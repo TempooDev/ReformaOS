@@ -1,0 +1,47 @@
+# --- IDEs & System ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# --- Bun / Node Dependencies ---
+node_modules/
+bun.lock
+# Si prefieres guardar el lockfile de bun para despliegues, comenta la línea de arriba
+# pero asegúrate de ignorar los de npm/yarn
+package-lock.json
+yarn.lock
+
+# --- Angular Specific ---
+.angular/
+dist/
+/web/dist/
+/web/out-tsc/
+/web/bazel-out/
+
+# --- Environment & Secrets (CRITICO para MCP/Stitch) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+auth_token.txt
+stitch_config.json
+
+# --- API & Database (Bun/SQLite) ---
+/api/db.sqlite
+/api/db.sqlite-journal
+/api/uploads/
+*.db
+
+# --- Shared & Build Artifacts ---
+/shared/dist/
+*.tsbuildinfo
+
+# --- Stitch & Design MCP ---
+/web/src/assets/design/temp_*
+/temp/
+mcp_debug.log
