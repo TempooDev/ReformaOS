@@ -1,1 +1,165 @@
-<p>domotica works!</p>
+<div class="pt-24 px-10 pb-16">
+  <!-- Page Header -->
+  <div class="mb-12 flex items-end justify-between">
+    <div>
+      <span class="text-on-surface-variant font-bold text-xs uppercase tracking-[0.2em] mb-2 block">Control Inteligente</span>
+      <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Seguridad y Domótica.</h2>
+    </div>
+    <div class="text-right">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full border border-green-100 text-sm font-bold">
+        <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
+        Sistema Armado y Seguro
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Bento Grid -->
+  <div class="grid grid-cols-12 gap-8">
+    <!-- Security Cameras (The Visual Monolith) -->
+    <section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined">videocam</span>
+          Cámaras de Seguridad
+        </h3>
+        <div class="flex gap-2">
+          <span class="px-2 py-1 bg-surface-container text-xs font-bold rounded">2 Canales Activos</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+        @for (camera of cameras; track camera.name) {
+        <div class="relative group rounded-lg overflow-hidden aspect-video bg-black">
+          <img [src]="camera.image" [alt]="camera.name" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <span class="px-2 py-1 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold rounded uppercase tracking-widest flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                LIVE
+              </span>
+              <button class="p-1.5 bg-white/20 backdrop-blur-md text-white rounded-lg hover:bg-white/40 transition-colors">
+                <span class="material-symbols-outlined text-sm">fullscreen</span>
+              </button>
+            </div>
+            <div>
+              <p class="text-white font-bold text-sm">{{ camera.name }}</p>
+              <p class="text-white/70 text-[10px] uppercase tracking-tighter">HD • 30 FPS</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+
+    <!-- Alarm & Access Control -->
+    <section class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+      <div class="bg-primary text-white p-8 rounded-xl shadow-xl shadow-primary/20 relative overflow-hidden group">
+        <div class="relative z-10">
+          <h3 class="font-headline text-2xl font-bold mb-8 tracking-tight">Estado de Alarma</h3>
+          <div class="flex flex-col items-center justify-center py-6">
+            <div class="w-32 h-32 rounded-full border-4 border-on-primary-container flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(247,125,0,0.3)]">
+              <span class="material-symbols-outlined text-6xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+            </div>
+            <p class="text-xl font-headline font-bold mb-1">Totalmente Protegido</p>
+            <p class="text-primary-fixed text-sm opacity-80">Armado hace 6h 12m</p>
+          </div>
+          <button class="w-full mt-8 bg-on-primary-container text-white py-4 rounded-xl font-bold text-sm hover:brightness-110 transition-all flex items-center justify-center gap-2">
+            Desarmar Sistema
+            <span class="material-symbols-outlined text-sm">lock_open</span>
+          </button>
+        </div>
+        <!-- Background Icon -->
+        <span class="material-symbols-outlined absolute -bottom-10 -right-10 text-[180px] text-white/5 rotate-12">verified_user</span>
+      </div>
+
+      <!-- Smart Locks -->
+      <div class="bg-surface-container-low p-6 rounded-xl border border-slate-100">
+        <h4 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary">door_front</span>
+          Cerraduras Inteligentes
+        </h4>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-slate-50">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-on-primary-container">lock</span>
+              <span class="text-sm font-bold text-primary">Puerta Principal</span>
+            </div>
+            <span class="text-[10px] font-bold text-green-600 uppercase">Cerrada</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-slate-50">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-on-primary-container">lock</span>
+              <span class="text-sm font-bold text-primary">Garaje</span>
+            </div>
+            <span class="text-[10px] font-bold text-green-600 uppercase">Cerrada</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Domotics Control (Lighting & Climate) -->
+  <div class="grid grid-cols-12 gap-8 mt-8">
+    <!-- Lighting Control -->
+    <section class="col-span-12 lg:col-span-7 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+      <div class="flex justify-between items-center mb-8">
+        <h3 class="font-headline text-2xl font-bold text-primary tracking-tight">Iluminación Inteligente</h3>
+        <button class="text-sm font-bold text-secondary hover:text-primary transition-colors">Apagar Todo</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        @for (light of lights; track light.name) {
+        <div class="p-6 rounded-xl border transition-all duration-300 group cursor-pointer" 
+             [ngClass]="light.status ? 'bg-secondary-container/20 border-secondary-container' : 'bg-surface-container-low border-transparent hover:border-slate-200'">
+          <div class="flex justify-between items-start mb-6">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                 [ngClass]="light.status ? 'bg-secondary text-white' : 'bg-surface-container-high text-slate-400'">
+              <span class="material-symbols-outlined">{{ light.status ? 'lightbulb' : 'lightbulb_outline' }}</span>
+            </div>
+            <div class="w-10 h-5 bg-slate-200 rounded-full relative p-0.5 transition-colors"
+                 [ngClass]="{'bg-on-primary-container': light.status}">
+              <div class="w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
+                   [ngStyle]="{'transform': light.status ? 'translateX(20px)' : 'translateX(0)'}"></div>
+            </div>
+          </div>
+          <h4 class="font-bold text-primary text-base mb-1">{{ light.name }}</h4>
+          <p class="text-xs text-on-surface-variant font-medium">{{ light.status ? 'Encendido (' + light.brightness + '%)' : 'Apagado' }}</p>
+        </div>
+        }
+      </div>
+    </section>
+
+    <!-- Climate Control -->
+    <section class="col-span-12 lg:col-span-5 bg-surface-container-low rounded-xl p-8 relative overflow-hidden">
+      <h3 class="font-headline text-2xl font-bold text-primary tracking-tight mb-8">Climatización</h3>
+      <div class="flex flex-col items-center">
+        <div class="relative w-48 h-48 flex items-center justify-center">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-200"/>
+            <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="552" stroke-dashoffset="400" class="text-on-primary-container"/>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-5xl font-headline font-black text-primary tabular-nums">22°</span>
+            <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">Setpoint</span>
+          </div>
+        </div>
+        <div class="mt-8 flex gap-6">
+          <button class="w-12 h-12 rounded-full border-2 border-slate-200 flex items-center justify-center text-primary hover:bg-slate-50 active:scale-95 transition-all">
+            <span class="material-symbols-outlined">remove</span>
+          </button>
+          <button class="w-12 h-12 rounded-full border-2 border-slate-200 flex items-center justify-center text-primary hover:bg-slate-50 active:scale-95 transition-all">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
+        <div class="w-full mt-10 grid grid-cols-2 gap-4">
+          <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-50">
+            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Humedad</span>
+            <span class="text-lg font-bold text-primary">45%</span>
+          </div>
+          <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-50">
+            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Exterior</span>
+            <span class="text-lg font-bold text-primary">18°C</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
