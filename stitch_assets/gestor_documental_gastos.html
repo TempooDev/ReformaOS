@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#d7dadc",
+              "surface-container-low": "#f1f4f6",
+              "error-container": "#ffdad6",
+              "on-primary-container": "#f77d00",
+              "inverse-surface": "#2d3133",
+              "on-tertiary": "#ffffff",
+              "tertiary-container": "#4f2f00",
+              "secondary": "#465f88",
+              "primary-fixed": "#ffdcc6",
+              "surface-container": "#ebeef0",
+              "on-error": "#ffffff",
+              "secondary-container": "#b6d0ff",
+              "on-surface": "#181c1e",
+              "surface-variant": "#e0e3e5",
+              "tertiary": "#321c00",
+              "outline-variant": "#c4c6cf",
+              "on-primary-fixed": "#301400",
+              "surface-container-highest": "#e0e3e5",
+              "on-secondary-container": "#3f5881",
+              "inverse-primary": "#ffb785",
+              "tertiary-fixed-dim": "#f1bd81",
+              "secondary-fixed": "#d6e3ff",
+              "primary": "#381800",
+              "on-primary-fixed-variant": "#723700",
+              "primary-container": "#582900",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#2b1700",
+              "on-secondary-fixed-variant": "#2e476f",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e5e9eb",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#eef1f3",
+              "background": "#f7fafc",
+              "outline": "#74777f",
+              "surface-tint": "#954a00",
+              "secondary-fixed-dim": "#aec7f7",
+              "on-surface-variant": "#44474e",
+              "on-secondary-fixed": "#001b3d",
+              "surface": "#f7fafc",
+              "primary-fixed-dim": "#ffb785",
+              "tertiary-fixed": "#ffddb9",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#181c1e",
+              "on-tertiary-fixed-variant": "#623f0f",
+              "surface-bright": "#f7fafc",
+              "on-tertiary-container": "#c6965e",
+              "on-secondary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .tnum { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between px-8 h-20">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-[#1B365D] dark:text-white uppercase tracking-tighter font-headline">ReformaOS</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 font-['Inter'] text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg" href="#">Dashboard</a>
+<a class="text-[#f77d00] font-bold font-['Inter'] text-sm px-3 py-2 rounded-lg" href="#">Finance &amp; Construction</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-highest border-none rounded-lg px-4 py-2 text-sm w-64 focus:ring-2 focus:ring-[#f77d00] transition-all" placeholder="Search invoices..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+</div>
+<button class="p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">account_circle</span>
+</button>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- Side Navigation (Web) -->
+<aside class="hidden lg:flex h-screen w-72 sticky top-0 bg-slate-100 dark:bg-slate-950 flex-col py-8 border-r border-slate-200 dark:border-slate-800 shrink-0">
+<div class="px-8 mb-10">
+<h2 class="text-xl font-black text-[#1B365D] dark:text-white tracking-widest font-headline">ReformaOS</h2>
+<p class="text-xs text-slate-500 font-medium tracking-wider">Property Management</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 px-6 py-4 text-slate-500 dark:text-slate-400 hover:text-[#1B365D] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Inter'] text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-slate-500 dark:text-slate-400 hover:text-[#1B365D] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">home_work</span>
+<span class="font-['Inter'] text-sm font-medium">My Home</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-slate-500 dark:text-slate-400 hover:text-[#1B365D] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-['Inter'] text-sm font-medium">Monthly Rental</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-slate-500 dark:text-slate-400 hover:text-[#1B365D] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">event_repeat</span>
+<span class="font-['Inter'] text-sm font-medium">Daily Rental</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#1B365D] dark:text-white bg-white dark:bg-slate-900 rounded-l-none border-l-4 border-[#f77d00] transition-all hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined text-[#f77d00]">construction</span>
+<span class="font-['Inter'] text-sm font-medium">Finance &amp; Construction</span>
+</a>
+</nav>
+<div class="px-6 py-4">
+<button class="w-full bg-[#f77d00] text-white py-3 rounded-lg font-bold text-sm tracking-wide shadow-lg shadow-orange-500/20 active:scale-95 transition-all">
+                    New Project
+                </button>
+</div>
+<div class="mt-auto border-t border-slate-200 dark:border-slate-800 pt-4">
+<a class="flex items-center gap-4 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#1B365D] transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#1B365D] transition-all" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-['Inter'] text-sm font-medium">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 min-w-0 bg-surface px-6 md:px-12 py-10 pb-32">
+<!-- Header Section -->
+<div class="mb-12">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-[0.2em] mb-2 block">Project Ledger</span>
+<h1 class="text-5xl font-extrabold font-headline tracking-tighter text-primary mb-6">Expense Documents</h1>
+<!-- Filter Bar -->
+<div class="flex flex-wrap items-center gap-3 bg-surface-container-low p-2 rounded-xl border border-outline-variant/15">
+<button class="px-4 py-2 rounded-lg bg-surface-container-lowest text-primary font-bold text-sm shadow-sm">All Units</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">home</span> My House
+                    </button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_month</span> Monthly Rental
+                    </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">event_repeat</span> Unit: Daily Rental
+                    </button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">filter_list</span> More Filters
+                    </button>
+</div>
+</div>
+<!-- Expense List -->
+<div class="space-y-6">
+<!-- Entry 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_40px_40px_-15px_rgba(70,95,136,0.04)] flex flex-col md:flex-row items-stretch group hover:translate-y-[-2px] transition-transform duration-300">
+<div class="w-full md:w-48 h-48 md:h-auto relative shrink-0">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="close-up photo of a thermal printed hardware store receipt with bold black ink on white paper slightly wrinkled" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGlMcNpXnyfrTB30P5UsBl3PZu33vvrTRnE6kk0rp_SFh5CZUcFqN_8dnyhpqIG_5ZzGi988_2dp1TjCwXIzOBnGnGJTOLDtuPI-YwPJOUr5utca3N_eO_fevqQvkslm4VLO1103PTamVB8oEMj-Dj8ctnhg4rVDzA9-I-ZBLy-VmDkwkLX0KEzGNwwglGGsyxIv843YmzJH6QiVNjK8see8i5xfm1HZkgLcY300mltFSWrUYJBaN124eNJ_9joz6frixjksaQuuM"/>
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-between relative">
+<!-- Status Monolith -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-[#f77d00]"></div>
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 mb-1 block">Materials</span>
+<h3 class="text-xl font-bold text-on-surface font-headline mb-1">Structural Timber &amp; Drywall</h3>
+<div class="flex gap-4 text-xs font-medium text-on-surface-variant mt-2">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Oct 12, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">tag</span> INV-9921</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-2xl font-black font-body tnum text-primary">$1,240.50</span>
+<div class="mt-1">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Daily Rental</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional portrait of an architect wearing a black turtle neck in high end office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdvahIVtuVEksxgu9Ik_oAwCuaC0VcrOYakbCErfNd1NAAdLYExKagrz8dOWcqISY7GhpRmEeMHklXrZMTLjeyZewpAPXgeesXV5kplvX0Pyef_XXka8zukjVv_L7QItBirBy-bbOb0KTcaTky1E3qEQfGTaqv4g730sIzlvY1eKuQvdvAH7RCGV6mDOhhBIKyiXUmAV3O8gBH_glKO7jGXM363ijIZy919QNnHUGMKKavRkiyYaWyRr5loB12qI0iz3ROevHprt0"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-800 flex items-center justify-center text-[10px] text-white font-bold">JD</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">download</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Entry 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_40px_40px_-15px_rgba(70,95,136,0.04)] flex flex-col md:flex-row items-stretch group hover:translate-y-[-2px] transition-transform duration-300">
+<div class="w-full md:w-48 h-48 md:h-auto relative shrink-0">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="digital invoice on a tablet screen showing professional tax services line items with minimalist design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwaretED-lwSBj_27b9rwasOsHs1AlRW9p4tj7I7g7hFrtPRIMUdFXg1_kak2haoWdt4B9W61DTlYW4Ma9DQqj2W-ElbFeSglV-l5PTToYZUw8ctgPPETsKaqBF5mNMb2zCAgCAJbUpvMs8S-gAYoR1LjtaIMHiuGgnnVKdCKhTY5ika63mryIZp4_uMqCTN_ltHtXv7Pft3gkOjJQgBYPLt19IrA5XklgGFKt3u5QP31MJtYbidr96DcxLtcH30GbHFaxnjDFnW8"/>
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-between relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 mb-1 block">Tax &amp; Insurance</span>
+<h3 class="text-xl font-bold text-on-surface font-headline mb-1">Quarterly Property Tax Payment</h3>
+<div class="flex gap-4 text-xs font-medium text-on-surface-variant mt-2">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Oct 08, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">tag</span> TX-2023-Q3</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-2xl font-black font-body tnum text-primary">$4,850.00</span>
+<div class="mt-1">
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">My House</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<span class="text-[10px] font-bold text-error uppercase tracking-tighter bg-error-container/30 px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">priority_high</span> Pending Verification
+                            </span>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Entry 3 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_40px_40px_-15px_rgba(70,95,136,0.04)] flex flex-col md:flex-row items-stretch group hover:translate-y-[-2px] transition-transform duration-300">
+<div class="w-full md:w-48 h-48 md:h-auto relative shrink-0">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="close up of premium lighting fixture installation manual and invoice with gold accents on textured grey paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbd8VgroFsMLBO3MEDiZ8FownQFNEnSY8IC6YB8jTc-W2wdNTUUl0jfWyD4cI7cwBnvjtxJiRDTCWaEzz_wYcjGZBiQX-RlV_kre3gT5zvXWXwPhANQKisuq2Xbf2Oai2Xn8ZkertNIA5xtYFxcBEbaT-kT7au3bpPNOg68ypEjiI30lBlybuguGBS5vQyZ8NwKJ060GQEPNpHOKP7J3cclc3PCAcBbzNG7NFbeFioTMnO7AiH9JFcyftB8fz__8qXRO4GLCtp-Ag"/>
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-between relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-[#f77d00]"></div>
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 mb-1 block">Materials</span>
+<h3 class="text-xl font-bold text-on-surface font-headline mb-1">Bespoke Living Room Lighting</h3>
+<div class="flex gap-4 text-xs font-medium text-on-surface-variant mt-2">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Oct 05, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">tag</span> SHOP-441</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-2xl font-black font-body tnum text-primary">$899.99</span>
+<div class="mt-1">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Monthly Rental</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Reconciled</span>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">download</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating Action Button -->
+<div class="fixed bottom-10 right-10 z-[60]">
+<button class="bg-[#f77d00] hover:bg-primary-container text-white px-8 py-5 rounded-full flex items-center gap-3 shadow-2xl shadow-orange-500/40 hover:-translate-y-1 active:scale-95 transition-all duration-300">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
+<span class="font-bold text-sm uppercase tracking-widest">Subir Ticket</span>
+</button>
+</div>
+<!-- Bottom Navigation (Mobile Only) -->
+<footer class="md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 flex justify-around py-4 z-50 shadow-2xl border-t border-slate-100">
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Dash</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#f77d00]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-[10px] font-bold">Ledger</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">construction</span>
+<span class="text-[10px] font-bold">Build</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">User</span>
+</button>
+</footer>
+</body></html>
