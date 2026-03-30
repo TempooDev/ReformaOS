@@ -1,0 +1,67 @@
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-[#f7fafc] flex flex-col p-4 border-r border-slate-200 shadow-[40px_0_40px_rgba(70,95,136,0.04)]">
+  <div class="mb-10 px-4">
+    <h1 class="font-headline font-extrabold text-[#1B365D] text-2xl tracking-tighter">ReformaOS</h1>
+    <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Property Management</p>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a routerLink="/dashboard" routerLinkActive="bg-white shadow-sm font-bold text-[#1B365D]" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#1B365D] rounded-lg transition-transform duration-200 hover:translate-x-1">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="font-body text-sm font-medium">Dashboard</span>
+    </a>
+    <a routerLink="/my-home" routerLinkActive="bg-white shadow-sm font-bold text-[#1B365D]" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#1B365D] rounded-lg transition-transform duration-200 hover:translate-x-1">
+      <span class="material-symbols-outlined">home_work</span>
+      <span class="font-body text-sm font-medium">My Home</span>
+    </a>
+    <a routerLink="/monthly-rental" routerLinkActive="bg-white shadow-sm font-bold text-[#1B365D]" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#1B365D] rounded-lg transition-transform duration-200 hover:translate-x-1">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span class="font-body text-sm font-medium">Monthly Rental</span>
+    </a>
+    <a routerLink="/daily-rental" routerLinkActive="bg-white shadow-sm font-bold text-[#1B365D]" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#1B365D] rounded-lg transition-transform duration-200 hover:translate-x-1">
+      <span class="material-symbols-outlined">event_repeat</span>
+      <span class="font-body text-sm font-medium">Daily Rental</span>
+    </a>
+    <a routerLink="/finance" routerLinkActive="bg-white shadow-sm font-bold text-[#1B365D]" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#1B365D] rounded-lg transition-transform duration-200 hover:translate-x-1">
+      <span class="material-symbols-outlined">construction</span>
+      <span class="font-body text-sm font-medium">Finance/Construction</span>
+    </a>
+  </nav>
+  <div class="mt-auto pt-6 border-t border-slate-100 space-y-1">
+    <button class="w-full mb-4 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm shadow-lg hover:-translate-y-0.5 transition-all">
+      New Project
+    </button>
+    <a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-[#1B365D] transition-all" href="#">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="font-body text-sm font-medium">Settings</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-[#1B365D] transition-all" href="#">
+      <span class="material-symbols-outlined">help</span>
+      <span class="font-body text-sm font-medium">Support</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+  <!-- TopAppBar -->
+  <header class="fixed top-0 left-64 right-0 z-40 bg-white/80 backdrop-blur-md flex justify-between items-center px-8 h-16 shadow-sm">
+    <div class="flex items-center gap-4">
+      <span class="text-[#1B365D] font-headline font-bold text-lg tracking-tight">Dashboard Principal</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <div class="relative">
+        <span class="material-symbols-outlined text-slate-400">search</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="p-2 hover:bg-slate-100 rounded-full transition-colors active:scale-95 duration-200">
+          <span class="material-symbols-outlined text-slate-600">notifications</span>
+        </button>
+        <button class="p-2 hover:bg-slate-100 rounded-full transition-colors active:scale-95 duration-200">
+          <span class="material-symbols-outlined text-slate-600">account_circle</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <router-outlet></router-outlet>
+</main>

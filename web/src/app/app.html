@@ -1,13 +1,1 @@
-<h1>Mi Reforma: Plan de Alquiler</h1>
-
-<div class="grid">
-  @for (u of reformaService.unidades(); track u.id) {
-  <div class="card">
-    <h3>{{ u.nombre }}</h3>
-    <p>Presupuesto: {{ u.presupuesto }}€</p>
-    <p>Estado: <strong>{{ u.estado }}</strong></p>
-  </div>
-  }
-</div>
-
-<router-outlet/>
+<router-outlet></router-outlet>
