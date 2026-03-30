@@ -1,0 +1,230 @@
+<div class="p-12 max-w-7xl mx-auto space-y-12">
+  <!-- Hero Stats Row -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Monthly Installment -->
+    <div class="relative bg-surface-container-lowest p-8 overflow-hidden rounded-xl border border-slate-50">
+      <div class="status-monolith bg-[#1B365D]"></div>
+      <p class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant mb-4">Monthly Installment</p>
+      <div class="flex items-baseline gap-2 mb-6">
+        <span class="text-4xl font-extrabold font-headline tracking-tighter text-primary">€4.285</span>
+        <span class="text-sm font-medium text-on-surface-variant">/ mo</span>
+      </div>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-on-surface-variant">Principal Contribution</span>
+          <span class="font-bold text-[#1B365D]">€1.840</span>
+        </div>
+        <div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+          <div class="bg-[#1B365D] h-full" style="width: 43%"></div>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-on-surface-variant">Interest & Fees</span>
+          <span class="font-bold text-on-primary-container">€2.445</span>
+        </div>
+        <div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+          <div class="bg-on-primary-container h-full" style="width: 57%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remaining Term -->
+    <div class="relative bg-surface-container-lowest p-8 overflow-hidden rounded-xl border border-slate-50">
+      <div class="status-monolith bg-on-primary-container"></div>
+      <p class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant mb-4">Remaining Term</p>
+      <div class="flex items-baseline gap-2 mb-6">
+        <span class="text-4xl font-extrabold font-headline tracking-tighter text-primary">214</span>
+        <span class="text-sm font-medium text-on-surface-variant">Months</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex -space-x-2">
+          <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-[10px] font-bold">17y</div>
+        </div>
+        <p class="text-xs text-on-surface-variant">Projected Payoff: <span class="text-on-surface font-bold">Oct 2041</span></p>
+      </div>
+      <div class="mt-8">
+        <button class="text-xs font-bold text-[#1B365D] flex items-center gap-1 hover:underline">
+          Recalculate with extra payments
+          <span class="material-symbols-outlined text-sm">trending_up</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Self-Paying Ratio -->
+    <div class="relative bg-[#381800] text-white p-8 overflow-hidden rounded-xl">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-on-primary-container/10 rounded-full -mr-16 -mt-16"></div>
+      <p class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-primary-container mb-4">Self-Paying Ratio</p>
+      <div class="flex items-baseline gap-2 mb-2">
+        <span class="text-5xl font-extrabold font-headline tracking-tighter text-on-primary-container">84%</span>
+      </div>
+      <p class="text-sm text-on-primary-container/80 font-medium mb-6 italic">Optimizing for 100% Autonomy</p>
+      <div class="space-y-2">
+        <div class="flex justify-between text-[10px] uppercase tracking-wider">
+          <span>Rental Income</span>
+          <span>€3.600</span>
+        </div>
+        <div class="w-full bg-white/10 h-2 rounded-full">
+          <div class="bg-on-primary-container h-full rounded-full" style="width: 84%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Evolution Chart Section -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Evolution Area Chart Visual -->
+    <div class="lg:col-span-8 bg-surface-container-lowest p-10 rounded-xl relative border border-slate-50">
+      <div class="flex flex-col md:flex-row justify-between items-start mb-12 gap-4">
+        <div>
+          <h3 class="text-3xl font-extrabold font-headline tracking-tighter text-[#1B365D]">Equity Acceleration</h3>
+          <p class="text-on-surface-variant text-sm mt-2">Visualizing the gap between asset appreciation and debt reduction.</p>
+        </div>
+        <div class="flex gap-4">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-[#1B365D]"></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Est. Value</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-on-primary-container"></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Mortgage</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Simulated Area Chart -->
+      <div class="relative h-[400px] w-full mt-8">
+        <svg class="w-full h-full" viewBox="0 0 1000 400" preserveAspectRatio="none">
+          <!-- Equity Area Fill -->
+          <path d="M0 320 L200 280 L400 220 L600 140 L800 80 L1000 40 L1000 350 L800 360 L600 375 L400 385 L200 392 L0 400 Z" fill="#b6d0ff" fill-opacity="0.1"></path>
+          <!-- Property Value Line (Upper) -->
+          <path d="M0 320 Q 200 280, 400 220 T 800 80 T 1000 40" fill="none" stroke="#1B365D" stroke-width="4"></path>
+          <!-- Mortgage Balance Line (Lower) -->
+          <path d="M0 400 Q 200 392, 400 385 T 800 360 T 1000 350" fill="none" stroke="#f77d00" stroke-width="4"></path>
+          <!-- Current Marker -->
+          <line stroke="#e0e3e5" stroke-dasharray="8 4" x1="400" x2="400" y1="0" y2="400"></line>
+          <circle cx="400" cy="220" fill="#1B365D" r="6"></circle>
+          <circle cx="400" cy="385" fill="#f77d00" r="6"></circle>
+        </svg>
+        
+        <!-- Tooltip Label -->
+        <div class="absolute top-[180px] left-[420px] bg-white shadow-xl p-4 rounded-lg border border-slate-100 z-10 hidden md:block">
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Current State (Year 5)</p>
+          <div class="space-y-1">
+            <div class="flex justify-between gap-8">
+              <span class="text-xs">Property Value</span>
+              <span class="text-xs font-bold">€1.240.000</span>
+            </div>
+            <div class="flex justify-between gap-8">
+              <span class="text-xs">Mortgage Bal.</span>
+              <span class="text-xs font-bold text-on-primary-container">€780.240</span>
+            </div>
+            <div class="pt-2 border-t border-slate-100 mt-2 flex justify-between">
+              <span class="text-sm font-bold">Net Equity</span>
+              <span class="text-sm font-black text-[#1B365D]">€459.760</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-between mt-8 text-[10px] font-bold text-surface-dim uppercase tracking-[0.3em]">
+        <span>2020</span>
+        <span>2025 (Now)</span>
+        <span>2030</span>
+        <span>2035</span>
+        <span>2040</span>
+      </div>
+    </div>
+
+    <!-- Technical Details Sidebar -->
+    <div class="lg:col-span-4 space-y-6">
+      <!-- Debt-to-Value Monolith -->
+      <div class="bg-surface-container-low p-6 rounded-xl border border-slate-100">
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase mb-4 tracking-widest">LTV Ratio</p>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="relative w-20 h-20">
+            <svg class="w-full h-full transform -rotate-90">
+              <circle class="text-white" cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" stroke-width="8"></circle>
+              <circle class="text-secondary" cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" stroke-dasharray="213" stroke-dashoffset="80" stroke-width="8"></circle>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center text-lg font-black font-headline">62%</div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold">Optimal Zone</h4>
+            <p class="text-[10px] text-on-surface-variant uppercase mt-1">Health: Excellent</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property Context -->
+      <div class="bg-surface-container-highest rounded-xl overflow-hidden group cursor-pointer border border-slate-100">
+        <div class="h-48 relative">
+          <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuxj5Gfzm_zEIxpC5mzjKqwX_SAIN8Zj257p_yrnaIZ7Gzc16h03gdaxLj7prlWlsJlLT9bdb378knU6WxT7dAluGKQO4MrNntCDtXf54tUHTvxB_eAhDzEpVvRE8ggjbpObV3g1ZM9zOibU2OdaEPaf_5XHIjzZsIFci-XTJMP4vVggnB-deh-PkLR05-_B8bKT6kHI-N116o5Y2e3kHB3O-nVfWCJt1vY0O0JMRyC1TrXxaz4OgVOOdf88v4orQ-Cv4fGZY6zoc" alt="Property">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1B365D]/80 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">Portfolio Asset #042</p>
+            <p class="text-sm font-bold font-headline">Riverside Penthouse B</p>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-on-surface-variant">Annual Appreciation</span>
+            <span class="font-bold text-[#1B365D]">+4.2%</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-on-surface-variant">Interest Rate</span>
+            <span class="font-bold text-on-primary-container">3.75% Fixed</span>
+          </div>
+          <button class="w-full bg-surface-container-high py-3 text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors rounded">
+            Detailed Appraisal
+          </button>
+        </div>
+      </div>
+
+      <!-- Milestone Notification -->
+      <div class="bg-secondary-container/20 p-6 rounded-xl relative">
+        <div class="status-monolith bg-secondary"></div>
+        <h4 class="text-xs font-bold mb-2">Equity Milestone</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">You are <span class="font-bold text-secondary">€42.000</span> away from qualifying for a secondary line of credit at preferred rates.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Amortization Milestones Table -->
+  <section class="bg-surface-container-lowest rounded-xl overflow-hidden border border-slate-50">
+    <div class="p-8 border-b border-surface-container flex flex-col sm:flex-row justify-between items-center gap-4">
+      <h3 class="text-xl font-extrabold font-headline tracking-tight text-primary">Amortization Milestones</h3>
+      <div class="flex gap-2">
+        <button class="px-3 py-1 bg-surface-container text-[10px] font-bold rounded uppercase hover:bg-surface-container-high transition-colors">Download PDF</button>
+        <button class="px-3 py-1 bg-surface-container text-[10px] font-bold rounded uppercase hover:bg-surface-container-high transition-colors">Export CSV</button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low">
+          <tr>
+            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Payment Year</th>
+            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Total Paid</th>
+            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Principal</th>
+            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Interest</th>
+            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Balance</th>
+            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-right">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-container text-sm">
+          @for (item of amortizationMilestones; track item.year) {
+          <tr class="hover:bg-surface-container-low/50 transition-colors">
+            <td class="px-8 py-6 font-bold">{{ item.year }}</td>
+            <td class="px-8 py-6 tabular-nums">€{{ item.totalPaid | number:'1.0-0' }}</td>
+            <td class="px-8 py-6 tabular-nums text-[#1B365D]">€{{ item.principal | number:'1.0-0' }}</td>
+            <td class="px-8 py-6 tabular-nums text-on-primary-container">€{{ item.interest | number:'1.0-0' }}</td>
+            <td class="px-8 py-6 tabular-nums font-bold">€{{ item.balance | number:'1.0-0' }}</td>
+            <td class="px-8 py-6 text-right">
+              <span class="inline-block w-2 h-2 rounded-full" 
+                    [class.bg-secondary]="item.status === 'current'" 
+                    [class.bg-surface-dim]="item.status !== 'current'"></span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

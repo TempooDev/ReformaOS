@@ -73,12 +73,10 @@
           <div class="flex justify-between items-start mb-2">
             <div>
               <h4 class="font-bold text-primary text-sm">{{ phase.name }}</h4>
-              <span class="text-[10px] font-bold uppercase tracking-tighter" [ngClass]="{
-                'text-green-600': phase.status === 'Completado',
-                'text-secondary': phase.status === 'En curso',
-                'text-[#f77d00]': phase.status === 'Iniciado',
-                'text-slate-400': phase.status === 'Pendiente'
-              }">{{ phase.status }}</span>
+              <span class="text-[10px] font-bold uppercase tracking-tighter" [class.text-green-600]="phase.status === 'Completado'"
+                    [class.text-secondary]="phase.status === 'En curso'"
+                    [class.text-[#f77d00]]="phase.status === 'Iniciado'"
+                    [class.text-slate-400]="phase.status === 'Pendiente'">{{ phase.status }}</span>
             </div>
             <span class="text-xs font-bold tabular-nums text-primary">{{ phase.progress }}%</span>
           </div>
@@ -125,11 +123,13 @@
                 <span class="text-xs font-medium text-on-surface-variant">{{ invoice.date }}</span>
               </td>
               <td class="px-6 py-4">
-                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest" [ngClass]="{
-                  'bg-green-50 text-green-700': invoice.status === 'Pagado',
-                  'bg-[#ffdcc6] text-[#301400]': invoice.status === 'Pendiente',
-                  'bg-slate-100 text-slate-600': invoice.status === 'En Revisión'
-                }">{{ invoice.status }}</span>
+                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest"
+                      [class.bg-green-50]="invoice.status === 'Pagado'"
+                      [class.text-green-700]="invoice.status === 'Pagado'"
+                      [class.bg-[#ffdcc6]]="invoice.status === 'Pendiente'"
+                      [class.text-[#301400]]="invoice.status === 'Pendiente'"
+                      [class.bg-slate-100]="invoice.status === 'En Revisión'"
+                      [class.text-slate-600]="invoice.status === 'En Revisión'">{{ invoice.status }}</span>
               </td>
             </tr>
             }

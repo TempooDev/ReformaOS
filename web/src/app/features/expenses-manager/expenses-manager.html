@@ -32,7 +32,9 @@
       </div>
       <div class="flex-1 p-6 flex flex-col justify-between relative">
         <!-- Status Monolith -->
-        <div class="absolute left-0 top-0 bottom-0 w-1" [ngClass]="expense.status === 'monolith-orange' ? 'bg-[#f77d00]' : 'bg-secondary'"></div>
+        <div class="absolute left-0 top-0 bottom-0 w-1" 
+             [class.bg-[#f77d00]]="expense.status === 'monolith-orange'" 
+             [class.bg-secondary]="expense.status !== 'monolith-orange'"></div>
         <div class="flex justify-between items-start">
           <div>
             <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 mb-1 block">{{ expense.category }}</span>
@@ -46,7 +48,10 @@
             <span class="text-2xl font-black font-body tabular-nums text-primary">€{{ expense.amount | number:'1.2-2' }}</span>
             <div class="mt-1">
               <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider" 
-                    [ngClass]="expense.unit === 'Daily Rental' ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-highest text-on-surface-variant'">
+                    [class.bg-secondary-container]="expense.unit === 'Daily Rental'"
+                    [class.text-on-secondary-container]="expense.unit === 'Daily Rental'"
+                    [class.bg-surface-container-highest]="expense.unit !== 'Daily Rental'"
+                    [class.text-on-surface-variant]="expense.unit !== 'Daily Rental'">
                 {{ expense.unit }}
               </span>
             </div>

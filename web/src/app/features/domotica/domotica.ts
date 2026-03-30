@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-domotica',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './domotica.html',
   styleUrl: './domotica.css'
 })
