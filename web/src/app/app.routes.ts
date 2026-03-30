@@ -22,6 +22,10 @@ export const routes: Routes = [
       {
         path: 'domotica',
         loadComponent: () => import('./features/domotica/domotica').then(m => m.DomoticaComponent)
+      },
+      {
+        path: 'expenses',
+        loadComponent: () => import('./features/expenses-manager/expenses-manager').then(m => m.ExpensesManagerComponent)
       }
     ]
   }
