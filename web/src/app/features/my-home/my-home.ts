@@ -6,7 +6,7 @@ import { ProgressBarComponent } from '../../core/components/progress-bar/progres
 @Component({
   selector: 'app-my-home',
   standalone: true,
-  imports: [SectionHeaderComponent, StatusMonolithComponent, ProgressBarComponent],
+  imports: [StatusMonolithComponent],
   templateUrl: './my-home.html',
   styleUrl: './my-home.css'
 })
