@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-        @for (camera of cameras; track camera.name) {
+        @for (camera of cameras(); track camera.name) {
         <div class="relative group rounded-lg overflow-hidden aspect-video bg-black">
           <img [src]="camera.image" [alt]="camera.name" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
           <div class="absolute inset-0 p-4 flex flex-col justify-between">
@@ -106,7 +106,7 @@
         <button class="text-sm font-bold text-secondary hover:text-primary transition-colors">Apagar Todo</button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        @for (light of lights; track light.name) {
+        @for (light of lights(); track light.name) {
         <div class="p-6 rounded-xl border transition-all duration-300 group cursor-pointer" 
              [class.bg-secondary-container/20]="light.status"
              [class.border-secondary-container]="light.status"

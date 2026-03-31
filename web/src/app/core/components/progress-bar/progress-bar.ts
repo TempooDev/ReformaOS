@@ -4,17 +4,7 @@ import { Component, input } from '@angular/core';
   selector: 'app-progress-bar',
   standalone: true,
   imports: [],
-  template: `
-    <div [class]="containerClass()">
-      <div class="h-full rounded-full transition-all duration-1000 ease-out relative" 
-           [class]="barClass()" 
-           [style.width.%]="progress()">
-        @if (showOverlay()) {
-          <div class="absolute inset-0 bg-white/10 mix-blend-overlay"></div>
-        }
-      </div>
-    </div>
-  `,
+  templateUrl: './progress-bar.html',
   styles: [`
     :host { display: block; width: 100%; }
   `]

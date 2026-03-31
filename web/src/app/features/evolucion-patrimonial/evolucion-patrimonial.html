@@ -209,7 +209,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-surface-container text-sm">
-          @for (item of amortizationMilestones; track item.year) {
+          @for (item of amortizationMilestones(); track item.year) {
           <tr class="hover:bg-surface-container-low/50 transition-colors">
             <td class="px-8 py-6 font-bold">{{ item.year }}</td>
             <td class="px-8 py-6 tabular-nums">€{{ item.totalPaid | number:'1.0-0' }}</td>

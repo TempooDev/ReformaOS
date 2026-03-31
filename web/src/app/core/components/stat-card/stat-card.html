@@ -1,0 +1,10 @@
+<div class="card-base h-full">
+  @if (icon()) {
+    <span class="material-symbols-outlined mb-4 text-3xl" [class]="iconColorClass()">{{ icon() }}</span>
+  }
+  <h4 class="text-overline">{{ label() }}</h4>
+  <p class="text-stat-value">{{ value() }}</p>
+  @if (subtext()) {
+    <p class="text-caption">{{ subtext() }}</p>
+  }
+</div>

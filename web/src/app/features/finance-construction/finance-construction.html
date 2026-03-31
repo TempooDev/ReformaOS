@@ -23,42 +23,27 @@
           <h3 class="font-headline text-xl font-bold text-primary mb-6">Estado de la Inversión</h3>
           <div class="flex justify-between items-end mb-4">
             <div>
-              <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 block mb-1">Total Gastado</span>
-              <span class="text-4xl font-headline font-black text-primary tabular-nums">€{{ projectStats.totalSpent | number:'1.0-0' }}</span>
+              <span class="text-overline opacity-60">Total Gastado</span>
+              <span class="text-stat-value text-4xl">€{{ projectStats().totalSpent | number:'1.0-0' }}</span>
             </div>
             <div class="text-right">
-              <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 block mb-1">Restante</span>
-              <span class="text-2xl font-headline font-bold text-secondary tabular-nums">€{{ projectStats.remaining | number:'1.0-0' }}</span>
+              <span class="text-overline opacity-60">Restante</span>
+              <span class="text-stat-value text-2xl text-secondary">€{{ projectStats().remaining | number:'1.0-0' }}</span>
             </div>
           </div>
           <div class="h-4 w-full bg-surface-container-high rounded-full overflow-hidden p-0.5 shadow-inner">
-            <div class="h-full bg-gradient-to-r from-primary to-on-primary-container rounded-full transition-all duration-1000 ease-out" [style.width.%]="projectStats.progress"></div>
+            <div class="h-full bg-gradient-to-r from-primary to-on-primary-container rounded-full transition-all duration-1000 ease-out" [style.width.%]="projectStats().progress"></div>
           </div>
           <div class="flex justify-between text-[10px] font-bold text-on-surface-variant mt-2 uppercase tracking-widest">
-            <span>{{ projectStats.progress }}% Consumido</span>
+            <span>{{ projectStats().progress }}% Consumido</span>
             <span>Margen de Seguridad: 12%</span>
           </div>
         </div>
       </div>
 
-      <div class="col-span-3 md:col-span-1 bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm">
-        <span class="material-symbols-outlined text-secondary mb-4 text-3xl">construction</span>
-        <h4 class="font-bold text-primary text-sm uppercase tracking-tight mb-1">Proveedores</h4>
-        <p class="text-2xl font-headline font-black text-primary">12</p>
-        <p class="text-[10px] text-on-surface-variant font-medium mt-1">Activos esta semana</p>
-      </div>
-      <div class="col-span-3 md:col-span-1 bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm">
-        <span class="material-symbols-outlined text-[#f77d00] mb-4 text-3xl">receipt_long</span>
-        <h4 class="font-bold text-primary text-sm uppercase tracking-tight mb-1">Facturas</h4>
-        <p class="text-2xl font-headline font-black text-primary">45</p>
-        <p class="text-[10px] text-on-surface-variant font-medium mt-1">Tramitadas en total</p>
-      </div>
-      <div class="col-span-3 md:col-span-1 bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm">
-        <span class="material-symbols-outlined text-green-600 mb-4 text-3xl">trending_up</span>
-        <h4 class="font-bold text-primary text-sm uppercase tracking-tight mb-1">Ahorro</h4>
-        <p class="text-2xl font-headline font-black text-green-600">€4.2K</p>
-        <p class="text-[10px] text-on-surface-variant font-medium mt-1">Vs. Presupuesto Inicial</p>
-      </div>
+      <app-stat-card icon="construction" label="Proveedores" value="12" subtext="Activos esta semana" iconColorClass="text-secondary"></app-stat-card>
+      <app-stat-card icon="receipt_long" label="Facturas" value="45" subtext="Tramitadas en total" iconColorClass="text-[#f77d00]"></app-stat-card>
+      <app-stat-card icon="trending_up" label="Ahorro" value="€4.2K" subtext="Vs. Presupuesto Inicial" iconColorClass="text-green-600"></app-stat-card>
     </section>
 
     <!-- Project Timeline & Phases -->

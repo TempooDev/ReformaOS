@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Expense } from '@shared';
 
 @Component({
   selector: 'app-expenses-manager',
@@ -9,7 +10,7 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './expenses-manager.css'
 })
 export class ExpensesManagerComponent {
-  expenses = [
+  expenses = input<Expense[]>([
     {
       id: 'INV-9921',
       title: 'Structural Timber & Drywall',

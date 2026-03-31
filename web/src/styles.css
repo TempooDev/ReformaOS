@@ -75,3 +75,21 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+@layer components {
+  .text-overline {
+    @apply font-bold text-primary text-[10px] uppercase tracking-[0.2em] mb-1 block;
+  }
+  
+  .text-stat-value {
+    @apply text-3xl font-headline font-black text-primary tabular-nums;
+  }
+  
+  .text-caption {
+    @apply text-[10px] text-on-surface-variant font-medium mt-1;
+  }
+
+  .card-base {
+    @apply bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm flex flex-col;
+  }
+}

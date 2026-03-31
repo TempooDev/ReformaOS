@@ -24,7 +24,7 @@
 
   <!-- Expense List -->
   <div class="space-y-6">
-    @for (expense of expenses; track expense.id) {
+    @for (expense of expenses(); track expense.id) {
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_40px_40px_-15px_rgba(70,95,136,0.04)] flex flex-col md:flex-row items-stretch group hover:translate-y-[-2px] transition-transform duration-300">
       <div class="w-full md:w-48 h-48 md:h-auto relative shrink-0">
         <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" [src]="expense.image" [alt]="expense.title">

@@ -17,24 +17,10 @@
   <div class="grid grid-cols-12 gap-8">
     <!-- Occupancy Stats -->
     <section class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm">
-        <span class="material-symbols-outlined text-primary mb-4 text-3xl">analytics</span>
-        <h4 class="font-bold text-primary text-xs uppercase tracking-widest mb-1">Ocupación</h4>
-        <p class="text-3xl font-headline font-black text-primary">{{ stats.occupancy }}%</p>
-        <p class="text-[10px] text-on-surface-variant font-medium mt-1">Este Mes</p>
-      </div>
-      <div class="bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm">
-        <span class="material-symbols-outlined text-secondary mb-4 text-3xl">payments</span>
-        <h4 class="font-bold text-primary text-xs uppercase tracking-widest mb-1">ADR</h4>
-        <p class="text-3xl font-headline font-black text-primary">€{{ stats.avgDailyRate }}</p>
-        <p class="text-[10px] text-on-surface-variant font-medium mt-1">Precio Medio Diario</p>
-      </div>
-      <div class="bg-surface-container-lowest p-6 rounded-xl border border-slate-50 shadow-sm">
-        <span class="material-symbols-outlined text-[#f77d00] mb-4 text-3xl">trending_up</span>
-        <h4 class="font-bold text-primary text-xs uppercase tracking-widest mb-1">Ingresos</h4>
-        <p class="text-3xl font-headline font-black text-primary">€{{ stats.revenueMonth | number:'1.0-0' }}</p>
-        <p class="text-[10px] text-on-surface-variant font-medium mt-1">Estimado Octubre</p>
-      </div>
+      <app-stat-card icon="analytics" label="Ocupación" [value]="stats().occupancy + '%'" subtext="Este Mes"></app-stat-card>
+      <app-stat-card icon="payments" label="ADR" [value]="'€' + stats().avgDailyRate" subtext="Precio Medio Diario" iconColorClass="text-secondary"></app-stat-card>
+      <app-stat-card icon="trending_up" label="Ingresos" [value]="'€' + (stats().revenueMonth | number:'1.0-0')" subtext="Estimado Octubre" iconColorClass="text-[#f77d00]"></app-stat-card>
+
 
       <!-- Current Guest Card -->
       <div class="col-span-12 bg-white rounded-xl shadow-lg border border-slate-100 p-8 relative overflow-hidden group">
@@ -76,7 +62,7 @@
       <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-slate-50 flex-1">
         <h3 class="font-headline text-xl font-bold text-primary mb-6">Próximas Reservas</h3>
         <div class="space-y-4">
-          @for (booking of upcomingBookings; track booking.guest) {
+          @for (booking of upcomingBookings(); track booking.guest) {
           <div class="p-4 rounded-lg bg-surface-container-low border border-transparent hover:border-slate-200 transition-all">
             <div class="flex justify-between items-start mb-2">
               <p class="font-bold text-primary text-sm">{{ booking.guest }}</p>
