@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"log"
-	"os"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -11,24 +10,10 @@ import (
 
 var MinioClient *minio.Client
 
-func InitMinio() {
-	endpoint := os.Getenv("MINIO_ENDPOINT")
-	if endpoint == "" {
-		endpoint = "localhost:9000"
-	}
-	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
-	if accessKeyID == "" {
-		accessKeyID = "minioadmin"
-	}
-	secretAccessKey := os.Getenv("MINIO_SECRET_KEY")
-	if secretAccessKey == "" {
-		secretAccessKey = "minioadmin123"
-	}
-	useSSL := false
-
-	client, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: useSSL,
+func InitMinio(cfg *Config) {
+	client, err := minio.New(cfg.Minio.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.Minio.AccessKey, cfg.Minio.SecretKey, ""),
+		Secure: cfg.Minio.UseSSL,
 	})
 	if err != nil {
 		log.Fatalf("Failed to connect to MinIO: %v", err)

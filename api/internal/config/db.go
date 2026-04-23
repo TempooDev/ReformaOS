@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -10,13 +9,8 @@ import (
 
 var DB *gorm.DB
 
-func InitDB() {
-	dsn := os.Getenv("DATABASE_URL")
-	if dsn == "" {
-		dsn = "host=localhost user=admin password=password dbname=reformaos port=5432 sslmode=disable TimeZone=UTC"
-	}
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func InitDB(cfg *Config) {
+	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}

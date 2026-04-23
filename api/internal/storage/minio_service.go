@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/tempoodev/reformaos/api/internal/config"
 )
@@ -46,9 +47,10 @@ func (s *MinioService) UploadFile(ctx context.Context, bucketName, section strin
 }
 
 // GetFileURL returns a URL for the object.
-// In a real app, this might be a pre-signed URL or a direct public URL depending on bucket policy.
 func (s *MinioService) GetFileURL(bucketName, objectName string) string {
-	// For simplicity in development, returning direct URL format.
-	// You may want to use PresignedGetObject if bucket is private.
 	return fmt.Sprintf("http://localhost:9000/%s/%s", bucketName, objectName)
+}
+
+func GenerateID() string {
+	return uuid.New().String()
 }
