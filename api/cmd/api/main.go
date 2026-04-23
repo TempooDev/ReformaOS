@@ -91,6 +91,15 @@ func main() {
 	api.GET("/projects/:projectId/documents", documentHandler.GetByProject)
 	api.POST("/projects/:projectId/documents", documentHandler.Upload)
 
+	api.GET("/unidades", func(c echo.Context) error {
+		unidades := []map[string]interface{}{
+			{"id": 1, "nombre": "Calle Mayor 12", "presupuesto": 150000, "gastado": 42500, "estado": "en_obra"},
+			{"id": 2, "nombre": "Apartamento Centro", "presupuesto": 80000, "gastado": 80000, "estado": "listo"},
+			{"id": 3, "nombre": "Apartamento Norte", "presupuesto": 95000, "gastado": 95000, "estado": "alquilado"},
+		}
+		return c.JSON(http.StatusOK, unidades)
+	})
+
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
 	})

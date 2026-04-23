@@ -6,6 +6,80 @@ export interface Unidad {
   estado: 'en_obra' | 'listo' | 'alquilado';
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  bucket: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MortgageProposal {
+  id: string;
+  project_id: string;
+  provider: string;
+  amount: number;
+  interest_rate: number;
+  type: 'Fija' | 'Variable' | 'Mixta';
+  bonuses: string[];
+  monthly_payment: number;
+  status: 'In Review' | 'Approved' | 'Rejected';
+  details: string;
+  document_url?: string;
+}
+
+export interface RenovationConcept {
+  name: string;
+  cost: number;
+}
+
+export interface RenovationProposal {
+  id: string;
+  project_id: string;
+  provider: string;
+  amount: number;
+  duration_months: number;
+  concepts: RenovationConcept[];
+  status: 'In Review' | 'Approved' | 'Rejected';
+  details: string;
+  document_url?: string;
+}
+
+export interface ProjectPhase {
+  id: string;
+  project_id: string;
+  name: string;
+  progress: number;
+  status: 'Completado' | 'En curso' | 'Pendiente';
+}
+
+export interface DocumentOrInvoice {
+  id: string;
+  project_id: string;
+  file_name: string;
+  type: 'Invoice' | 'Document';
+  status: 'Pending' | 'Approved' | 'Paid' | 'In Review';
+  preview_url: string;
+  updated_at?: string;
+}
+
+export interface Photo {
+  id: string;
+  folder_id: string;
+  url: string;
+  description: string;
+}
+
+export interface PhotoFolder {
+  id: string;
+  project_id: string;
+  name: string;
+  cover_url: string;
+  photo_count: number;
+  photos?: Photo[];
+  updated_at?: string;
+}
+
 export interface Expense {
   id: string;
   title: string;
