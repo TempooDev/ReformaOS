@@ -143,5 +143,8 @@ func seedData() {
 		if err != nil {
 			log.Printf("Warning: Could not create bucket %s: %v\n", p.Bucket, err)
 		}
+	} else {
+		// Even if project exists, ensure bucket policy is set (useful for existing dev env)
+		_ = config.EnsureBucketExists(context.Background(), "reforma-arroyo")
 	}
 }

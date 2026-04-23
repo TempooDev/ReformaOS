@@ -75,12 +75,20 @@ func (h *Handler) UploadPhoto(c echo.Context) error {
 		URL:         h.storage.GetFileURL(p.Bucket, objectKey),
 		Description: c.FormValue("description"),
 	}
+if err := config.DB.Create(&photo).Error; err != nil {
+	return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+}
 
-	if err := config.DB.Create(&photo).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
+// Update folder count and set cover_url if empty
+var folder PhotoFolder
+config.DB.First(&folder, "id = ?", folderID)
+updates := map[string]interface{}{
+	"photo_count": config.DB.Raw("photo_count + 1"),
+}
+if folder.CoverURL == "" {
+	updates["cover_url"] = photo.URL
+}
+config.DB.Model(&folder).Updates(updates)
 
-	config.DB.Model(&PhotoFolder{}).Where("id = ?", folderID).Update("photo_count", config.DB.Raw("photo_count + 1"))
-
-	return c.JSON(http.StatusCreated, photo)
+return c.JSON(http.StatusCreated, photo)
 }

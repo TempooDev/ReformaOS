@@ -48,7 +48,10 @@ export class RenovationManagerComponent implements OnInit {
     this.reformaService.getMortgages(this.projectId).subscribe(data => this.mortgages.set(data));
     this.reformaService.getRenovations(this.projectId).subscribe(data => this.renovations.set(data));
     this.reformaService.getDocuments(this.projectId).subscribe(data => this.documentsAndInvoices.set(data));
-    this.reformaService.getGalleryFolders(this.projectId).subscribe(data => this.photoFolders.set(data));
+    this.reformaService.getGalleryFolders(this.projectId).subscribe(data => {
+      console.log('Gallery Folders Loaded:', data);
+      this.photoFolders.set(data);
+    });
   }
 
   // --- Modal Methods ---

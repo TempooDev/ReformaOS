@@ -34,6 +34,29 @@ func EnsureBucketExists(ctx context.Context, bucketName string) error {
 			return err
 		}
 		log.Printf("Successfully created %s bucket\n", bucketName)
+
+		// Set public read-only policy for the bucket
+		policy := `{
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+					"Effect": "Allow",
+					"Principal": {"AWS": ["*"]},
+					"Action": ["s3:GetBucketLocation", "s3:ListBucket"],
+					"Resource": ["arn:aws:s3:::` + bucketName + `"]
+				},
+				{
+					"Effect": "Allow",
+					"Principal": {"AWS": ["*"]},
+					"Action": ["s3:GetObject"],
+					"Resource": ["arn:aws:s3:::` + bucketName + `/*"]
+				}
+			]
+		}`
+		err = MinioClient.SetBucketPolicy(ctx, bucketName, policy)
+		if err != nil {
+			log.Printf("Warning: Could not set public policy for bucket %s: %v\n", bucketName, err)
+		}
 	}
 	return nil
 }
