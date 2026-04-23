@@ -174,7 +174,7 @@
 
     <!-- Documents & Invoices Table -->
     <section class="col-span-12 bg-surface-container-lowest rounded-xl shadow-sm border border-slate-50 overflow-hidden flex flex-col mb-8">
-      <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-surface-container-low/30">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-surface-container-low/30">
         <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
           <span class="material-symbols-outlined">folder_open</span>
           Documentación y Facturas
@@ -222,7 +222,7 @@
                 </span>
               </td>
               <td class="px-6 py-4 text-right">
-                <a [href]="doc.preview_url" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-slate-200 hover:border-primary/30 hover:bg-primary/5 cursor-pointer">
+                <a [href]="sanitizeUrl(doc.preview_url)" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-slate-200 hover:border-primary/30 hover:bg-primary/5 cursor-pointer">
                   <span class="material-symbols-outlined text-sm">visibility</span>
                   Preview
                 </a>
@@ -259,7 +259,13 @@
                 
                 <!-- Main Folder Cover -->
                 <div class="absolute inset-0 rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
-                  <img [src]="folder.cover_url" [alt]="folder.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                  @if (folder.cover_url) {
+                    <img [ngSrc]="folder.cover_url" [alt]="folder.name" fill class="object-cover group-hover:scale-110 transition-transform duration-700">
+                  } @else {
+                    <div class="w-full h-full bg-slate-50 flex items-center justify-center">
+                       <span class="material-symbols-outlined text-slate-200 text-4xl">image</span>
+                    </div>
+                  }
                   <div class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-300"></div>
                   
                   <!-- Folder Icon Overlay -->
@@ -294,17 +300,23 @@
             </div>
           </div>
           <button (click)="openAddPhoto()" class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all flex items-center gap-2 cursor-pointer">
-            <span class="material-symbols-outlined text-sm">add_a_photo</span> Añadir Fotos
+            <span class="material-symbols-outlined text-sm">add_a_photo</span> Añadir Fotos o Carpeta
           </button>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           @for (photo of selectedFolder()?.photos; track photo.id; let i = $index) {
-            <div class="relative aspect-square rounded-xl overflow-hidden group cursor-pointer border border-slate-200 bg-white" (click)="openPhoto(i)">
-              <img [src]="photo.url" [alt]="photo.description" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-              <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-              <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <span class="material-symbols-outlined text-white text-3xl">zoom_in</span>
+            <div class="relative aspect-square rounded-xl overflow-hidden group border border-slate-200 bg-white">
+              <div class="w-full h-full cursor-pointer" (click)="openPhoto(i)">
+                <img [ngSrc]="photo.url" [alt]="photo.description" fill class="object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span class="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                </div>
+              </div>
+              <!-- Description Edit Overlay -->
+              <div class="absolute bottom-0 left-0 right-0 p-2 bg-white/90 backdrop-blur-sm transform translate-y-full group-hover:translate-y-0 transition-transform">
+                <input #descInput type="text" [value]="photo.description" (keyup.enter)="updatePhotoDescription(photo.id, descInput.value)" class="w-full bg-white border border-slate-200 rounded px-2 py-1 text-[10px] outline-hidden focus:border-primary" placeholder="Editar descripción...">
               </div>
             </div>
           }
@@ -335,9 +347,13 @@
     <!-- Main Content -->
     <div class="relative max-w-5xl w-full h-full flex flex-col items-center justify-center">
       <div class="relative w-full flex-1 flex items-center justify-center">
-        <img [src]="selectedFolder()?.photos?.[activePhotoIndex()!]?.url" 
-             [alt]="selectedFolder()?.photos?.[activePhotoIndex()!]?.description"
-             class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in duration-300">
+        @if (selectedFolder()?.photos?.[activePhotoIndex()!]) {
+          <img [ngSrc]="selectedFolder()!.photos![activePhotoIndex()!].url" 
+               [alt]="selectedFolder()!.photos![activePhotoIndex()!].description"
+               width="1200" height="800"
+               priority
+               class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in duration-300">
+        }
       </div>
       
       <!-- Photo Info -->
@@ -687,9 +703,9 @@
           <div>
             <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Estado</label>
             <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden">
-              <option>Pendiente</option>
-              <option>Aprobado</option>
-              <option>Pagado</option>
+              <option>Pending</option>
+              <option>Approved</option>
+              <option>Paid</option>
             </select>
           </div>
         </div>
@@ -731,11 +747,11 @@
         <button (click)="closeAddPhoto()" class="p-1"><span class="material-symbols-outlined">close</span></button>
       </div>
       <div class="p-8 space-y-6">
-        <input #photoInput type="file" (change)="onFileSelected($event)" class="hidden" accept="image/*" multiple>
+        <input #photoInput type="file" (change)="onFileSelected($event)" class="hidden" accept="image/*" multiple webkitdirectory>
         <div (click)="photoInput.click()" class="border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer group">
           <span class="material-symbols-outlined text-4xl mb-2 group-hover:scale-110 transition-transform">add_a_photo</span>
-          <p class="text-sm font-bold text-primary">Seleccionar imágenes</p>
-          <p class="text-[10px] mt-1">Haz clic para abrir el explorador de archivos</p>
+          <p class="text-sm font-bold text-primary">Subir Carpeta o Imágenes</p>
+          <p class="text-[10px] mt-1">Haz clic para elegir una carpeta completa de fotos</p>
           
           @if (selectedFiles.length > 0) {
             <div class="mt-4 p-2 bg-primary/5 rounded-lg w-full">
@@ -744,8 +760,8 @@
           }
         </div>
         <div>
-          <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Descripción (Opcional)</label>
-          <input #photoDescription type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="Descripción breve de las fotos...">
+          <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Descripción General (Opcional)</label>
+          <input #photoDescription type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="Si se deja vacío, se usará el nombre del archivo...">
         </div>
       </div>
       <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">

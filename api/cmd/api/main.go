@@ -86,6 +86,7 @@ func main() {
 	api.POST("/projects/:projectId/gallery", galleryHandler.CreateFolder)
 	api.GET("/gallery/:folderId/photos", galleryHandler.GetPhotosByFolder)
 	api.POST("/projects/:projectId/gallery/:folderId/photos", galleryHandler.UploadPhoto)
+	api.PUT("/gallery/photos/:id", galleryHandler.UpdatePhoto)
 
 	// Documents
 	api.GET("/projects/:projectId/documents", documentHandler.GetByProject)

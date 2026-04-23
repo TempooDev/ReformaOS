@@ -63,7 +63,6 @@ func (h *Handler) UploadPhoto(c echo.Context) error {
 		return err
 	}
 
-	// Use constant for section
 	objectKey, err := h.storage.UploadFile(context.Background(), p.Bucket, config.SectionGallery+"/"+folderID, file)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload to MinIO"})
@@ -75,20 +74,43 @@ func (h *Handler) UploadPhoto(c echo.Context) error {
 		URL:         h.storage.GetFileURL(p.Bucket, objectKey),
 		Description: c.FormValue("description"),
 	}
-if err := config.DB.Create(&photo).Error; err != nil {
-	return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+
+	if err := config.DB.Create(&photo).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// Update folder cover and count
+	var folder PhotoFolder
+	config.DB.First(&folder, "id = ?", folderID)
+	updates := map[string]interface{}{
+		"photo_count": config.DB.Raw("photo_count + 1"),
+	}
+	if folder.CoverURL == "" {
+		updates["cover_url"] = photo.URL
+	}
+	config.DB.Model(&folder).Updates(updates)
+
+	return c.JSON(http.StatusCreated, photo)
 }
 
-// Update folder count and set cover_url if empty
-var folder PhotoFolder
-config.DB.First(&folder, "id = ?", folderID)
-updates := map[string]interface{}{
-	"photo_count": config.DB.Raw("photo_count + 1"),
-}
-if folder.CoverURL == "" {
-	updates["cover_url"] = photo.URL
-}
-config.DB.Model(&folder).Updates(updates)
+func (h *Handler) UpdatePhoto(c echo.Context) error {
+	id := c.Param("id")
+	var photo Photo
+	if err := config.DB.First(&photo, "id = ?", id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Photo not found"})
+	}
 
-return c.JSON(http.StatusCreated, photo)
+	var input struct {
+		Description string `json:"description"`
+	}
+	if err := c.Bind(&input); err != nil {
+		return err
+	}
+
+	photo.Description = input.Description
+	if err := config.DB.Save(&photo).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, photo)
 }

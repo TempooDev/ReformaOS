@@ -1,5 +1,6 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { 
   ProjectPhase, MortgageProposal, RenovationProposal, 
   PhotoFolder, DocumentOrInvoice, Photo 
@@ -9,12 +10,13 @@ import { ReformaService } from '../../core/services/reforma';
 @Component({
   selector: 'app-renovation-manager',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './renovation-manager.html',
   styleUrl: './renovation-manager.css'
 })
 export class RenovationManagerComponent implements OnInit {
   private reformaService = inject(ReformaService);
+  private sanitizer = inject(DomSanitizer);
   private projectId = 'reforma-arroyo'; // Default project from seeder
 
   // --- Modals State ---
@@ -39,6 +41,8 @@ export class RenovationManagerComponent implements OnInit {
   documentsAndInvoices = signal<DocumentOrInvoice[]>([]);
   photoFolders = signal<PhotoFolder[]>([]);
 
+  selectedFiles: File[] = [];
+
   ngOnInit() {
     this.loadAllData();
   }
@@ -49,9 +53,13 @@ export class RenovationManagerComponent implements OnInit {
     this.reformaService.getRenovations(this.projectId).subscribe(data => this.renovations.set(data));
     this.reformaService.getDocuments(this.projectId).subscribe(data => this.documentsAndInvoices.set(data));
     this.reformaService.getGalleryFolders(this.projectId).subscribe(data => {
-      console.log('Gallery Folders Loaded:', data);
       this.photoFolders.set(data);
     });
+  }
+
+  // Mantenemos sanitizeUrl solo para enlaces externos de documentos (a href)
+  sanitizeUrl(url: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
   // --- Modal Methods ---
@@ -111,8 +119,6 @@ export class RenovationManagerComponent implements OnInit {
   openAddFolder() { this.isAddFolderModalOpen.set(true); }
   closeAddFolder() { this.isAddFolderModalOpen.set(false); }
 
-  selectedFiles: File[] = [];
-
   onFileSelected(event: any) {
     const files = event.target.files;
     if (files) {
@@ -124,30 +130,40 @@ export class RenovationManagerComponent implements OnInit {
     const folder = this.selectedFolder();
     if (!folder || this.selectedFiles.length === 0) return;
 
-    // Upload each file (could be optimized with Promise.all)
     const uploads = this.selectedFiles.map(file => {
       const formData = new FormData();
       formData.append('photo', file);
-      formData.append('description', description);
+      // Use filename as default description if the input is empty
+      const finalDesc = description || file.name.split('.').slice(0, -1).join('.');
+      formData.append('description', finalDesc);
       return this.reformaService.uploadPhoto(this.projectId, folder.id, formData);
     });
 
-    // Simple way to handle multiple uploads
     let completed = 0;
     uploads.forEach(u => {
       u.subscribe(() => {
         completed++;
         if (completed === uploads.length) {
-          this.loadAllData();
-          // Also update selected folder to show new photos immediately
-          this.reformaService.getGalleryFolders(this.projectId).subscribe(folders => {
-            const updated = folders.find(f => f.id === folder.id);
-            if (updated) this.selectedFolder.set(updated);
-          });
+          this.refreshGallery(folder.id);
           this.closeAddPhoto();
           this.selectedFiles = [];
         }
       });
+    });
+  }
+
+  private refreshGallery(folderId: string) {
+    this.reformaService.getGalleryFolders(this.projectId).subscribe(folders => {
+      this.photoFolders.set(folders);
+      const updated = folders.find(f => f.id === folderId);
+      if (updated) this.selectedFolder.set(updated);
+    });
+  }
+
+  updatePhotoDescription(photoId: string, newDescription: string) {
+    this.reformaService.updatePhoto(photoId, newDescription).subscribe(() => {
+      const folder = this.selectedFolder();
+      if (folder) this.refreshGallery(folder.id);
     });
   }
 

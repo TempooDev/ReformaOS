@@ -75,6 +75,10 @@ export class ReformaService {
     return this.http.post<Photo>(`${this.apiUrl}/projects/${projectId}/gallery/${folderId}/photos`, formData);
   }
 
+  updatePhoto(photoId: string, description: string) {
+    return this.http.put<Photo>(`${this.apiUrl}/gallery/photos/${photoId}`, { description });
+  }
+
   // --- Documents ---
   getDocuments(projectId: string) {
     return this.http.get<DocumentOrInvoice[]>(`${this.apiUrl}/projects/${projectId}/documents`);
