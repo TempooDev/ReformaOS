@@ -40,6 +40,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/daily-rental/daily-rental').then(m => m.DailyRentalComponent)
       },
       {
+        path: 'renovation',
+        loadComponent: () => import('./features/renovation-manager/renovation-manager').then(m => m.RenovationManagerComponent)
+      },
+      {
         path: 'evolucion-patrimonial',
         loadComponent: () => import('./features/evolucion-patrimonial/evolucion-patrimonial').then(m => m.EvolucionPatrimonialComponent)
       }

@@ -1,0 +1,237 @@
+<div class="pt-24 px-10 pb-16 min-h-screen">
+  <!-- Page Header -->
+  <div class="mb-12 flex items-end justify-between">
+    <div>
+      <span class="text-on-surface-variant font-bold text-xs uppercase tracking-[0.2em] mb-2 block">Portal de Proyectos</span>
+      <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Gestión de Reforma.</h2>
+    </div>
+    <div class="text-right">
+      <p class="text-secondary font-medium tabular-nums text-lg">Avance del Proyecto</p>
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container/30 text-on-primary-container rounded-full border border-primary-container/50 text-sm font-bold mt-2">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">construction</span>
+        Fase 2: Estructura (35%)
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-12 gap-8">
+    <!-- Propuestas (Proposals) -->
+    <section class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-headline text-2xl font-bold text-primary tracking-tight">Propuestas</h3>
+      </div>
+      
+      @for (proposal of proposals(); track proposal.id) {
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-1" 
+               [class.bg-secondary]="proposal.type === 'Renovation'"
+               [class.bg-on-primary-container]="proposal.type === 'Mortgage'"></div>
+          
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-widest block mb-1"
+                    [class.text-secondary]="proposal.type === 'Renovation'"
+                    [class.text-on-primary-container]="proposal.type === 'Mortgage'">
+                {{ proposal.type === 'Renovation' ? 'Reforma' : 'Hipoteca' }}
+              </span>
+              <h4 class="font-bold text-primary text-lg leading-tight">{{ proposal.provider }}</h4>
+            </div>
+            <span class="text-xs font-bold uppercase px-2 py-1 rounded"
+                  [class.bg-green-50]="proposal.status === 'Approved'"
+                  [class.text-green-700]="proposal.status === 'Approved'"
+                  [class.bg-yellow-50]="proposal.status === 'In Review'"
+                  [class.text-yellow-700]="proposal.status === 'In Review'">
+              {{ proposal.status === 'Approved' ? 'Aprobada' : 'En Revisión' }}
+            </span>
+          </div>
+          
+          <div class="mb-4">
+            <span class="font-headline font-extrabold text-2xl text-primary tabular-nums">€{{ proposal.amount | number:'1.0-0' }}</span>
+          </div>
+          
+          @if (proposal.highlight) {
+            <p class="text-xs font-medium text-on-surface-variant flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sm">star</span>
+              {{ proposal.highlight }}
+            </p>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Documents & Invoices Table -->
+    <section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl shadow-sm border border-slate-50 overflow-hidden flex flex-col">
+      <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-surface-container-low/30">
+        <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined">folder_open</span>
+          Documentación y Facturas
+        </h3>
+        <button class="flex items-center gap-2 text-xs font-bold text-white bg-primary px-4 py-2 rounded-lg hover:brightness-110 transition-colors">
+          <span class="material-symbols-outlined text-sm">upload_file</span> Subir Archivo
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto flex-1">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-surface-container-low/50">
+              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Nombre del Archivo</th>
+              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Tipo</th>
+              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Fecha Modificación</th>
+              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Estado</th>
+              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50">
+            @for (doc of documentsAndInvoices(); track doc.id) {
+            <tr class="hover:bg-surface-container-low transition-colors group">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">
+                    {{ doc.type === 'Invoice' ? 'receipt_long' : 'description' }}
+                  </span>
+                  <p class="font-bold text-primary text-sm max-w-[200px] truncate" [title]="doc.fileName">{{ doc.fileName }}</p>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-xs font-medium text-on-surface-variant">{{ doc.type === 'Invoice' ? 'Factura' : 'Documento' }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-xs font-medium text-on-surface-variant tabular-nums">{{ doc.updatedAt }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest"
+                      [class.bg-green-50]="doc.status === 'Approved' || doc.status === 'Paid'"
+                      [class.text-green-700]="doc.status === 'Approved' || doc.status === 'Paid'"
+                      [class.bg-yellow-50]="doc.status === 'Pending' || doc.status === 'In Review'"
+                      [class.text-yellow-700]="doc.status === 'Pending' || doc.status === 'In Review'">
+                  {{ doc.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <a [href]="doc.previewUrl" class="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-slate-200 hover:border-primary/30 hover:bg-primary/5">
+                  <span class="material-symbols-outlined text-sm">visibility</span>
+                  Preview
+                </a>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Photos Gallery by Folders -->
+    <section class="col-span-12 mt-4">
+      @if (!selectedFolder()) {
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="font-headline text-2xl font-bold text-primary tracking-tight">Fotos del Proceso por Carpetas</h3>
+          <div class="flex gap-3">
+            <button class="flex items-center gap-2 text-xs font-bold text-secondary border border-slate-200 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+              <span class="material-symbols-outlined text-sm">create_new_folder</span> Nueva Carpeta
+            </button>
+            <button class="text-sm font-bold text-secondary hover:underline flex items-center gap-1">
+              Ver todas <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          @for (folder of photoFolders(); track folder.id) {
+            <div class="group cursor-pointer" (click)="openFolder(folder)">
+              <div class="relative h-48 mb-3">
+                <!-- Folder Stack Effect -->
+                <div class="absolute inset-0 bg-slate-200 rounded-xl translate-x-2 -translate-y-2 group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-300"></div>
+                <div class="absolute inset-0 bg-slate-100 rounded-xl translate-x-1 -translate-y-1 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 transition-transform duration-300 border border-slate-200"></div>
+                
+                <!-- Main Folder Cover -->
+                <div class="absolute inset-0 rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
+                  <img [src]="folder.coverUrl" [alt]="folder.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                  <div class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-300"></div>
+                  
+                  <!-- Folder Icon Overlay -->
+                  <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg p-1.5 shadow-sm">
+                    <span class="material-symbols-outlined text-primary text-xl">folder</span>
+                  </div>
+                  
+                  <!-- Photo Count Badge -->
+                  <div class="absolute top-3 left-3 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-md">
+                    {{ folder.photoCount }} fotos
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 class="font-bold text-primary group-hover:text-secondary transition-colors">{{ folder.name }}</h4>
+                <p class="text-[10px] text-on-surface-variant uppercase font-medium tracking-tighter">Actualizado: {{ folder.updatedAt }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Folder Detail View -->
+        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div class="flex items-center gap-4">
+            <button (click)="closeFolder()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+              <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div>
+              <h3 class="font-headline text-3xl font-bold text-primary tracking-tight">{{ selectedFolder()?.name }}</h3>
+              <p class="text-xs text-on-surface-variant font-medium uppercase tracking-widest">{{ selectedFolder()?.photos?.length }} elementos en esta carpeta</p>
+            </div>
+          </div>
+          <button class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">add_a_photo</span> Añadir Fotos
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          @for (photo of selectedFolder()?.photos; track photo.id; let i = $index) {
+            <div class="relative aspect-square rounded-xl overflow-hidden group cursor-pointer border border-slate-200 bg-white" (click)="openPhoto(i)">
+              <img [src]="photo.url" [alt]="photo.description" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+              <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+              <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <span class="material-symbols-outlined text-white text-3xl">zoom_in</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+  </div>
+</div>
+
+<!-- Carousel Modal -->
+@if (activePhotoIndex() !== null) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-10">
+    <button (click)="closeCarousel()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-[110]">
+      <span class="material-symbols-outlined text-4xl">close</span>
+    </button>
+
+    <!-- Navigation Buttons -->
+    @if (selectedFolder()?.photos?.length && selectedFolder()!.photos!.length > 1) {
+      <button (click)="prevPhoto()" class="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-[110]">
+        <span class="material-symbols-outlined text-3xl">chevron_left</span>
+      </button>
+      <button (click)="nextPhoto()" class="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-[110]">
+        <span class="material-symbols-outlined text-3xl">chevron_right</span>
+      </button>
+    }
+
+    <!-- Main Content -->
+    <div class="relative max-w-5xl w-full h-full flex flex-col items-center justify-center">
+      <div class="relative w-full flex-1 flex items-center justify-center">
+        <img [src]="selectedFolder()?.photos?.[activePhotoIndex()!]?.url" 
+             [alt]="selectedFolder()?.photos?.[activePhotoIndex()!]?.description"
+             class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in duration-300">
+      </div>
+      
+      <!-- Photo Info -->
+      <div class="w-full text-center py-6 text-white">
+        <p class="text-lg font-medium">{{ selectedFolder()?.photos?.[activePhotoIndex()!]?.description }}</p>
+        <p class="text-white/40 text-sm mt-1 uppercase tracking-widest">{{ activePhotoIndex()! + 1 }} / {{ selectedFolder()?.photos?.length }}</p>
+      </div>
+    </div>
+  </div>
+}
