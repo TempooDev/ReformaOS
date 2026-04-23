@@ -53,7 +53,7 @@
         <button class="text-xs font-bold text-secondary uppercase tracking-widest hover:text-primary transition-colors">Cronograma</button>
       </div>
       <div class="space-y-6">
-        @for (phase of phases; track phase.name) {
+        @for (phase of phases(); track phase.name) {
         <div class="relative">
           <div class="flex justify-between items-start mb-2">
             <div>
@@ -95,7 +95,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            @for (invoice of recentInvoices; track invoice.provider) {
+            @for (invoice of recentInvoices(); track invoice.provider) {
             <tr class="hover:bg-surface-container-low transition-colors group">
               <td class="px-6 py-4">
                 <p class="font-bold text-primary text-sm">{{ invoice.provider }}</p>

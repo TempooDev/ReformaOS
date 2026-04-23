@@ -24,7 +24,7 @@
             <img class="w-full h-full object-cover" [src]="tenant().image" alt="Tenant">
           </div>
           <div>
-            <h3 class="text-2xl font-bold text-primary mb-1">{{ tenant.name }}</h3>
+            <h3 class="text-2xl font-bold text-primary mb-1">{{ tenant().name }}</h3>
             <p class="text-secondary font-medium flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">location_on</span>
               {{ tenant().location }}
@@ -43,15 +43,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-8 border-t border-surface-container">
         <div>
           <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1">Monthly Rent</p>
-          <p class="text-3xl font-headline font-extrabold text-primary tabular-nums">€{{ tenant.rent | number:'1.2-2' }}</p>
+          <p class="text-3xl font-headline font-extrabold text-primary tabular-nums">€{{ tenant().rent | number:'1.2-2' }}</p>
         </div>
         <div>
           <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1">Next Payment</p>
-          <p class="text-3xl font-headline font-extrabold text-primary tabular-nums">{{ tenant.nextPayment }}</p>
+          <p class="text-3xl font-headline font-extrabold text-primary tabular-nums">{{ tenant().nextPayment }}</p>
         </div>
         <div>
           <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1">Security Deposit</p>
-          <p class="text-3xl font-headline font-extrabold text-secondary tabular-nums">€{{ tenant.deposit | number:'1.2-2' }}</p>
+          <p class="text-3xl font-headline font-extrabold text-secondary tabular-nums">€{{ tenant().deposit | number:'1.2-2' }}</p>
         </div>
       </div>
     </div>

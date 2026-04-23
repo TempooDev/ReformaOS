@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Expense } from '@shared';
 
@@ -43,5 +43,5 @@ export class ExpensesManagerComponent {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBbd8VgroFsMLBO3MEDiZ8FownQFNEnSY8IC6YB8jTc-W2wdNTUUl0jfWyD4cI7cwBnvjtxJiRDTCWaEzz_wYcjGZBiQX-RlV_kre3gT5zvXWXwPhANQKisuq2Xbf2Oai2Xn8ZkertNIA5xtYFxcBEbaT-kT7au3bpPNOg68ypEjiI30lBlybuguGBS5vQyZ8NwKJ060GQEPNpHOKP7J3cclc3PCAcBbzNG7NFbeFioTMnO7AiH9JFcyftB8fz__8qXRO4GLCtp-Ag',
       reconciled: true
     }
-  ];
+  ]);
 }
