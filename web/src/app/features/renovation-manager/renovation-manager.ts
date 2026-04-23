@@ -1,13 +1,38 @@
 import { Component, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export interface Proposal {
+export interface MortgageProposal {
   id: string;
-  type: 'Mortgage' | 'Renovation';
   provider: string;
   amount: number;
-  status: string;
-  highlight?: string;
+  interestRate: number;
+  type: 'Fija' | 'Variable' | 'Mixta';
+  bonuses: string[];
+  monthlyPayment: number;
+  status: 'In Review' | 'Approved' | 'Rejected';
+  details: string;
+}
+
+export interface RenovationConcept {
+  name: string;
+  cost: number;
+}
+
+export interface RenovationProposal {
+  id: string;
+  provider: string;
+  amount: number;
+  durationMonths: number;
+  concepts: RenovationConcept[];
+  status: 'In Review' | 'Approved' | 'Rejected';
+  details: string;
+}
+
+export interface ProjectPhase {
+  id: string;
+  name: string;
+  progress: number;
+  status: 'Completado' | 'En curso' | 'Pendiente';
 }
 
 export interface DocumentOrInvoice {
@@ -42,9 +67,66 @@ export interface PhotoFolder {
   styleUrl: './renovation-manager.css'
 })
 export class RenovationManagerComponent {
-  proposals = input<Proposal[]>([
-    { id: 'P-1', type: 'Renovation', provider: 'Arquitectura Studio', amount: 45000, status: 'In Review', highlight: 'Diseño integral' },
-    { id: 'P-2', type: 'Mortgage', provider: 'Banco Central', amount: 150000, status: 'Approved', highlight: 'Interés fijo 2.5%' }
+  // --- Modals State ---
+  isPhasesModalOpen = signal<boolean>(false);
+  selectedMortgage = signal<MortgageProposal | null>(null);
+  selectedRenovation = signal<RenovationProposal | null>(null);
+  selectedFolder = signal<PhotoFolder | null>(null);
+  activePhotoIndex = signal<number | null>(null);
+
+  // --- Creation Modals State ---
+  isAddMortgageModalOpen = signal<boolean>(false);
+  isAddRenovationModalOpen = signal<boolean>(false);
+  isAddDocumentModalOpen = signal<boolean>(false);
+  isAddPhotoModalOpen = signal<boolean>(false);
+  isAddFolderModalOpen = signal<boolean>(false);
+
+  // --- Data Signals ---
+  projectPhases = signal<ProjectPhase[]>([
+    { id: 'PHS-1', name: 'Fase 1: Demolición', progress: 100, status: 'Completado' },
+    { id: 'PHS-2', name: 'Fase 2: Estructura', progress: 35, status: 'En curso' },
+    { id: 'PHS-3', name: 'Fase 3: Instalaciones', progress: 0, status: 'Pendiente' },
+    { id: 'PHS-4', name: 'Fase 4: Acabados', progress: 0, status: 'Pendiente' }
+  ]);
+
+  editablePhases = signal<ProjectPhase[]>([]);
+
+  mortgages = input<MortgageProposal[]>([
+    { 
+      id: 'M-1', provider: 'Banco Santander', amount: 150000, interestRate: 2.8, type: 'Fija', 
+      bonuses: ['Nómina', 'Seguro Hogar'], monthlyPayment: 616.40, status: 'Approved',
+      details: 'Hipoteca a 30 años con vinculaciones mínimas obligatorias. No incluye seguro de vida, solo seguro de hogar básico y nómina domiciliada.'
+    },
+    { 
+      id: 'M-2', provider: 'BBVA', amount: 150000, interestRate: 2.5, type: 'Mixta', 
+      bonuses: ['Nómina', 'Seguro Vida', 'Seguro Hogar'], monthlyPayment: 590.20, status: 'In Review',
+      details: 'Tipo fijo al 2.5% los primeros 10 años, luego Euribor + 0.70%. Requiere alta vinculación.'
+    }
+  ]);
+
+  renovations = input<RenovationProposal[]>([
+    {
+      id: 'R-1', provider: 'Arquitectura Studio', amount: 45000, durationMonths: 4,
+      concepts: [
+        { name: 'Proyecto Básico y de Ejecución', cost: 4500 },
+        { name: 'Dirección Facultativa', cost: 2500 },
+        { name: 'Demoliciones y Desescombro', cost: 8000 },
+        { name: 'Albañilería y Tabiquería', cost: 12000 },
+        { name: 'Instalaciones (Fontanería/Elec)', cost: 10000 },
+        { name: 'Acabados y Pintura', cost: 8000 }
+      ],
+      status: 'In Review',
+      details: 'Presupuesto cerrado llave en mano. Incluye gestión de licencias de obra mayor y dirección facultativa. Materiales calidad media-alta.'
+    },
+    {
+      id: 'R-2', provider: 'Constructora Local', amount: 38000, durationMonths: 5,
+      concepts: [
+        { name: 'Ejecución de Obra', cost: 30000 },
+        { name: 'Materiales básicos', cost: 8000 }
+      ],
+      status: 'In Review',
+      details: 'No incluye honorarios técnicos ni licencias. Materiales a elegir por la propiedad en almacenes asociados. Plazo estimado no vinculante.'
+    }
   ]);
 
   documentsAndInvoices = input<DocumentOrInvoice[]>([
@@ -89,25 +171,75 @@ export class RenovationManagerComponent {
     }
   ]);
 
-  selectedFolder = signal<PhotoFolder | null>(null);
-  activePhotoIndex = signal<number | null>(null);
-
-  openFolder(folder: PhotoFolder) {
-    this.selectedFolder.set(folder);
+  // --- Modal Methods ---
+  openPhasesModal() { 
+    // Clone the phases so we don't mutate original state until save
+    this.editablePhases.set(this.projectPhases().map(p => ({ ...p })));
+    this.isPhasesModalOpen.set(true); 
+  }
+  closePhasesModal() { 
+    this.isPhasesModalOpen.set(false); 
   }
 
-  closeFolder() {
-    this.selectedFolder.set(null);
+  addNewPhase() {
+    const currentPhases = this.editablePhases();
+    const newPhaseId = `PHS-${currentPhases.length + 1}`;
+    this.editablePhases.update(phases => [
+      ...phases,
+      { id: newPhaseId, name: `Fase ${currentPhases.length + 1}: Nueva Fase`, progress: 0, status: 'Pendiente' }
+    ]);
   }
 
-  openPhoto(index: number) {
-    this.activePhotoIndex.set(index);
+  savePhases() {
+    this.projectPhases.set(this.editablePhases());
+    this.closePhasesModal();
   }
 
-  closeCarousel() {
-    this.activePhotoIndex.set(null);
+  updatePhaseName(id: string, newName: string) {
+    this.editablePhases.update(phases => 
+      phases.map(p => p.id === id ? { ...p, name: newName } : p)
+    );
   }
 
+  updatePhaseStatus(id: string, newStatus: string) {
+    this.editablePhases.update(phases => 
+      phases.map(p => p.id === id ? { ...p, status: newStatus as ProjectPhase['status'] } : p)
+    );
+  }
+
+  updatePhaseProgress(id: string, newProgress: string) {
+    this.editablePhases.update(phases => 
+      phases.map(p => p.id === id ? { ...p, progress: parseInt(newProgress, 10) } : p)
+    );
+  }
+
+  openMortgage(mortgage: MortgageProposal) { this.selectedMortgage.set(mortgage); }
+  closeMortgage() { this.selectedMortgage.set(null); }
+
+  openRenovation(renovation: RenovationProposal) { this.selectedRenovation.set(renovation); }
+  closeRenovation() { this.selectedRenovation.set(null); }
+
+  // --- Creation Methods ---
+  openAddMortgage() { this.isAddMortgageModalOpen.set(true); }
+  closeAddMortgage() { this.isAddMortgageModalOpen.set(false); }
+
+  openAddRenovation() { this.isAddRenovationModalOpen.set(true); }
+  closeAddRenovation() { this.isAddRenovationModalOpen.set(false); }
+
+  openAddDocument() { this.isAddDocumentModalOpen.set(true); }
+  closeAddDocument() { this.isAddDocumentModalOpen.set(false); }
+
+  openAddPhoto() { this.isAddPhotoModalOpen.set(true); }
+  closeAddPhoto() { this.isAddPhotoModalOpen.set(false); }
+
+  openAddFolder() { this.isAddFolderModalOpen.set(true); }
+  closeAddFolder() { this.isAddFolderModalOpen.set(false); }
+
+  // --- Gallery Carousel Methods ---
+  openFolder(folder: PhotoFolder) { this.selectedFolder.set(folder); }
+  closeFolder() { this.selectedFolder.set(null); }
+  openPhoto(index: number) { this.activePhotoIndex.set(index); }
+  closeCarousel() { this.activePhotoIndex.set(null); }
   nextPhoto() {
     const folder = this.selectedFolder();
     const index = this.activePhotoIndex();
@@ -115,7 +247,6 @@ export class RenovationManagerComponent {
       this.activePhotoIndex.set((index + 1) % folder.photos.length);
     }
   }
-
   prevPhoto() {
     const folder = this.selectedFolder();
     const index = this.activePhotoIndex();
