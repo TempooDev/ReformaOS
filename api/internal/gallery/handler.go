@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/tempoodev/reformaos/api/internal/config"
-	"github.com/tempoodev/reformaos/api/internal/project"
+	"github.com/tempoodev/reformaos/api/internal/property"
 	"github.com/tempoodev/reformaos/api/internal/storage"
 )
 
@@ -19,9 +19,9 @@ func NewHandler(s *storage.MinioService) *Handler {
 }
 
 func (h *Handler) GetFolders(c echo.Context) error {
-	projectID := c.Param("projectId")
+	propertyID := c.Param("propertyId")
 	var folders []PhotoFolder
-	if err := config.DB.Where("project_id = ?", projectID).Preload("Photos").Find(&folders).Error; err != nil {
+	if err := config.DB.Where("property_id = ?", propertyID).Preload("Photos").Find(&folders).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, folders)
@@ -32,7 +32,7 @@ func (h *Handler) CreateFolder(c echo.Context) error {
 	if err := c.Bind(f); err != nil {
 		return err
 	}
-	f.ProjectID = c.Param("projectId")
+	f.PropertyID = c.Param("propertyId")
 
 	if err := config.DB.Create(f).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
@@ -50,12 +50,12 @@ func (h *Handler) GetPhotosByFolder(c echo.Context) error {
 }
 
 func (h *Handler) UploadPhoto(c echo.Context) error {
-	projectID := c.Param("projectId")
+	propertyID := c.Param("propertyId")
 	folderID := c.Param("folderId")
 
-	var p project.Project
-	if err := config.DB.First(&p, "id = ?", projectID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Project not found"})
+	var p property.Property
+	if err := config.DB.First(&p, "id = ?", propertyID).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Property not found"})
 	}
 
 	file, err := c.FormFile("photo")

@@ -6,7 +6,7 @@ import (
 
 type PhotoFolder struct {
 	ID         string    `gorm:"primaryKey" json:"id"`
-	ProjectID  string    `json:"project_id"`
+	PropertyID string    `json:"property_id"`
 	Name       string    `json:"name"`
 	CoverURL   string    `json:"cover_url"` // Path in MinIO
 	PhotoCount int       `json:"photo_count"`

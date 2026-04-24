@@ -12,9 +12,11 @@ import (
 	"github.com/tempoodev/reformaos/api/internal/gallery"
 	"github.com/tempoodev/reformaos/api/internal/mortgage"
 	"github.com/tempoodev/reformaos/api/internal/phase"
-	"github.com/tempoodev/reformaos/api/internal/project"
+	"github.com/tempoodev/reformaos/api/internal/property"
 	"github.com/tempoodev/reformaos/api/internal/renovation"
 	"github.com/tempoodev/reformaos/api/internal/storage"
+	"github.com/tempoodev/reformaos/api/internal/auth"
+	"github.com/tempoodev/reformaos/api/internal/user"
 )
 
 func main() {
@@ -27,10 +29,12 @@ func main() {
 
 	// Run Migrations
 	err := config.DB.AutoMigrate(
-		&project.Project{},
+		&user.User{},
+		&property.Property{},
+		&user.PropertyAssignment{},
 		&mortgage.MortgageProposal{},
 		&renovation.RenovationProposal{},
-		&phase.ProjectPhase{},
+		&phase.Phase{},
 		&gallery.PhotoFolder{},
 		&gallery.Photo{},
 		&document.DocumentOrInvoice{},
@@ -44,7 +48,7 @@ func main() {
 
 	// Initialize Services & Handlers
 	storageService := storage.NewMinioService()
-	projectHandler := project.NewHandler()
+	propertyHandler := property.NewHandler()
 	phaseHandler := phase.NewHandler()
 	galleryHandler := gallery.NewHandler(storageService)
 	mortgageHandler := mortgage.NewHandler(storageService)
@@ -61,36 +65,39 @@ func main() {
 
 	// Routes
 	api := e.Group("/api")
+	api.Use(auth.MockAuthMiddleware)
+	api.Use(auth.RequirePropertyAccess)
 
-	// Projects
-	api.POST("/projects", projectHandler.Create)
-	api.GET("/projects", projectHandler.GetAll)
-	api.GET("/projects/:id", projectHandler.GetByID)
+	// Properties
+	api.POST("/properties", propertyHandler.Create)
+	api.GET("/properties", propertyHandler.GetAll)
+	api.GET("/properties/:id", propertyHandler.GetByID)
+	api.PUT("/properties/:id", propertyHandler.Update, auth.RequireRole(auth.RoleOwner))
 
 	// Phases
-	api.GET("/projects/:projectId/phases", phaseHandler.GetByProject)
-	api.POST("/projects/:projectId/phases", phaseHandler.Create)
+	api.GET("/properties/:propertyId/phases", phaseHandler.GetByProperty)
+	api.POST("/properties/:propertyId/phases", phaseHandler.Create)
 	api.PUT("/phases/:id", phaseHandler.Update)
-	api.PUT("/projects/:projectId/phases/batch", phaseHandler.BatchUpdate)
+	api.PUT("/properties/:propertyId/phases/batch", phaseHandler.BatchUpdate)
 
 	// Mortgages
-	api.GET("/projects/:projectId/mortgages", mortgageHandler.GetByProject)
-	api.POST("/projects/:projectId/mortgages", mortgageHandler.Create)
+	api.GET("/properties/:propertyId/mortgages", mortgageHandler.GetByProperty)
+	api.POST("/properties/:propertyId/mortgages", mortgageHandler.Create)
 
 	// Renovations
-	api.GET("/projects/:projectId/renovations", renovationHandler.GetByProject)
-	api.POST("/projects/:projectId/renovations", renovationHandler.Create)
+	api.GET("/properties/:propertyId/renovations", renovationHandler.GetByProperty)
+	api.POST("/properties/:propertyId/renovations", renovationHandler.Create, auth.RequireRole(auth.RoleOwner))
 
 	// Gallery
-	api.GET("/projects/:projectId/gallery", galleryHandler.GetFolders)
-	api.POST("/projects/:projectId/gallery", galleryHandler.CreateFolder)
+	api.GET("/properties/:propertyId/gallery", galleryHandler.GetFolders)
+	api.POST("/properties/:propertyId/gallery", galleryHandler.CreateFolder)
 	api.GET("/gallery/:folderId/photos", galleryHandler.GetPhotosByFolder)
-	api.POST("/projects/:projectId/gallery/:folderId/photos", galleryHandler.UploadPhoto)
+	api.POST("/properties/:propertyId/gallery/:folderId/photos", galleryHandler.UploadPhoto)
 	api.PUT("/gallery/photos/:id", galleryHandler.UpdatePhoto)
 
 	// Documents
-	api.GET("/projects/:projectId/documents", documentHandler.GetByProject)
-	api.POST("/projects/:projectId/documents", documentHandler.Upload)
+	api.GET("/properties/:propertyId/documents", documentHandler.GetByProperty)
+	api.POST("/properties/:propertyId/documents", documentHandler.Upload)
 
 	api.GET("/unidades", func(c echo.Context) error {
 		unidades := []map[string]interface{}{
@@ -111,31 +118,52 @@ func main() {
 
 func seedData() {
 	var count int64
-	config.DB.Model(&project.Project{}).Count(&count)
+	config.DB.Model(&property.Property{}).Count(&count)
 	if count == 0 {
 		log.Println("Seeding initial data...")
-		p := project.Project{
-			ID:     "reforma-arroyo",
-			Name:   "Reforma Arroyo",
-			Bucket: "reforma-arroyo",
+
+		// Users
+		owner := user.User{ID: "USR-OWNER", Email: "dueno@reformaos.com", Role: auth.RoleOwner}
+		architect := user.User{ID: "USR-ARCH", Email: "arquitecto@reformaos.com", Role: auth.RoleArchitect}
+		manager := user.User{ID: "USR-MGR", Email: "gestor@reformaos.com", Role: auth.RoleManager}
+		
+		config.DB.Create(&owner)
+		config.DB.Create(&architect)
+		config.DB.Create(&manager)
+
+		p := property.Property{
+			ID:                 "PRJ-1",
+			Name:               "Casa Arroyo",
+			Address:            "Calle Jardines, 3 Sedella",
+			Bucket:             "reforma-arroyo",
+			OwnerID:            owner.ID,
+			CadastralReference: "9876543AA1234B0001XY",
 		}
 		config.DB.Create(&p)
 
+		// Assignments
+		assignments := []user.PropertyAssignment{
+			{ID: "ASG-1", UserID: owner.ID, PropertyID: p.ID, Role: auth.RoleOwner},
+			{ID: "ASG-2", UserID: architect.ID, PropertyID: p.ID, Role: auth.RoleArchitect},
+			{ID: "ASG-3", UserID: manager.ID, PropertyID: p.ID, Role: auth.RoleManager},
+		}
+		config.DB.Create(&assignments)
+
 		// Create default folders
 		f := gallery.PhotoFolder{
-			ID:        "fotos-del-antes",
-			ProjectID: p.ID,
-			Name:      "FOTOS DEL ANTES",
-			CoverURL:  "",
+			ID:         "fotos-del-antes",
+			PropertyID: p.ID,
+			Name:       "FOTOS DEL ANTES",
+			CoverURL:   "",
 		}
 		config.DB.Create(&f)
 
 		// Create initial phases
-		phases := []phase.ProjectPhase{
-			{ID: "PHS-1", ProjectID: p.ID, Name: "Fase 1: Demolición", Progress: 100, Status: config.PhaseStatusCompleted},
-			{ID: "PHS-2", ProjectID: p.ID, Name: "Fase 2: Estructura", Progress: 35, Status: config.PhaseStatusInProgress},
-			{ID: "PHS-3", ProjectID: p.ID, Name: "Fase 3: Instalaciones", Progress: 0, Status: config.PhaseStatusPending},
-			{ID: "PHS-4", ProjectID: p.ID, Name: "Fase 4: Acabados", Progress: 0, Status: config.PhaseStatusPending},
+		phases := []phase.Phase{
+			{ID: "PHS-1", PropertyID: p.ID, Name: "Fase 1: Demolición", Progress: 100, Status: config.PhaseStatusCompleted},
+			{ID: "PHS-2", PropertyID: p.ID, Name: "Fase 2: Estructura", Progress: 35, Status: config.PhaseStatusInProgress},
+			{ID: "PHS-3", PropertyID: p.ID, Name: "Fase 3: Instalaciones", Progress: 0, Status: config.PhaseStatusPending},
+			{ID: "PHS-4", PropertyID: p.ID, Name: "Fase 4: Acabados", Progress: 0, Status: config.PhaseStatusPending},
 		}
 		config.DB.Create(&phases)
 
@@ -145,7 +173,7 @@ func seedData() {
 			log.Printf("Warning: Could not create bucket %s: %v\n", p.Bucket, err)
 		}
 	} else {
-		// Even if project exists, ensure bucket policy is set (useful for existing dev env)
+		// Even if property exists, ensure bucket policy is set (useful for existing dev env)
 		_ = config.EnsureBucketExists(context.Background(), "reforma-arroyo")
 	}
 }

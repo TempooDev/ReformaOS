@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ProjectStats, Phase, Invoice } from '@shared';
+import { PropertyStats, Phase, Invoice } from '@shared';
 import { StatCardComponent } from '../../core/components/stat-card/stat-card';
 
 @Component({
@@ -11,7 +11,7 @@ import { StatCardComponent } from '../../core/components/stat-card/stat-card';
   styleUrl: './finance-construction.css'
 })
 export class FinanceConstructionComponent {
-  projectStats = input<ProjectStats>({
+  propertyStats = input<PropertyStats>({
     totalBudget: 150000,
     totalSpent: 85400,
     remaining: 64600,

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-main-layout',
@@ -8,4 +9,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css'
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent {
+  authService = inject(AuthService);
+
+  logout() {
+    this.authService.logout();
+  }
+}

@@ -28,7 +28,7 @@ func (a *ConceptArray) Scan(value interface{}) error {
 
 type RenovationProposal struct {
 	ID             string       `gorm:"primaryKey" json:"id"`
-	ProjectID      string       `json:"project_id"`
+	PropertyID     string       `json:"property_id"`
 	Provider       string       `json:"provider"`
 	Amount         float64      `json:"amount"`
 	DurationMonths int          `json:"duration_months"`

@@ -6,17 +6,32 @@ export interface Unidad {
   estado: 'en_obra' | 'listo' | 'alquilado';
 }
 
-export interface Project {
+export enum UserRole {
+  OWNER = 'OWNER',
+  ARCHITECT = 'ARCHITECT',
+  MANAGER = 'MANAGER'
+}
+
+export interface User {
+  id: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface Property {
   id: string;
   name: string;
+  address?: string;
   bucket: string;
+  owner_id?: string;
+  cadastral_reference?: string;
   created_at?: string;
   updated_at?: string;
 }
 
 export interface MortgageProposal {
   id: string;
-  project_id: string;
+  property_id: string;
   provider: string;
   amount: number;
   interest_rate: number;
@@ -35,7 +50,7 @@ export interface RenovationConcept {
 
 export interface RenovationProposal {
   id: string;
-  project_id: string;
+  property_id: string;
   provider: string;
   amount: number;
   duration_months: number;
@@ -45,9 +60,9 @@ export interface RenovationProposal {
   document_url?: string;
 }
 
-export interface ProjectPhase {
+export interface PropertyPhase {
   id: string;
-  project_id: string;
+  property_id: string;
   name: string;
   progress: number;
   status: 'Completado' | 'En curso' | 'Pendiente';
@@ -55,7 +70,7 @@ export interface ProjectPhase {
 
 export interface DocumentOrInvoice {
   id: string;
-  project_id: string;
+  property_id: string;
   file_name: string;
   type: 'Invoice' | 'Document';
   status: 'Pending' | 'Approved' | 'Paid' | 'In Review';
@@ -72,7 +87,7 @@ export interface Photo {
 
 export interface PhotoFolder {
   id: string;
-  project_id: string;
+  property_id: string;
   name: string;
   cover_url: string;
   photo_count: number;
@@ -106,7 +121,7 @@ export interface Light {
   brightness: number;
 }
 
-export interface ProjectStats {
+export interface PropertyStats {
   totalBudget: number;
   totalSpent: number;
   remaining: number;

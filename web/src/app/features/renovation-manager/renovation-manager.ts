@@ -1,11 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, effect } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { 
-  ProjectPhase, MortgageProposal, RenovationProposal, 
+  PropertyPhase, MortgageProposal, RenovationProposal, 
   PhotoFolder, DocumentOrInvoice, Photo 
 } from '@shared';
 import { ReformaService } from '../../core/services/reforma';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-renovation-manager',
@@ -15,9 +16,18 @@ import { ReformaService } from '../../core/services/reforma';
   styleUrl: './renovation-manager.css'
 })
 export class RenovationManagerComponent implements OnInit {
-  private reformaService = inject(ReformaService);
+  public reformaService = inject(ReformaService);
+  public authService = inject(AuthService);
   private sanitizer = inject(DomSanitizer);
-  private projectId = 'reforma-arroyo'; // Default project from seeder
+
+  constructor() {
+    effect(() => {
+      const pId = this.reformaService.activePropertyId();
+      if (pId) {
+        this.loadAllData(pId);
+      }
+    });
+  }
 
   // --- Modals State ---
   isPhasesModalOpen = signal<boolean>(false);
@@ -34,8 +44,8 @@ export class RenovationManagerComponent implements OnInit {
   isAddFolderModalOpen = signal<boolean>(false);
 
   // --- Data Signals ---
-  projectPhases = signal<ProjectPhase[]>([]);
-  editablePhases = signal<ProjectPhase[]>([]);
+  propertyPhases = signal<PropertyPhase[]>([]);
+  editablePhases = signal<PropertyPhase[]>([]);
   mortgages = signal<MortgageProposal[]>([]);
   renovations = signal<RenovationProposal[]>([]);
   documentsAndInvoices = signal<DocumentOrInvoice[]>([]);
@@ -44,15 +54,18 @@ export class RenovationManagerComponent implements OnInit {
   selectedFiles: File[] = [];
 
   ngOnInit() {
-    this.loadAllData();
+    const pId = this.reformaService.activePropertyId();
+    if (pId) {
+      this.loadAllData(pId);
+    }
   }
 
-  loadAllData() {
-    this.reformaService.getPhases(this.projectId).subscribe(data => this.projectPhases.set(data));
-    this.reformaService.getMortgages(this.projectId).subscribe(data => this.mortgages.set(data));
-    this.reformaService.getRenovations(this.projectId).subscribe(data => this.renovations.set(data));
-    this.reformaService.getDocuments(this.projectId).subscribe(data => this.documentsAndInvoices.set(data));
-    this.reformaService.getGalleryFolders(this.projectId).subscribe(data => {
+  loadAllData(propertyId: string) {
+    this.reformaService.getPhases(propertyId).subscribe(data => this.propertyPhases.set(data));
+    this.reformaService.getMortgages(propertyId).subscribe(data => this.mortgages.set(data));
+    this.reformaService.getRenovations(propertyId).subscribe(data => this.renovations.set(data));
+    this.reformaService.getDocuments(propertyId).subscribe(data => this.documentsAndInvoices.set(data));
+    this.reformaService.getGalleryFolders(propertyId).subscribe(data => {
       this.photoFolders.set(data);
     });
   }
@@ -64,23 +77,26 @@ export class RenovationManagerComponent implements OnInit {
 
   // --- Modal Methods ---
   openPhasesModal() { 
-    this.editablePhases.set(this.projectPhases().map(p => ({ ...p })));
+    this.editablePhases.set(this.propertyPhases().map(p => ({ ...p })));
     this.isPhasesModalOpen.set(true); 
   }
   closePhasesModal() { this.isPhasesModalOpen.set(false); }
 
   addNewPhase() {
-    const currentPhases = this.editablePhases();
+    const pId = this.reformaService.activePropertyId();
+    if (!pId) return;
     const newPhaseId = `TEMP-${Date.now()}`;
     this.editablePhases.update(phases => [
       ...phases,
-      { id: newPhaseId, project_id: this.projectId, name: `Nueva Fase`, progress: 0, status: 'Pendiente' }
+      { id: newPhaseId, property_id: pId, name: `Nueva Fase`, progress: 0, status: 'Pendiente' }
     ]);
   }
 
   savePhases() {
-    this.reformaService.updatePhasesBatch(this.projectId, this.editablePhases()).subscribe(() => {
-      this.loadAllData();
+    const pId = this.reformaService.activePropertyId();
+    if (!pId) return;
+    this.reformaService.updatePhasesBatch(pId, this.editablePhases()).subscribe(() => {
+      this.loadAllData(pId);
       this.closePhasesModal();
     });
   }
@@ -90,7 +106,7 @@ export class RenovationManagerComponent implements OnInit {
   }
 
   updatePhaseStatus(id: string, newStatus: string) {
-    this.editablePhases.update(phases => phases.map(p => p.id === id ? { ...p, status: newStatus as ProjectPhase['status'] } : p));
+    this.editablePhases.update(phases => phases.map(p => p.id === id ? { ...p, status: newStatus as PropertyPhase['status'] } : p));
   }
 
   updatePhaseProgress(id: string, newProgress: string) {
@@ -127,8 +143,9 @@ export class RenovationManagerComponent implements OnInit {
   }
 
   uploadPhotos(description: string) {
+    const pId = this.reformaService.activePropertyId();
     const folder = this.selectedFolder();
-    if (!folder || this.selectedFiles.length === 0) return;
+    if (!pId || !folder || this.selectedFiles.length === 0) return;
 
     const uploads = this.selectedFiles.map(file => {
       const formData = new FormData();
@@ -136,7 +153,7 @@ export class RenovationManagerComponent implements OnInit {
       // Use filename as default description if the input is empty
       const finalDesc = description || file.name.split('.').slice(0, -1).join('.');
       formData.append('description', finalDesc);
-      return this.reformaService.uploadPhoto(this.projectId, folder.id, formData);
+      return this.reformaService.uploadPhoto(pId, folder.id, formData);
     });
 
     let completed = 0;
@@ -153,7 +170,9 @@ export class RenovationManagerComponent implements OnInit {
   }
 
   private refreshGallery(folderId: string) {
-    this.reformaService.getGalleryFolders(this.projectId).subscribe(folders => {
+    const pId = this.reformaService.activePropertyId();
+    if (!pId) return;
+    this.reformaService.getGalleryFolders(pId).subscribe(folders => {
       this.photoFolders.set(folders);
       const updated = folders.find(f => f.id === folderId);
       if (updated) this.selectedFolder.set(updated);
@@ -168,8 +187,10 @@ export class RenovationManagerComponent implements OnInit {
   }
 
   createFolder(name: string) {
-    this.reformaService.createFolder(this.projectId, name).subscribe(() => {
-      this.loadAllData();
+    const pId = this.reformaService.activePropertyId();
+    if (!pId) return;
+    this.reformaService.createFolder(pId, name).subscribe(() => {
+      this.loadAllData(pId);
       this.closeAddFolder();
     });
   }

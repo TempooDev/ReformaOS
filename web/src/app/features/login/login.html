@@ -1,0 +1,42 @@
+<div class="min-h-screen flex items-center justify-center bg-surface-container-lowest p-6">
+  <div class="max-w-md w-full bg-white rounded-3xl shadow-xl p-10 border border-slate-100">
+    <div class="text-center mb-10">
+      <div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-white text-3xl">architecture</span>
+      </div>
+      <h1 class="font-headline text-4xl font-extrabold text-primary tracking-tight">ReformaOS.</h1>
+      <p class="text-on-surface-variant mt-2 font-medium">Panel de Control de Propiedades</p>
+    </div>
+
+    <div class="space-y-6">
+      <div class="text-center mb-6">
+        <h2 class="text-lg font-bold text-on-surface">Selecciona tu perfil de acceso</h2>
+        <p class="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Entorno de Pruebas</p>
+      </div>
+
+      @for (user of testUsers; track user.id) {
+        <button 
+          (click)="selectUser(user)"
+          class="w-full flex items-center justify-between p-4 bg-surface-container-low rounded-2xl hover:bg-primary/5 hover:border-primary/20 border-2 border-transparent transition-all group"
+        >
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+              <span class="material-symbols-outlined">
+                {{ user.role === authService.Role.OWNER ? 'person' : user.role === authService.Role.ARCHITECT ? 'architecture' : 'visibility' }}
+              </span>
+            </div>
+            <div class="text-left">
+              <p class="font-bold text-on-surface">{{ user.role === authService.Role.OWNER ? 'Dueño' : user.role === authService.Role.ARCHITECT ? 'Arquitecto' : 'Gestor' }}</p>
+              <p class="text-xs text-on-surface-variant">{{ user.email }}</p>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+        </button>
+      }
+    </div>
+
+    <p class="mt-10 text-center text-[10px] text-on-surface-variant font-bold uppercase tracking-[0.2em]">
+      &copy; 2026 REFORMAOS - INTERNAL USE ONLY
+    </p>
+  </div>
+</div>

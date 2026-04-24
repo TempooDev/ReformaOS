@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/tempoodev/reformaos/api/internal/config"
-	"github.com/tempoodev/reformaos/api/internal/project"
+	"github.com/tempoodev/reformaos/api/internal/property"
 	"github.com/tempoodev/reformaos/api/internal/storage"
 )
 
@@ -18,22 +18,22 @@ func NewHandler(s *storage.MinioService) *Handler {
 	return &Handler{storage: s}
 }
 
-func (h *Handler) GetByProject(c echo.Context) error {
-	projectID := c.Param("projectId")
+func (h *Handler) GetByProperty(c echo.Context) error {
+	propertyID := c.Param("propertyId")
 	var docs []DocumentOrInvoice
-	if err := config.DB.Where("project_id = ?", projectID).Find(&docs).Error; err != nil {
+	if err := config.DB.Where("property_id = ?", propertyID).Find(&docs).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, docs)
 }
 
 func (h *Handler) Upload(c echo.Context) error {
-	projectID := c.Param("projectId")
+	propertyID := c.Param("propertyId")
 	docType := c.FormValue("type") // Invoice or Document
 
-	var p project.Project
-	if err := config.DB.First(&p, "id = ?", projectID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Project not found"})
+	var p property.Property
+	if err := config.DB.First(&p, "id = ?", propertyID).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Property not found"})
 	}
 
 	file, err := c.FormFile("file")
@@ -54,7 +54,7 @@ func (h *Handler) Upload(c echo.Context) error {
 
 	doc := DocumentOrInvoice{
 		ID:         storage.GenerateID(),
-		ProjectID:  projectID,
+		PropertyID: propertyID,
 		FileName:   file.Filename,
 		Type:       docType,
 		Status:     config.StatusPending,

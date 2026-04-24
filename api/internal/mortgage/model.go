@@ -8,7 +8,7 @@ import (
 
 type MortgageProposal struct {
 	ID             string         `gorm:"primaryKey" json:"id"`
-	ProjectID      string         `json:"project_id"`
+	PropertyID     string         `json:"property_id"`
 	Provider       string         `json:"provider"`
 	Amount         float64        `json:"amount"`
 	InterestRate   float64        `json:"interest_rate"`

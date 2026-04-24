@@ -13,21 +13,21 @@ func NewHandler() *Handler {
 	return &Handler{}
 }
 
-func (h *Handler) GetByProject(c echo.Context) error {
-	projectID := c.Param("projectId")
-	var phases []ProjectPhase
-	if err := config.DB.Where("project_id = ?", projectID).Order("created_at asc").Find(&phases).Error; err != nil {
+func (h *Handler) GetByProperty(c echo.Context) error {
+	propertyID := c.Param("propertyId")
+	var phases []Phase
+	if err := config.DB.Where("property_id = ?", propertyID).Order("created_at asc").Find(&phases).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, phases)
 }
 
 func (h *Handler) Create(c echo.Context) error {
-	p := new(ProjectPhase)
+	p := new(Phase)
 	if err := c.Bind(p); err != nil {
 		return err
 	}
-	p.ProjectID = c.Param("projectId")
+	p.PropertyID = c.Param("propertyId")
 
 	if err := config.DB.Create(p).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
@@ -37,7 +37,7 @@ func (h *Handler) Create(c echo.Context) error {
 
 func (h *Handler) Update(c echo.Context) error {
 	id := c.Param("id")
-	var p ProjectPhase
+	var p Phase
 	if err := config.DB.First(&p, "id = ?", id).Error; err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "Phase not found"})
 	}
@@ -53,7 +53,7 @@ func (h *Handler) Update(c echo.Context) error {
 }
 
 func (h *Handler) BatchUpdate(c echo.Context) error {
-	var phases []ProjectPhase
+	var phases []Phase
 	if err := c.Bind(&phases); err != nil {
 		return err
 	}
