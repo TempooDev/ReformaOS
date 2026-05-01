@@ -1,10 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { 
   Property, PropertyPhase, MortgageProposal, 
   RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unidad 
 } from '@shared';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,42 +12,56 @@ export class ReformaService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api';
 
-  // Usamos WritableSignal para un estado reactivo moderno
-  unidades = signal<Unidad[]>([]);
-  properties = signal<Property[]>([]);
+  // Usamos httpResource para una carga reactiva y automática
+  unidadesResource = httpResource<Unidad[]>(() => `${this.apiUrl}/unidades`);
+  propertiesResource = httpResource<Property[]>(() => `${this.apiUrl}/properties`);
+
+  // Signals derivadas para mantener compatibilidad con el resto de la app
+  unidades = computed(() => this.unidadesResource.value() ?? []);
+  properties = computed(() => this.propertiesResource.value() ?? []);
+  
   activePropertyId = signal<string | null>(null);
 
-  getUnidades() {
-    this.http.get<Unidad[]>(`${this.apiUrl}/unidades`).subscribe(data => {
-      this.unidades.set(data);
-    });
+  constructor() {
+    // Inicializamos el activePropertyId cuando carguen las propiedades
+    const properties = this.propertiesResource.value;
+    if (properties()?.length && !this.activePropertyId()) {
+      this.activePropertyId.set(properties()![0].id);
+    }
   }
 
-  loadProperties() {
-    this.http.get<Property[]>(`${this.apiUrl}/properties`).subscribe(data => {
-      this.properties.set(data);
-      if (data.length > 0 && !this.activePropertyId()) {
-        this.activePropertyId.set(data[0].id);
-      }
-    });
+  // Los métodos de carga manual ya no son necesarios con httpResource,
+  // pero los mantenemos o adaptamos si se usaban para forzar refresco
+  refreshProperties() {
+    this.propertiesResource.reload();
   }
 
-  // --- Properties ---
-  getProperties() {
-    return this.http.get<Property[]>(`${this.apiUrl}/properties`);
+  // --- REST Methods (serán consumidos mediante resource() en los componentes) ---
+  
+  // Mantenemos estos métodos que devuelven el URL o el Observable para ser usados por resource()
+  getPhasesUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/phases`;
   }
 
-  getProperty(id: string) {
-    return this.http.get<Property>(`${this.apiUrl}/properties/${id}`);
+  getMortgagesUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/mortgages`;
   }
 
+  getRenovationsUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/renovations`;
+  }
+
+  getGalleryUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/gallery`;
+  }
+
+  getDocumentsUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/documents`;
+  }
+
+  // Métodos de mutación (POST/PUT/DELETE) se mantienen con HttpClient
   updateProperty(id: string, prop: Partial<Property>) {
     return this.http.put<Property>(`${this.apiUrl}/properties/${id}`, prop);
-  }
-
-  // --- Phases ---
-  getPhases(propertyId: string) {
-    return this.http.get<PropertyPhase[]>(`${this.apiUrl}/properties/${propertyId}/phases`);
   }
 
   updatePhasesBatch(propertyId: string, phases: PropertyPhase[]) {
@@ -59,27 +72,12 @@ export class ReformaService {
     return this.http.post<PropertyPhase>(`${this.apiUrl}/properties/${propertyId}/phases`, phase);
   }
 
-  // --- Mortgages ---
-  getMortgages(propertyId: string) {
-    return this.http.get<MortgageProposal[]>(`${this.apiUrl}/properties/${propertyId}/mortgages`);
-  }
-
   createMortgage(propertyId: string, formData: FormData) {
     return this.http.post<MortgageProposal>(`${this.apiUrl}/properties/${propertyId}/mortgages`, formData);
   }
 
-  // --- Renovations ---
-  getRenovations(propertyId: string) {
-    return this.http.get<RenovationProposal[]>(`${this.apiUrl}/properties/${propertyId}/renovations`);
-  }
-
   createRenovation(propertyId: string, formData: FormData) {
     return this.http.post<RenovationProposal>(`${this.apiUrl}/properties/${propertyId}/renovations`, formData);
-  }
-
-  // --- Gallery ---
-  getGalleryFolders(propertyId: string) {
-    return this.http.get<PhotoFolder[]>(`${this.apiUrl}/properties/${propertyId}/gallery`);
   }
 
   createFolder(propertyId: string, name: string) {
@@ -92,11 +90,6 @@ export class ReformaService {
 
   updatePhoto(photoId: string, description: string) {
     return this.http.put<Photo>(`${this.apiUrl}/gallery/photos/${photoId}`, { description });
-  }
-
-  // --- Documents ---
-  getDocuments(propertyId: string) {
-    return this.http.get<DocumentOrInvoice[]>(`${this.apiUrl}/properties/${propertyId}/documents`);
   }
 
   uploadDocument(propertyId: string, formData: FormData) {

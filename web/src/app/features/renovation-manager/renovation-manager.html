@@ -392,55 +392,65 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <div class="p-6 overflow-y-auto flex-1 space-y-8">
-        @for (phase of editablePhases(); track phase.id) {
-          <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
-            <div class="flex justify-between items-start mb-4">
-              <div class="flex-1 mr-4">
-                <input type="text" [value]="phase.name" [disabled]="authService.getRole() === authService.Role.MANAGER" (input)="updatePhaseName(phase.id, $any($event.target).value)" class="font-bold text-primary text-base bg-transparent border-none outline-hidden hover:bg-slate-200 focus:bg-white focus:ring-2 focus:ring-primary/20 px-1 py-0.5 rounded -ml-1 transition-all w-full mb-1 disabled:opacity-70 disabled:cursor-not-allowed">
-                <div class="flex items-center gap-2">
-                  <select [disabled]="authService.getRole() === authService.Role.MANAGER" (change)="updatePhaseStatus(phase.id, $any($event.target).value)" class="text-[10px] font-bold uppercase tracking-tighter bg-white border border-slate-200 rounded px-2 py-0.5 outline-hidden focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed">
-                    <option [selected]="phase.status === 'Completado'" value="Completado">Completado</option>
-                    <option [selected]="phase.status === 'En curso'" value="En curso">En curso</option>
-                    <option [selected]="phase.status === 'Pendiente'" value="Pendiente">Pendiente</option>
-                  </select>
+      <form (submit)="savePhases(); $event.preventDefault()" class="flex flex-col flex-1 min-h-0">
+        <div class="p-6 overflow-y-auto flex-1 space-y-8">
+          @for (phase of phasesForm.phases; track $index) {
+            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex-1 mr-4">
+                  <!-- Name Input -->
+                  <input type="text" 
+                         [formField]="phase.name" 
+                         class="font-bold text-primary text-base bg-transparent border-none outline-hidden hover:bg-slate-200 focus:bg-white focus:ring-2 focus:ring-primary/20 px-1 py-0.5 rounded -ml-1 transition-all w-full mb-1 disabled:opacity-70 disabled:cursor-not-allowed">
+                  
+                  @if (phase.name().touched() && phase.name().errors().length) {
+                    <p class="text-[10px] text-red-500 font-bold uppercase">{{ phase.name().errors()[0].message }}</p>
+                  }
+
+                  <div class="flex items-center gap-2">
+                    <!-- Status Select -->
+                    <select [formField]="phase.status" 
+                            class="text-[10px] font-bold uppercase tracking-tighter bg-white border border-slate-200 rounded px-2 py-0.5 outline-hidden focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                      <option value="Completado">Completado</option>
+                      <option value="En curso">En curso</option>
+                      <option value="Pendiente">Pendiente</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end shrink-0">
+                  <span class="text-lg font-headline font-black tabular-nums text-primary">{{ phase.progress().value() }}%</span>
                 </div>
               </div>
-              <div class="flex flex-col items-end shrink-0">
-                <span class="text-lg font-headline font-black tabular-nums text-primary">{{ phase.progress }}%</span>
+              
+              <div class="space-y-3">
+                <!-- Progress Range -->
+                <input type="range" 
+                       [formField]="phase.progress"
+                       class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-700 ease-out" 
+                       [class.bg-green-500]="phase.status().value() === 'Completado'"
+                       [class.bg-primary]="phase.status().value() === 'En curso'"
+                       [class.bg-slate-300]="phase.status().value() === 'Pendiente'"
+                       [style.width.%]="phase.progress().value()"></div>
+                </div>
               </div>
             </div>
-            
-            <div class="space-y-3">
-              <input type="range" 
-                     [value]="phase.progress" 
-                     [disabled]="authService.getRole() === authService.Role.MANAGER"
-                     (input)="updatePhaseProgress(phase.id, $any($event.target).value)"
-                     class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                     min="0" max="100">
-              <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
-                <div class="h-full rounded-full transition-all duration-700 ease-out" 
-                     [class.bg-green-500]="phase.status === 'Completado'"
-                     [class.bg-primary]="phase.status === 'En curso'"
-                     [class.bg-slate-300]="phase.status === 'Pendiente'"
-                     [style.width.%]="phase.progress"></div>
-              </div>
-            </div>
-          </div>
-        }
-        @if (authService.getRole() !== authService.Role.MANAGER) {
-          <button (click)="addNewPhase()" class="w-full py-4 border-2 border-dashed border-slate-200 rounded-xl text-secondary font-bold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-            <span class="material-symbols-outlined text-sm">add_circle</span>
-            Añadir Nueva Fase al Proyecto
-          </button>
-        }
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button (click)="closePhasesModal()" class="px-6 py-2.5 rounded-lg font-bold text-sm text-on-surface-variant hover:bg-slate-200 transition-colors cursor-pointer">Cerrar</button>
-        @if (authService.getRole() !== authService.Role.MANAGER) {
-          <button (click)="savePhases()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white hover:brightness-110 transition-all shadow-md cursor-pointer">Guardar Cambios</button>
-        }
-      </div>
+          }
+          @if (authService.getRole() !== authService.Role.MANAGER) {
+            <button type="button" (click)="addNewPhase()" class="w-full py-4 border-2 border-dashed border-slate-200 rounded-xl text-secondary font-bold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-sm">add_circle</span>
+              Añadir Nueva Fase al Proyecto
+            </button>
+          }
+        </div>
+        <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
+          <button type="button" (click)="closePhasesModal()" class="px-6 py-2.5 rounded-lg font-bold text-sm text-on-surface-variant hover:bg-slate-200 transition-colors cursor-pointer">Cerrar</button>
+          @if (authService.getRole() !== authService.Role.MANAGER) {
+            <button type="submit" [disabled]="phasesForm().invalid()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white hover:brightness-110 transition-all shadow-md cursor-pointer disabled:opacity-50">Guardar Cambios</button>
+          }
+        </div>
+      </form>
     </div>
   </div>
 }

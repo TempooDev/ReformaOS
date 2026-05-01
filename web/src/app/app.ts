@@ -1,6 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ReformaService } from './core/services/reforma';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +8,4 @@ import { ReformaService } from './core/services/reforma';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
- reformaService = inject(ReformaService);
-
-  ngOnInit() {
-    this.reformaService.getUnidades();
-  }
-}
+export class App {}

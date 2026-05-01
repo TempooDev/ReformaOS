@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReformaService } from '../../core/services/reforma';
 import { AuthService } from '../../core/services/auth';
@@ -10,12 +10,10 @@ import { AuthService } from '../../core/services/auth';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   reformaService = inject(ReformaService);
   authService = inject(AuthService);
+  
+  // These are now computed signals from httpResource
   unidades = this.reformaService.unidades;
-
-  ngOnInit() {
-    this.reformaService.loadProperties();
-  }
 }
