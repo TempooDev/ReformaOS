@@ -11,10 +11,10 @@ import (
 )
 
 type Handler struct {
-	storage *storage.MinioService
+	storage storage.Service
 }
 
-func NewHandler(s *storage.MinioService) *Handler {
+func NewHandler(s storage.Service) *Handler {
 	return &Handler{storage: s}
 }
 
@@ -47,7 +47,7 @@ func (h *Handler) Upload(c echo.Context) error {
 		section = config.SectionInvoices
 	}
 
-	objectKey, err := h.storage.UploadFile(context.Background(), p.Bucket, section, file)
+	url, err := h.storage.UploadMultipartFile(context.Background(), p.Bucket, section, file)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload"})
 	}
@@ -58,7 +58,7 @@ func (h *Handler) Upload(c echo.Context) error {
 		FileName:   file.Filename,
 		Type:       docType,
 		Status:     config.StatusPending,
-		PreviewURL: h.storage.GetFileURL(p.Bucket, objectKey),
+		PreviewURL: url,
 	}
 
 	if err := config.DB.Create(&doc).Error; err != nil {

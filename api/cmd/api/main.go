@@ -4,11 +4,13 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/tempoodev/reformaos/api/internal/config"
 	"github.com/tempoodev/reformaos/api/internal/document"
+	"github.com/tempoodev/reformaos/api/internal/expense"
 	"github.com/tempoodev/reformaos/api/internal/gallery"
 	"github.com/tempoodev/reformaos/api/internal/mortgage"
 	"github.com/tempoodev/reformaos/api/internal/phase"
@@ -38,6 +40,7 @@ func main() {
 		&gallery.PhotoFolder{},
 		&gallery.Photo{},
 		&document.DocumentOrInvoice{},
+		&expense.Expense{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
@@ -54,6 +57,7 @@ func main() {
 	mortgageHandler := mortgage.NewHandler(storageService)
 	renovationHandler := renovation.NewHandler(storageService)
 	documentHandler := document.NewHandler(storageService)
+	expenseHandler := expense.NewHandler(storageService)
 
 	// Initialize Echo
 	e := echo.New()
@@ -98,6 +102,12 @@ func main() {
 	// Documents
 	api.GET("/properties/:propertyId/documents", documentHandler.GetByProperty)
 	api.POST("/properties/:propertyId/documents", documentHandler.Upload)
+
+	// Expenses
+	api.GET("/properties/:propertyId/expenses", expenseHandler.GetByProperty)
+	api.POST("/properties/:propertyId/expenses", expenseHandler.Create)
+	api.PUT("/expenses/:id", expenseHandler.Update)
+	api.DELETE("/expenses/:id", expenseHandler.Delete)
 
 	api.GET("/unidades", func(c echo.Context) error {
 		unidades := []map[string]interface{}{
@@ -172,6 +182,50 @@ func seedData() {
 		if err != nil {
 			log.Printf("Warning: Could not create bucket %s: %v\n", p.Bucket, err)
 		}
+
+		// Seed Expenses
+		expenses := []expense.Expense{
+			{
+				ID:         "EXP-1",
+				PropertyID: p.ID,
+				Title:      "Estructura de madera y pladur",
+				Category:   "Materiales",
+				Date:       time.Now().AddDate(0, 0, -15),
+				Amount:     1240.50,
+				Unit:       "Alquiler Diario",
+				Status:     config.ExpenseStatusReconciled,
+				Image:      "https://lh3.googleusercontent.com/aida-public/AB6AXuAGlMcNpXnyfrTB30P5UsBl3PZu33vvrTRnE6kk0rp_SFh5CZUcFqN_8dnyhpqIG_5ZzGi988_2dp1TjCwXIzOBnGnGJTOLDtuPI-YwPJOUr5utca3N_eO_fevqQvkslm4VLO1103PTamVB8oEMj-Dj8ctnhg4rVDzA9-I-ZBLy-VmDkwkLX0KEzGNwwglGGsyxIv843YmzJH6QiVNjK8see8i5xfm1HZkgLcY300mltFSWrUYJBaN124eNJ_9joz6frixjksaQuuM",
+				Pending:    false,
+				Reconciled: true,
+			},
+			{
+				ID:         "EXP-2",
+				PropertyID: p.ID,
+				Title:      "Pago IBI Trimestral",
+				Category:   "Impuestos y Seguros",
+				Date:       time.Now().AddDate(0, 0, -20),
+				Amount:     4850.00,
+				Unit:       "Mi Hogar",
+				Status:     config.ExpenseStatusPending,
+				Image:      "https://lh3.googleusercontent.com/aida-public/AB6AXuAwaretED-lwSBj_27b9rwasOsHs1AlRW9p4tj7I7g7hFrtPRIMUdFXg1_kak2haoWdt4B9W61DTlYW4Ma9DQqj2W-ElbFeSglV-l5PTToYZUw8ctgPPETsKaqBF5mNMb2zCAgCAJbUpvMs8S-gAYoR1LjtaIMHiuGgnnVKdCKhTY5ika63mryIZp4_uMqCTN_ltHtXv7Pft3gkOjJQgBYPLt19IrA5XklgGFKt3u5QP31MJtYbidr96DcxLtcH30GbHFaxnjDFnW8",
+				Pending:    true,
+				Reconciled: false,
+			},
+			{
+				ID:         "EXP-3",
+				PropertyID: p.ID,
+				Title:      "Iluminación Salón",
+				Category:   "Materiales",
+				Date:       time.Now().AddDate(0, 0, -25),
+				Amount:     899.99,
+				Unit:       "Alquiler Mensual",
+				Status:     config.ExpenseStatusApproved,
+				Image:      "https://lh3.googleusercontent.com/aida-public/AB6AXuBbd8VgroFsMLBO3MEDiZ8FownQFNEnSY8IC6YB8jTc-W2wdNTUUl0jfWyD4cI7cwBnvjtxJiRDTCWaEzz_wYcjGZBiQX-RlV_kre3gT5zvXWXwPhANQKisuq2Xbf2Oai2Xn8ZkertNIA5xtYFxcBEbaT-kT7au3bpPNOg68ypEjiI30lBlybuguGBS5vQyZ8NwKJ060GQEPNpHOKP7J3cclc3PCAcBbzNG7NFbeFioTMnO7AiH9JFcyftB8fz__8qXRO4GLCtp-Ag",
+				Pending:    false,
+				Reconciled: false,
+			},
+		}
+		config.DB.Create(&expenses)
 	} else {
 		// Even if property exists, ensure bucket policy is set (useful for existing dev env)
 		_ = config.EnsureBucketExists(context.Background(), "reforma-arroyo")

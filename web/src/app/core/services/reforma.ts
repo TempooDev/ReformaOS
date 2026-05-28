@@ -2,7 +2,7 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { 
   Property, PropertyPhase, MortgageProposal, 
-  RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unidad 
+  RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unidad, Expense
 } from '@shared';
 
 @Injectable({
@@ -94,5 +94,22 @@ export class ReformaService {
 
   uploadDocument(propertyId: string, formData: FormData) {
     return this.http.post<DocumentOrInvoice>(`${this.apiUrl}/properties/${propertyId}/documents`, formData);
+  }
+
+  // --- Expenses ---
+  getExpenses(propertyId: string) {
+    return this.http.get<Expense[]>(`${this.apiUrl}/properties/${propertyId}/expenses`);
+  }
+
+  createExpense(propertyId: string, formData: FormData) {
+    return this.http.post<Expense>(`${this.apiUrl}/properties/${propertyId}/expenses`, formData);
+  }
+
+  updateExpense(id: string, expense: Partial<Expense>) {
+    return this.http.put<Expense>(`${this.apiUrl}/expenses/${id}`, expense);
+  }
+
+  deleteExpense(id: string) {
+    return this.http.delete(`${this.apiUrl}/expenses/${id}`);
   }
 }

@@ -1,47 +1,187 @@
-import { Component, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { Expense } from '@shared';
+import { Component, inject, OnInit, signal, effect, computed } from '@angular/core';
+import { DecimalPipe, DatePipe, CommonModule } from '@angular/common';
+import { Expense, ExpenseStatus } from '@shared';
+import { ReformaService } from '../../core/services/reforma';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-expenses-manager',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [CommonModule, DecimalPipe, DatePipe, FormsModule],
   templateUrl: './expenses-manager.html',
   styleUrl: './expenses-manager.css'
 })
-export class ExpensesManagerComponent {
-  expenses = input<Expense[]>([
-    {
-      id: 'INV-9921',
-      title: 'Structural Timber & Drywall',
-      category: 'Materials',
-      date: 'Oct 12, 2023',
-      amount: 1240.50,
-      unit: 'Daily Rental',
-      status: 'monolith-orange',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGlMcNpXnyfrTB30P5UsBl3PZu33vvrTRnE6kk0rp_SFh5CZUcFqN_8dnyhpqIG_5ZzGi988_2dp1TjCwXIzOBnGnGJTOLDtuPI-YwPJOUr5utca3N_eO_fevqQvkslm4VLO1103PTamVB8oEMj-Dj8ctnhg4rVDzA9-I-ZBLy-VmDkwkLX0KEzGNwwglGGsyxIv843YmzJH6QiVNjK8see8i5xfm1HZkgLcY300mltFSWrUYJBaN124eNJ_9joz6frixjksaQuuM'
-    },
-    {
-      id: 'TX-2023-Q3',
-      title: 'Quarterly Property Tax Payment',
-      category: 'Tax & Insurance',
-      date: 'Oct 08, 2023',
-      amount: 4850.00,
-      unit: 'My House',
-      status: 'monolith-blue',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAwaretED-lwSBj_27b9rwasOsHs1AlRW9p4tj7I7g7hFrtPRIMUdFXg1_kak2haoWdt4B9W61DTlYW4Ma9DQqj2W-ElbFeSglV-l5PTToYZUw8ctgPPETsKaqBF5mNMb2zCAgCAJbUpvMs8S-gAYoR1LjtaIMHiuGgnnVKdCKhTY5ika63mryIZp4_uMqCTN_ltHtXv7Pft3gkOjJQgBYPLt19IrA5XklgGFKt3u5QP31MJtYbidr96DcxLtcH30GbHFaxnjDFnW8',
-      pending: true
-    },
-    {
-      id: 'SHOP-441',
-      title: 'Bespoke Living Room Lighting',
-      category: 'Materials',
-      date: 'Oct 05, 2023',
-      amount: 899.99,
-      unit: 'Monthly Rental',
-      status: 'monolith-orange',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBbd8VgroFsMLBO3MEDiZ8FownQFNEnSY8IC6YB8jTc-W2wdNTUUl0jfWyD4cI7cwBnvjtxJiRDTCWaEzz_wYcjGZBiQX-RlV_kre3gT5zvXWXwPhANQKisuq2Xbf2Oai2Xn8ZkertNIA5xtYFxcBEbaT-kT7au3bpPNOg68ypEjiI30lBlybuguGBS5vQyZ8NwKJ060GQEPNpHOKP7J3cclc3PCAcBbzNG7NFbeFioTMnO7AiH9JFcyftB8fz__8qXRO4GLCtp-Ag',
-      reconciled: true
+export class ExpensesManagerComponent implements OnInit {
+  private reformaService = inject(ReformaService);
+  
+  // State
+  allExpenses = signal<Expense[]>([]);
+  filterUnit = signal<string>('All');
+  isUploadModalOpen = signal<boolean>(false);
+  isDetailModalOpen = signal<boolean>(false);
+  selectedExpense = signal<Expense | null>(null);
+  
+  availableStatuses: ExpenseStatus[] = ['PENDING', 'APPROVED', 'RECONCILED', 'REJECTED'];
+  
+  statusTranslations: Record<ExpenseStatus, string> = {
+    'PENDING': 'Pendiente',
+    'APPROVED': 'Aprobado',
+    'RECONCILED': 'Conciliado',
+    'REJECTED': 'Rechazado'
+  };
+  
+  // Form State for new expense
+  newExpense = {
+    title: '',
+    category: 'Materiales',
+    amount: 0,
+    unit: 'Alquiler Diario',
+    date: new Date().toISOString().split('T')[0]
+  };
+  selectedFile: File | null = null;
+
+  // Computed filtered list
+  expenses = computed(() => {
+    const unit = this.filterUnit();
+    if (unit === 'All') return this.allExpenses();
+    return this.allExpenses().filter(e => e.unit === unit);
+  });
+
+  constructor() {
+    effect(() => {
+      const pId = this.reformaService.activePropertyId();
+      if (pId) {
+        this.loadExpenses(pId);
+      }
+    });
+  }
+
+  ngOnInit() {
+    const pId = this.reformaService.activePropertyId();
+    if (pId) {
+      this.loadExpenses(pId);
     }
-  ]);
+  }
+
+  loadExpenses(propertyId: string) {
+    this.reformaService.getExpenses(propertyId).subscribe(data => {
+      this.allExpenses.set(data);
+    });
+  }
+
+  setFilter(unit: string) {
+    this.filterUnit.set(unit);
+  }
+
+  // Visual Mapping
+  getStatusColor(status: ExpenseStatus): string {
+    switch (status) {
+      case 'RECONCILED': return 'bg-green-500';
+      case 'APPROVED': return 'bg-blue-500';
+      case 'PENDING': return 'bg-[#f77d00]';
+      case 'REJECTED': return 'bg-red-500';
+      default: return 'bg-slate-400';
+    }
+  }
+
+  getUnitColorClass(unit: string): string {
+    if (unit === 'Alquiler Diario') return 'bg-[#f77d00]';
+    if (unit === 'Mi Hogar') return 'bg-secondary';
+    return 'bg-primary';
+  }
+
+  // Modal Detail Methods
+  openDetail(expense: Expense) {
+    this.selectedExpense.set({ ...expense });
+    this.isDetailModalOpen.set(true);
+  }
+
+  closeDetail() {
+    this.isDetailModalOpen.set(false);
+    this.selectedExpense.set(null);
+  }
+
+  setStatus(status: ExpenseStatus) {
+    const expense = this.selectedExpense();
+    if (!expense) return;
+    
+    expense.status = status;
+    expense.pending = (status === 'PENDING' || status === 'REJECTED');
+    expense.reconciled = (status === 'RECONCILED');
+  }
+
+  saveChanges() {
+    const expense = this.selectedExpense();
+    if (!expense) return;
+
+    this.reformaService.updateExpense(expense.id, expense).subscribe(() => {
+      const pId = this.reformaService.activePropertyId();
+      if (pId) this.loadExpenses(pId);
+      this.closeDetail();
+    });
+  }
+
+  // Upload Modal Methods
+  openUploadModal() {
+    this.isUploadModalOpen.set(true);
+  }
+
+  closeUploadModal() {
+    this.isUploadModalOpen.set(false);
+    this.selectedFile = null;
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
+  saveExpense() {
+    const pId = this.reformaService.activePropertyId();
+    if (!pId) return;
+
+    const formData = new FormData();
+    formData.append('title', this.newExpense.title);
+    formData.append('category', this.newExpense.category);
+    formData.append('amount', this.newExpense.amount.toString());
+    formData.append('unit', this.newExpense.unit);
+    formData.append('date', this.newExpense.date);
+    
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
+    this.reformaService.createExpense(pId, formData).subscribe(() => {
+      this.loadExpenses(pId);
+      this.closeUploadModal();
+      this.newExpense.title = '';
+      this.newExpense.amount = 0;
+    });
+  }
+
+  deleteExpense(id: string) {
+    if (confirm('¿Estás seguro de que deseas eliminar este gasto?')) {
+      this.reformaService.deleteExpense(id).subscribe(() => {
+        const pId = this.reformaService.activePropertyId();
+        if (pId) this.loadExpenses(pId);
+        if (this.isDetailModalOpen()) this.closeDetail();
+      });
+    }
+  }
+
+  updateStatus(expense: Expense, newStatus: ExpenseStatus) {
+    const updated = { 
+      ...expense, 
+      status: newStatus,
+      pending: newStatus === 'PENDING' || newStatus === 'REJECTED',
+      reconciled: newStatus === 'RECONCILED'
+    };
+    
+    this.reformaService.updateExpense(expense.id, updated).subscribe(() => {
+      const pId = this.reformaService.activePropertyId();
+      if (pId) this.loadExpenses(pId);
+    });
+  }
 }

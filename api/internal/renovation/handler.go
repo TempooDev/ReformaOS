@@ -11,10 +11,10 @@ import (
 )
 
 type Handler struct {
-	storage *storage.MinioService
+	storage storage.Service
 }
 
-func NewHandler(s *storage.MinioService) *Handler {
+func NewHandler(s storage.Service) *Handler {
 	return &Handler{storage: s}
 }
 
@@ -41,9 +41,9 @@ func (h *Handler) Create(c echo.Context) error {
 		var p property.Property
 		config.DB.First(&p, "id = ?", propertyID)
 		// Use constant for section
-		objectKey, err := h.storage.UploadFile(context.Background(), p.Bucket, config.SectionBudgets, file)
+		url, err := h.storage.UploadMultipartFile(context.Background(), p.Bucket, config.SectionBudgets, file)
 		if err == nil {
-			r.DocumentURL = h.storage.GetFileURL(p.Bucket, objectKey)
+			r.DocumentURL = url
 		}
 	}
 

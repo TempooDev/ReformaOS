@@ -77,3 +77,10 @@ const (
 	PhaseStatusInProgress = "En curso"
 	PhaseStatusPending    = "Pendiente"
 )
+
+const (
+	ExpenseStatusPending    = "PENDING"
+	ExpenseStatusApproved   = "APPROVED"
+	ExpenseStatusReconciled = "RECONCILED"
+	ExpenseStatusRejected   = "REJECTED"
+)

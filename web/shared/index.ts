@@ -95,17 +95,20 @@ export interface PhotoFolder {
   updated_at?: string;
 }
 
+export type ExpenseStatus = 'PENDING' | 'APPROVED' | 'RECONCILED' | 'REJECTED';
+
 export interface Expense {
   id: string;
+  property_id: string;
   title: string;
   category: string;
   date: string;
   amount: number;
   unit: string;
-  status: string;
+  status: ExpenseStatus;
   image: string;
-  pending?: boolean;
-  reconciled?: boolean;
+  pending: boolean;
+  reconciled: boolean;
 }
 
 export interface Camera {
