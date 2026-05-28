@@ -265,3 +265,29 @@
   </div>
 </div>
 }
+
+<!-- Delete Confirmation Modal -->
+@if (isDeleteModalOpen()) {
+<div class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="bg-surface rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in duration-200">
+    <div class="p-8 text-center">
+      <div class="w-16 h-16 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-3xl">delete_forever</span>
+      </div>
+      <h2 class="text-xl font-black font-headline text-on-surface uppercase mb-2">¿Confirmar Eliminación?</h2>
+      <p class="text-sm text-on-surface-variant/70 font-medium mb-8">Esta acción no se puede deshacer. El registro y su documento adjunto serán borrados permanentemente.</p>
+      
+      <div class="flex gap-3">
+        <button (click)="closeDeleteModal()" 
+                class="flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-all">
+          Cancelar
+        </button>
+        <button (click)="confirmDelete()" 
+                class="flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest bg-error text-white hover:bg-error-variant shadow-lg shadow-error/20 transition-all">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -19,7 +19,9 @@ export class ExpensesManagerComponent implements OnInit {
   filterUnit = signal<string>('All');
   isUploadModalOpen = signal<boolean>(false);
   isDetailModalOpen = signal<boolean>(false);
+  isDeleteModalOpen = signal<boolean>(false);
   selectedExpense = signal<Expense | null>(null);
+  expenseIdToDelete = signal<string | null>(null);
   
   availableStatuses: ExpenseStatus[] = ['PENDING', 'APPROVED', 'RECONCILED', 'REJECTED'];
   
@@ -92,7 +94,8 @@ export class ExpensesManagerComponent implements OnInit {
 
   // Modal Detail Methods
   openDetail(expense: Expense) {
-    this.selectedExpense.set({ ...expense });
+    const formattedDate = expense.date ? new Date(expense.date).toISOString().split('T')[0] : '';
+    this.selectedExpense.set({ ...expense, date: formattedDate });
     this.isDetailModalOpen.set(true);
   }
 
@@ -105,16 +108,24 @@ export class ExpensesManagerComponent implements OnInit {
     const expense = this.selectedExpense();
     if (!expense) return;
     
-    expense.status = status;
-    expense.pending = (status === 'PENDING' || status === 'REJECTED');
-    expense.reconciled = (status === 'RECONCILED');
+    this.selectedExpense.set({
+      ...expense,
+      status: status,
+      pending: (status === 'PENDING' || status === 'REJECTED'),
+      reconciled: (status === 'RECONCILED')
+    });
   }
 
   saveChanges() {
     const expense = this.selectedExpense();
     if (!expense) return;
 
-    this.reformaService.updateExpense(expense.id, expense).subscribe(() => {
+    const payload = { ...expense };
+    if (payload.date) {
+      payload.date = new Date(payload.date).toISOString();
+    }
+
+    this.reformaService.updateExpense(expense.id, payload).subscribe(() => {
       const pId = this.reformaService.activePropertyId();
       if (pId) this.loadExpenses(pId);
       this.closeDetail();
@@ -161,14 +172,27 @@ export class ExpensesManagerComponent implements OnInit {
     });
   }
 
+  // Delete Methods
   deleteExpense(id: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar este gasto?')) {
-      this.reformaService.deleteExpense(id).subscribe(() => {
-        const pId = this.reformaService.activePropertyId();
-        if (pId) this.loadExpenses(pId);
-        if (this.isDetailModalOpen()) this.closeDetail();
-      });
-    }
+    this.expenseIdToDelete.set(id);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  confirmDelete() {
+    const id = this.expenseIdToDelete();
+    if (!id) return;
+
+    this.reformaService.deleteExpense(id).subscribe(() => {
+      const pId = this.reformaService.activePropertyId();
+      if (pId) this.loadExpenses(pId);
+      this.closeDeleteModal();
+      if (this.isDetailModalOpen()) this.closeDetail();
+    });
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen.set(false);
+    this.expenseIdToDelete.set(null);
   }
 
   updateStatus(expense: Expense, newStatus: ExpenseStatus) {
@@ -183,5 +207,15 @@ export class ExpensesManagerComponent implements OnInit {
       const pId = this.reformaService.activePropertyId();
       if (pId) this.loadExpenses(pId);
     });
+  }
+
+  toggleReconciled(expense: Expense) {
+    let nextStatus: ExpenseStatus = expense.status;
+    if (expense.status === 'RECONCILED') {
+        nextStatus = 'APPROVED';
+    } else {
+        nextStatus = 'RECONCILED';
+    }
+    this.updateStatus(expense, nextStatus);
   }
 }
