@@ -9,7 +9,7 @@
       <p class="text-secondary font-medium tabular-nums text-lg">Avance del Proyecto</p>
       <button (click)="openPhasesModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container/30 text-on-primary-container rounded-full border border-primary-container/50 text-sm font-bold mt-2 hover:bg-primary-container/50 transition-colors cursor-pointer">
         <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">construction</span>
-        Fase 2: Estructura (35%)
+        Ver Estado Actual
       </button>
     </div>
   </div>
@@ -244,7 +244,7 @@
       </div>
     </section>
 
-    <!-- Photos Gallery by Folders -->
+    <!-- Photos Gallery -->
     <section class="col-span-12 mt-4">
       @if (!selectedFolder()) {
         <div class="flex justify-between items-center mb-6">
@@ -255,9 +255,6 @@
                 <span class="material-symbols-outlined text-sm">create_new_folder</span> Nueva Carpeta
               </button>
             }
-            <button class="text-sm font-bold text-secondary hover:underline flex items-center gap-1 cursor-pointer">
-              Ver todas <span class="material-symbols-outlined text-sm">arrow_forward</span>
-            </button>
           </div>
         </div>
         
@@ -265,11 +262,8 @@
           @for (folder of photoFolders(); track folder.id) {
             <div class="group cursor-pointer" (click)="openFolder(folder)">
               <div class="relative h-48 mb-3">
-                <!-- Folder Stack Effect -->
                 <div class="absolute inset-0 bg-slate-200 rounded-xl translate-x-2 -translate-y-2 group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-300"></div>
                 <div class="absolute inset-0 bg-slate-100 rounded-xl translate-x-1 -translate-y-1 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 transition-transform duration-300 border border-slate-200"></div>
-                
-                <!-- Main Folder Cover -->
                 <div class="absolute inset-0 rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
                   @if (folder.cover_url) {
                     <img [ngSrc]="folder.cover_url" [alt]="folder.name" fill class="object-cover group-hover:scale-110 transition-transform duration-700">
@@ -279,19 +273,14 @@
                     </div>
                   }
                   <div class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-300"></div>
-                  
-                  <!-- Folder Icon Overlay -->
                   <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg p-1.5 shadow-sm">
                     <span class="material-symbols-outlined text-primary text-xl">folder</span>
                   </div>
-                  
-                  <!-- Photo Count Badge -->
                   <div class="absolute top-3 left-3 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-md">
                     {{ folder.photo_count }} fotos
                   </div>
                 </div>
               </div>
-              
               <div>
                 <h4 class="font-bold text-primary group-hover:text-secondary transition-colors">{{ folder.name }}</h4>
                 <p class="text-[10px] text-on-surface-variant uppercase font-medium tracking-tighter">Actualizado: {{ folder.updated_at | date:'shortDate' }}</p>
@@ -328,7 +317,6 @@
                   <span class="material-symbols-outlined text-white text-3xl">zoom_in</span>
                 </div>
               </div>
-              <!-- Description Edit Overlay -->
               <div class="absolute bottom-0 left-0 right-0 p-2 bg-white/90 backdrop-blur-sm transform translate-y-full group-hover:translate-y-0 transition-transform">
                 <input #descInput type="text" [value]="photo.description" (keyup.enter)="updatePhotoDescription(photo.id, descInput.value)" class="w-full bg-white border border-slate-200 rounded px-2 py-1 text-[10px] outline-hidden focus:border-primary" placeholder="Editar descripción...">
               </div>
@@ -337,28 +325,23 @@
         </div>
       }
     </section>
-
   </div>
 </div>
 
-<!-- Carousel Modal -->
+<!-- Carousel Modal (Fullscreen Special) -->
 @if (activePhotoIndex() !== null) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-10">
-    <button (click)="closeCarousel()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-[110]">
+  <div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-10">
+    <button (click)="closeCarousel()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-[210]">
       <span class="material-symbols-outlined text-4xl">close</span>
     </button>
-
-    <!-- Navigation Buttons -->
     @if (selectedFolder()?.photos?.length && selectedFolder()!.photos!.length > 1) {
-      <button (click)="prevPhoto()" class="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-[110]">
+      <button (click)="prevPhoto()" class="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-[210]">
         <span class="material-symbols-outlined text-3xl">chevron_left</span>
       </button>
-      <button (click)="nextPhoto()" class="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-[110]">
+      <button (click)="nextPhoto()" class="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-[210]">
         <span class="material-symbols-outlined text-3xl">chevron_right</span>
       </button>
     }
-
-    <!-- Main Content -->
     <div class="relative max-w-5xl w-full h-full flex flex-col items-center justify-center">
       <div class="relative w-full flex-1 flex items-center justify-center">
         @if (selectedFolder()?.photos?.[activePhotoIndex()!]) {
@@ -369,8 +352,6 @@
                class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in duration-300">
         }
       </div>
-      
-      <!-- Photo Info -->
       <div class="w-full text-center py-6 text-white">
         <p class="text-lg font-medium">{{ selectedFolder()?.photos?.[activePhotoIndex()!]?.description }}</p>
         <p class="text-white/40 text-sm mt-1 uppercase tracking-widest">{{ activePhotoIndex()! + 1 }} / {{ selectedFolder()?.photos?.length }}</p>
@@ -379,426 +360,252 @@
   </div>
 }
 
-<!-- Phases Config Modal -->
-@if (isPhasesModalOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-        <h3 class="font-headline text-2xl font-bold text-primary flex items-center gap-2">
-          <span class="material-symbols-outlined text-secondary">timeline</span>
-          Fases del Proyecto
-        </h3>
-        <button (click)="closePhasesModal()" class="text-on-surface-variant hover:text-primary transition-colors p-1">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <form (submit)="savePhases(); $event.preventDefault()" class="flex flex-col flex-1 min-h-0">
-        <div class="p-6 overflow-y-auto flex-1 space-y-8">
-          @for (phase of phasesForm.phases; track $index) {
-            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
-              <div class="flex justify-between items-start mb-4">
-                <div class="flex-1 mr-4">
-                  <!-- Name Input -->
-                  <input type="text" 
-                         [formField]="phase.name" 
-                         class="font-bold text-primary text-base bg-transparent border-none outline-hidden hover:bg-slate-200 focus:bg-white focus:ring-2 focus:ring-primary/20 px-1 py-0.5 rounded -ml-1 transition-all w-full mb-1 disabled:opacity-70 disabled:cursor-not-allowed">
-                  
-                  @if (phase.name().touched() && phase.name().errors().length) {
-                    <p class="text-[10px] text-red-500 font-bold uppercase">{{ phase.name().errors()[0].message }}</p>
-                  }
-
-                  <div class="flex items-center gap-2">
-                    <!-- Status Select -->
-                    <select [formField]="phase.status" 
-                            class="text-[10px] font-bold uppercase tracking-tighter bg-white border border-slate-200 rounded px-2 py-0.5 outline-hidden focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed">
-                      <option value="Completado">Completado</option>
-                      <option value="En curso">En curso</option>
-                      <option value="Pendiente">Pendiente</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="flex flex-col items-end shrink-0">
-                  <span class="text-lg font-headline font-black tabular-nums text-primary">{{ phase.progress().value() }}%</span>
-                </div>
-              </div>
-              
-              <div class="space-y-3">
-                <!-- Progress Range -->
-                <input type="range" 
-                       [formField]="phase.progress"
-                       class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary disabled:opacity-50 disabled:cursor-not-allowed">
-                <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-700 ease-out" 
-                       [class.bg-green-500]="phase.status().value() === 'Completado'"
-                       [class.bg-primary]="phase.status().value() === 'En curso'"
-                       [class.bg-slate-300]="phase.status().value() === 'Pendiente'"
-                       [style.width.%]="phase.progress().value()"></div>
-                </div>
-              </div>
+<!-- Phases Modal -->
+<app-modal [isOpen]="isPhasesModalOpen()" title="Fases del Proyecto" maxWidth="max-w-2xl" (close)="closePhasesModal()">
+  <form (submit)="savePhases(); $event.preventDefault()" class="space-y-6">
+    @for (phase of phasesForm.phases; track $index) {
+      <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1 mr-4">
+            <input type="text" [formField]="phase.name" class="font-bold text-primary text-base bg-transparent border-none outline-hidden hover:bg-slate-200 focus:bg-white focus:ring-2 focus:ring-primary/20 px-1 py-0.5 rounded -ml-1 transition-all w-full mb-1 disabled:opacity-70">
+            <div class="flex items-center gap-2">
+              <select [formField]="phase.status" class="text-[10px] font-bold uppercase tracking-tighter bg-white border border-slate-200 rounded px-2 py-0.5 outline-hidden focus:border-primary disabled:opacity-50">
+                <option value="Completado">Completado</option>
+                <option value="En curso">En curso</option>
+                <option value="Pendiente">Pendiente</option>
+              </select>
             </div>
-          }
-          @if (authService.getRole() !== authService.Role.MANAGER) {
-            <button type="button" (click)="addNewPhase()" class="w-full py-4 border-2 border-dashed border-slate-200 rounded-xl text-secondary font-bold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-              <span class="material-symbols-outlined text-sm">add_circle</span>
-              Añadir Nueva Fase al Proyecto
-            </button>
-          }
+          </div>
+          <span class="text-lg font-headline font-black tabular-nums text-primary">{{ phase.progress().value() }}%</span>
         </div>
-        <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-          <button type="button" (click)="closePhasesModal()" class="px-6 py-2.5 rounded-lg font-bold text-sm text-on-surface-variant hover:bg-slate-200 transition-colors cursor-pointer">Cerrar</button>
-          @if (authService.getRole() !== authService.Role.MANAGER) {
-            <button type="submit" [disabled]="phasesForm().invalid()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white hover:brightness-110 transition-all shadow-md cursor-pointer disabled:opacity-50">Guardar Cambios</button>
-          }
+        <div class="space-y-3">
+          <input type="range" [formField]="phase.progress" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary disabled:opacity-50">
+          <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700 ease-out" 
+                 [class.bg-green-500]="phase.status().value() === 'Completado'"
+                 [class.bg-primary]="phase.status().value() === 'En curso'"
+                 [class.bg-slate-300]="phase.status().value() === 'Pendiente'"
+                 [style.width.%]="phase.progress().value()"></div>
+          </div>
         </div>
-      </form>
+      </div>
+    }
+    @if (authService.getRole() !== authService.Role.MANAGER) {
+      <button type="button" (click)="addNewPhase()" class="w-full py-4 border-2 border-dashed border-slate-200 rounded-xl text-secondary font-bold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-sm">add_circle</span> Añadir Nueva Fase
+      </button>
+    }
+    <div modal-footer class="flex justify-end gap-3 w-full">
+      <button type="button" (click)="closePhasesModal()" class="px-6 py-2.5 rounded-lg font-bold text-sm text-on-surface-variant hover:bg-slate-200 transition-colors">Cerrar</button>
+      @if (authService.getRole() !== authService.Role.MANAGER) {
+        <button type="submit" [disabled]="phasesForm().invalid()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white hover:brightness-110 shadow-md disabled:opacity-50">Guardar Cambios</button>
+      }
+    </div>
+  </form>
+</app-modal>
+
+<!-- Mortgage Detail Modal -->
+<app-modal [isOpen]="!!selectedMortgage()" title="Detalle de Hipoteca" maxWidth="max-w-xl" (close)="closeMortgage()">
+  <div class="space-y-8">
+    <div>
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Entidad Financiera</p>
+      <h4 class="font-headline text-3xl font-extrabold text-primary">{{ selectedMortgage()?.provider }}</h4>
+    </div>
+    <div class="grid grid-cols-2 gap-6">
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Cantidad Solicitada</p>
+        <p class="font-headline text-2xl font-bold text-primary tabular-nums">€{{ selectedMortgage()?.amount | number:'1.0-0' }}</p>
+      </div>
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Cuota Estimada</p>
+        <p class="font-headline text-2xl font-bold text-secondary tabular-nums">€{{ selectedMortgage()?.monthly_payment | number:'1.2-2' }}/mes</p>
+      </div>
+    </div>
+    <div>
+      <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Detalles Adicionales</p>
+      <p class="text-sm text-on-surface-variant leading-relaxed">{{ selectedMortgage()?.details }}</p>
     </div>
   </div>
-}
+  <div modal-footer class="flex justify-end gap-3 w-full">
+    <button class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">download</span> Oferta
+    </button>
+    <button (click)="closeMortgage()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white shadow-md">Aceptar</button>
+  </div>
+</app-modal>
 
-<!-- Mortgage Proposal Detail Modal -->
-@if (selectedMortgage()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-surface-container-lowest rounded-t-2xl">
-        <h3 class="font-headline text-2xl font-bold text-primary flex items-center gap-2">
-          <span class="material-symbols-outlined text-on-primary-container">real_estate_agent</span>
-          Detalle de Hipoteca
-        </h3>
-        <button (click)="closeMortgage()" class="text-on-surface-variant hover:text-primary transition-colors p-1">
-          <span class="material-symbols-outlined">close</span>
-        </button>
+<!-- Renovation Detail Modal -->
+<app-modal [isOpen]="!!selectedRenovation()" title="Detalle de Presupuesto" maxWidth="max-w-2xl" (close)="closeRenovation()">
+  <div class="space-y-8">
+    <div>
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Proveedor / Arquitecto</p>
+      <h4 class="font-headline text-3xl font-extrabold text-primary">{{ selectedRenovation()?.provider }}</h4>
+    </div>
+    <div class="grid grid-cols-2 gap-6">
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Presupuesto Total</p>
+        <p class="font-headline text-2xl font-bold text-primary tabular-nums">€{{ selectedRenovation()?.amount | number:'1.0-0' }}</p>
       </div>
-      <div class="p-8 overflow-y-auto flex-1">
-        <div class="mb-8">
-          <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Entidad Financiera</p>
-          <h4 class="font-headline text-3xl font-extrabold text-primary">{{ selectedMortgage()?.provider }}</h4>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-6 mb-8">
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Cantidad Solicitada</p>
-            <p class="font-headline text-2xl font-bold text-primary tabular-nums">€{{ selectedMortgage()?.amount | number:'1.0-0' }}</p>
-          </div>
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Cuota Estimada</p>
-            <p class="font-headline text-2xl font-bold text-secondary tabular-nums">€{{ selectedMortgage()?.monthly_payment | number:'1.2-2' }}/mes</p>
-          </div>
-          <div>
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Tipo de Interés</p>
-            <p class="font-bold text-lg text-primary">{{ selectedMortgage()?.type }} ({{ selectedMortgage()?.interest_rate }}%)</p>
-          </div>
-          <div>
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Estado</p>
-            <span class="inline-block px-3 py-1 mt-1 rounded text-xs font-bold uppercase tracking-widest"
-                  [class.bg-green-50]="selectedMortgage()?.status === 'Approved'"
-                  [class.text-green-700]="selectedMortgage()?.status === 'Approved'"
-                  [class.bg-yellow-50]="selectedMortgage()?.status === 'In Review'"
-                  [class.text-yellow-700]="selectedMortgage()?.status === 'In Review'">
-              {{ selectedMortgage()?.status === 'Approved' ? 'Aprobada' : 'En Revisión' }}
-            </span>
-          </div>
-        </div>
-
-        <div class="mb-8">
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Bonificaciones / Vinculaciones</p>
-          <div class="flex gap-2 flex-wrap">
-            @for (bonus of selectedMortgage()?.bonuses; track bonus) {
-              <span class="text-xs font-bold px-3 py-1 bg-surface-container-low text-primary rounded-full border border-slate-200">{{ bonus }}</span>
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Duración Estimada</p>
+        <p class="font-headline text-2xl font-bold text-secondary tabular-nums">{{ selectedRenovation()?.duration_months }} Meses</p>
+      </div>
+    </div>
+    <div class="mb-8">
+      <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Desglose de Conceptos</p>
+      <div class="rounded-xl border border-slate-100 overflow-hidden">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-on-surface-variant">Concepto</th>
+              <th class="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-on-surface-variant text-right">Coste Est.</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50">
+            @for (concept of selectedRenovation()?.concepts; track concept.name) {
+              <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-4 py-3 text-sm font-medium text-primary">{{ concept.name }}</td>
+                <td class="px-4 py-3 text-sm font-bold text-secondary text-right tabular-nums">€{{ concept.cost | number:'1.0-0' }}</td>
+              </tr>
             }
-          </div>
-        </div>
-
-        <div>
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Detalles Adicionales</p>
-          <p class="text-sm text-on-surface-variant leading-relaxed">{{ selectedMortgage()?.details }}</p>
-        </div>
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 transition-colors flex items-center gap-2 cursor-pointer">
-          <span class="material-symbols-outlined text-sm">download</span> Descargar Oferta
-        </button>
-        <button class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white hover:brightness-110 transition-all shadow-md cursor-pointer">
-          Aceptar Propuesta
-        </button>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-}
-
-<!-- Renovation Proposal Detail Modal -->
-@if (selectedRenovation()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-surface-container-lowest rounded-t-2xl">
-        <h3 class="font-headline text-2xl font-bold text-primary flex items-center gap-2">
-          <span class="material-symbols-outlined text-secondary">architecture</span>
-          Detalle de Presupuesto
-        </h3>
-        <button (click)="closeRenovation()" class="text-on-surface-variant hover:text-primary transition-colors p-1">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div class="p-8 overflow-y-auto flex-1">
-        <div class="mb-8">
-          <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Proveedor / Arquitecto</p>
-          <h4 class="font-headline text-3xl font-extrabold text-primary">{{ selectedRenovation()?.provider }}</h4>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-6 mb-8">
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Presupuesto Total</p>
-            <p class="font-headline text-2xl font-bold text-primary tabular-nums">€{{ selectedRenovation()?.amount | number:'1.0-0' }}</p>
-          </div>
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Duración Estimada</p>
-            <p class="font-headline text-2xl font-bold text-secondary tabular-nums">{{ selectedRenovation()?.duration_months }} Meses</p>
-          </div>
-        </div>
-
-        <div class="mb-8">
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Desglose de Conceptos</p>
-          <div class="rounded-xl border border-slate-100 overflow-hidden">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="bg-slate-50 border-b border-slate-100">
-                  <th class="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-on-surface-variant">Concepto</th>
-                  <th class="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-on-surface-variant text-right">Coste Est.</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-50">
-                @for (concept of selectedRenovation()?.concepts; track concept.name) {
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-4 py-3 text-sm font-medium text-primary">{{ concept.name }}</td>
-                    <td class="px-4 py-3 text-sm font-bold text-secondary text-right tabular-nums">€{{ concept.cost | number:'1.0-0' }}</td>
-                  </tr>
-                }
-              </tbody>
-              <tfoot>
-                <tr class="bg-primary/5">
-                  <td class="px-4 py-3 text-sm font-bold text-primary uppercase">Total Presupuesto</td>
-                  <td class="px-4 py-3 text-lg font-headline font-black text-primary text-right tabular-nums">€{{ selectedRenovation()?.amount | number:'1.0-0' }}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Condiciones Generales</p>
-          <p class="text-sm text-on-surface-variant leading-relaxed">{{ selectedRenovation()?.details }}</p>
-        </div>
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 transition-colors flex items-center gap-1 cursor-pointer">
-          <span class="material-symbols-outlined text-sm">request_quote</span> Solicitar Cambios
-        </button>
-        <button class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white hover:brightness-110 transition-all shadow-md cursor-pointer">
-          Aprobar Presupuesto
-        </button>
-      </div>
-    </div>
+  <div modal-footer class="flex justify-end gap-3 w-full">
+    <button (click)="closeRenovation()" class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 flex items-center gap-1">
+      <span class="material-symbols-outlined text-sm">request_quote</span> Solicitar Cambios
+    </button>
+    <button (click)="closeRenovation()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white shadow-md">Aprobar</button>
   </div>
-}
+</app-modal>
 
 <!-- Add Mortgage Modal -->
-@if (isAddMortgageModalOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-on-primary-container text-white rounded-t-2xl">
-        <h3 class="font-headline text-xl font-bold">Nueva Propuesta de Hipoteca</h3>
-        <button (click)="closeAddMortgage()" class="p-1"><span class="material-symbols-outlined">close</span></button>
+<app-modal [isOpen]="isAddMortgageModalOpen()" title="Nueva Propuesta de Hipoteca" maxWidth="max-w-lg" (close)="closeAddMortgage()">
+  <div class="space-y-4">
+    <div>
+      <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Entidad Bancaria</label>
+      <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="Ej. Santander, BBVA...">
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Cantidad (€)</label>
+        <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="150000">
       </div>
-      <div class="p-8 space-y-4">
-        <div>
-          <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Entidad Bancaria</label>
-          <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="Ej. Santander, BBVA...">
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Cantidad (€)</label>
-            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="150000">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Interés (%)</label>
-            <input type="number" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="2.5">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Tipo</label>
-            <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors">
-              <option>Fija</option>
-              <option>Variable</option>
-              <option>Mixta</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Cuota Estimada (€)</label>
-            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="600">
-          </div>
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Descripción y Vinculaciones</label>
-          <textarea class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" rows="3" placeholder="Ej. Seguro de vida, nómina, plan de pensiones..."></textarea>
-        </div>
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button (click)="closeAddMortgage()" class="px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg transition-colors">Cancelar</button>
-        <button (click)="closeAddMortgage()" class="px-6 py-2 text-sm font-bold bg-primary text-white rounded-lg shadow-md hover:brightness-110">Guardar Propuesta</button>
+      <div>
+        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Interés (%)</label>
+        <input type="number" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="2.5">
       </div>
     </div>
   </div>
-}
+  <div modal-footer class="flex gap-3 w-full">
+    <button (click)="closeAddMortgage()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
+    <button (click)="closeAddMortgage()" class="flex-1 py-3 text-sm font-bold bg-primary text-white rounded-lg shadow-md">Guardar</button>
+  </div>
+</app-modal>
 
 <!-- Add Renovation Modal -->
-@if (isAddRenovationModalOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-secondary text-white rounded-t-2xl">
-        <h3 class="font-headline text-xl font-bold">Nuevo Presupuesto de Reforma</h3>
-        <button (click)="closeAddRenovation()" class="p-1"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div class="p-8 space-y-4">
-        <div>
-          <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Proveedor / Empresa</label>
-          <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="Ej. Constructora X">
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Importe Total (€)</label>
-            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="40000">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Plazo (Meses)</label>
-            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-hidden focus:border-primary transition-colors" placeholder="5">
-          </div>
-        </div>
-        <div class="mb-4">
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase mb-2">Desglose de Conceptos</p>
-          <div class="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="bg-slate-100 border-b border-slate-200">
-                  <th class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-on-surface-variant">Concepto</th>
-                  <th class="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-on-surface-variant text-right">Coste (€)</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                <tr>
-                  <td class="px-4 py-2"><input type="text" class="w-full bg-transparent text-sm outline-hidden" placeholder="Ej. Albañilería"></td>
-                  <td class="px-4 py-2 text-right"><input type="number" class="w-24 bg-transparent text-sm text-right outline-hidden" placeholder="0"></td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-2 text-[10px] font-bold text-secondary cursor-pointer hover:underline flex items-center gap-1">
-                    <span class="material-symbols-outlined text-xs">add</span> Añadir Concepto
-                  </td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button (click)="closeAddRenovation()" class="px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg transition-colors">Cancelar</button>
-        <button (click)="closeAddRenovation()" class="px-6 py-2 text-sm font-bold bg-secondary text-white rounded-lg shadow-md hover:brightness-110">Añadir Presupuesto</button>
+<app-modal [isOpen]="isAddRenovationModalOpen()" title="Nuevo Presupuesto de Reforma" maxWidth="max-w-lg" (close)="closeAddRenovation()">
+  <div class="space-y-4">
+    <div>
+      <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Proveedor / Empresa</label>
+      <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="Ej. Constructora X">
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Importe Total (€)</label>
+        <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="40000">
       </div>
     </div>
   </div>
-}
+  <div modal-footer class="flex gap-3 w-full">
+    <button (click)="closeAddRenovation()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
+    <button (click)="closeAddRenovation()" class="flex-1 py-3 text-sm font-bold bg-secondary text-white rounded-lg shadow-md">Añadir</button>
+  </div>
+</app-modal>
 
 <!-- Add Document Modal -->
-@if (isAddDocumentModalOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-primary text-white rounded-t-2xl">
-        <h3 class="font-headline text-xl font-bold">Subir Documento / Factura</h3>
-        <button (click)="closeAddDocument()" class="p-1"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div class="p-8 space-y-6">
-        <div class="border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors cursor-pointer">
-          <span class="material-symbols-outlined text-4xl mb-2">cloud_upload</span>
-          <p class="text-sm font-bold">Seleccionar archivo PDF</p>
-          <p class="text-[10px] mt-1">O arrastra y suelta aquí</p>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Tipo</label>
-            <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden">
-              <option>Documento</option>
-              <option>Factura</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Estado</label>
-            <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden">
-              <option>Pending</option>
-              <option>Approved</option>
-              <option>Paid</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button (click)="closeAddDocument()" class="px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
-        <button (click)="closeAddDocument()" class="px-6 py-2 text-sm font-bold bg-primary text-white rounded-lg shadow-md">Subir Archivo</button>
-      </div>
+<app-modal [isOpen]="isAddDocumentModalOpen()" title="Subir Documento / Factura" maxWidth="max-w-md" (close)="closeAddDocument()">
+  <div class="space-y-6">
+    <div class="border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors cursor-pointer">
+      <span class="material-symbols-outlined text-4xl mb-2">cloud_upload</span>
+      <p class="text-sm font-bold">Seleccionar archivo PDF</p>
     </div>
   </div>
-}
+  <div modal-footer class="flex gap-3 w-full">
+    <button (click)="closeAddDocument()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
+    <button (click)="closeAddDocument()" class="flex-1 py-3 text-sm font-bold bg-primary text-white rounded-lg shadow-md">Subir</button>
+  </div>
+</app-modal>
 
 <!-- Add Folder Modal -->
-@if (isAddFolderModalOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-secondary text-white rounded-t-2xl">
-        <h3 class="font-headline text-xl font-bold">Nueva Carpeta</h3>
-        <button (click)="closeAddFolder()" class="p-1"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div class="p-8">
-        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Nombre de la Carpeta</label>
-        <input #folderName type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="Ej. Cocina, Baño principal...">
-      </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button (click)="closeAddFolder()" class="px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
-        <button (click)="createFolder(folderName.value)" class="px-6 py-2 text-sm font-bold bg-secondary text-white rounded-lg shadow-md">Crear Carpeta</button>
-      </div>
-    </div>
+<app-modal [isOpen]="isAddFolderModalOpen()" title="Nueva Carpeta" maxWidth="max-w-sm" (close)="closeAddFolder()">
+  <div class="p-2">
+    <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-2">Nombre de la Carpeta</label>
+    <input [ngModel]="newFolderName()" (ngModelChange)="newFolderName.set($event)" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-primary outline-hidden" placeholder="Ej. Cocina, Baño principal...">
   </div>
-}
+  <div modal-footer class="flex gap-3 w-full">
+    <button (click)="closeAddFolder()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
+    <button (click)="createFolder()" class="flex-1 py-3 text-sm font-bold bg-secondary text-white rounded-lg shadow-md">Crear</button>
+  </div>
+</app-modal>
 
 <!-- Add Photo Modal -->
-@if (isAddPhotoModalOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl animate-in">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-primary text-white rounded-t-2xl">
-        <h3 class="font-headline text-xl font-bold">Añadir Fotos a {{ selectedFolder()?.name }}</h3>
-        <button (click)="closeAddPhoto()" class="p-1"><span class="material-symbols-outlined">close</span></button>
+<app-modal [isOpen]="isAddPhotoModalOpen()" [title]="'Añadir Fotos a ' + selectedFolder()?.name" maxWidth="max-w-md" (close)="closeAddPhoto()">
+  <div class="space-y-6">
+    @if (!isUploadingPhotos() && failedFiles().length === 0) {
+      <input #photoInput type="file" (change)="onFileSelected($event)" class="hidden" accept="image/*" multiple>
+      <div (click)="photoInput.click()" class="border-2 border-dashed border-slate-200 rounded-2xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer group">
+        <span class="material-symbols-outlined text-4xl mb-2 group-hover:scale-110 transition-transform">add_a_photo</span>
+        <p class="text-sm font-bold text-primary">Seleccionar Imágenes</p>
+        @if (selectedFiles.length > 0) {
+          <p class="mt-2 text-[10px] font-bold text-primary uppercase">{{ selectedFiles.length }} archivos</p>
+        }
       </div>
-      <div class="p-8 space-y-6">
-        <input #photoInput type="file" (change)="onFileSelected($event)" class="hidden" accept="image/*" multiple webkitdirectory>
-        <div (click)="photoInput.click()" class="border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer group">
-          <span class="material-symbols-outlined text-4xl mb-2 group-hover:scale-110 transition-transform">add_a_photo</span>
-          <p class="text-sm font-bold text-primary">Subir Carpeta o Imágenes</p>
-          <p class="text-[10px] mt-1">Haz clic para elegir una carpeta completa de fotos</p>
-          
-          @if (selectedFiles.length > 0) {
-            <div class="mt-4 p-2 bg-primary/5 rounded-lg w-full">
-              <p class="text-[10px] font-bold text-primary uppercase text-center">{{ selectedFiles.length }} archivos seleccionados</p>
-            </div>
+      <div>
+        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-2">Descripción (Opcional)</label>
+        <input [ngModel]="photoDescription()" (ngModelChange)="photoDescription.set($event)" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-hidden focus:border-primary" placeholder="Descripción general...">
+      </div>
+    } @else if (isUploadingPhotos()) {
+      <div class="py-10 text-center">
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+          <div class="bg-primary h-full transition-all duration-300" [style.width.%]="(uploadProgress().current / uploadProgress().total) * 100"></div>
+        </div>
+        <p class="text-sm font-bold text-primary mb-1">Subiendo fotos...</p>
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+          {{ uploadProgress().current }} de {{ uploadProgress().total }} procesadas
+          @if (uploadProgress().failed > 0) {
+            <span class="text-error ml-2">({{ uploadProgress().failed }} fallidas)</span>
           }
+        </p>
+      </div>
+    } @else if (failedFiles().length > 0) {
+      <div class="bg-error/5 border border-error/10 rounded-2xl p-6">
+        <div class="flex items-center gap-3 text-error mb-4">
+          <span class="material-symbols-outlined">warning</span>
+          <h4 class="font-black text-xs uppercase tracking-widest">Algunas subidas han fallado</h4>
         </div>
-        <div>
-          <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Descripción General (Opcional)</label>
-          <input #photoDescription type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="Si se deja vacío, se usará el nombre del archivo...">
+        <ul class="space-y-2 max-h-48 overflow-y-auto pr-2">
+          @for (error of failedFiles(); track error) {
+            <li class="text-[10px] font-bold text-on-surface-variant flex items-start gap-2">
+              <span class="w-1 h-1 rounded-full bg-error mt-1.5 shrink-0"></span>
+              {{ error }}
+            </li>
+          }
+        </ul>
+        <div class="mt-6 pt-4 border-t border-error/10">
+           <p class="text-[9px] font-medium text-on-surface-variant/60 italic">Puedes cerrar esta ventana e intentar de nuevo con los archivos que faltan.</p>
         </div>
       </div>
-      <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button (click)="closeAddPhoto()" class="px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancelar</button>
-        <button (click)="uploadPhotos(photoDescription.value)" [disabled]="selectedFiles.length === 0" class="px-6 py-2 text-sm font-bold bg-primary text-white rounded-lg shadow-md hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed">
-          Guardar Fotos
-        </button>
-      </div>
-    </div>
+    }
   </div>
-}
+  <div modal-footer class="flex gap-3 w-full">
+    <button (click)="closeAddPhoto()" [disabled]="isUploadingPhotos()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg disabled:opacity-30">
+      {{ failedFiles().length > 0 ? 'Cerrar' : 'Cancelar' }}
+    </button>
+    @if (!isUploadingPhotos() && failedFiles().length === 0) {
+      <button (click)="uploadPhotos()" [disabled]="selectedFiles.length === 0" class="flex-1 py-3 text-sm font-bold bg-primary text-white rounded-lg shadow-md disabled:opacity-50">Guardar</button>
+    }
+  </div>
+</app-modal>

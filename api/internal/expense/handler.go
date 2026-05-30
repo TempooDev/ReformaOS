@@ -72,7 +72,7 @@ func (h *Handler) Create(c echo.Context) error {
 
 		url, err := h.storage.UploadFile(c.Request().Context(), bucket, objectName, src, file.Size, file.Header.Get("Content-Type"))
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload to MinIO"})
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload expense image to MinIO: " + err.Error()})
 		}
 		e.Image = url
 	}

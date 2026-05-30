@@ -1,7 +1,7 @@
 package gallery
 
 import (
-	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -32,6 +32,7 @@ func (h *Handler) CreateFolder(c echo.Context) error {
 	if err := c.Bind(f); err != nil {
 		return err
 	}
+	f.ID = storage.GenerateID()
 	f.PropertyID = c.Param("propertyId")
 
 	if err := config.DB.Create(f).Error; err != nil {
@@ -53,19 +54,25 @@ func (h *Handler) UploadPhoto(c echo.Context) error {
 	propertyID := c.Param("propertyId")
 	folderID := c.Param("folderId")
 
+	if folderID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Folder ID is required. It seems the selected folder has no ID."})
+	}
+
 	var p property.Property
 	if err := config.DB.First(&p, "id = ?", propertyID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Property not found"})
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Property not found: " + propertyID})
 	}
 
 	file, err := c.FormFile("photo")
 	if err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Failed to get file from request: " + err.Error()})
 	}
 
-	url, err := h.storage.UploadMultipartFile(context.Background(), p.Bucket, config.SectionGallery+"/"+folderID, file)
+	url, err := h.storage.UploadMultipartFile(c.Request().Context(), p.Bucket, config.SectionGallery+"/"+folderID, file)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload to MinIO"})
+		// Log the error to server console for the developer to see the root cause
+		fmt.Printf("Error uploading photo to MinIO: %v\n", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload to MinIO: " + err.Error()})
 	}
 
 	photo := Photo{

@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/tempoodev/reformaos/api/internal/auth"
 	"github.com/tempoodev/reformaos/api/internal/config"
 	"github.com/tempoodev/reformaos/api/internal/document"
 	"github.com/tempoodev/reformaos/api/internal/expense"
@@ -17,7 +19,6 @@ import (
 	"github.com/tempoodev/reformaos/api/internal/property"
 	"github.com/tempoodev/reformaos/api/internal/renovation"
 	"github.com/tempoodev/reformaos/api/internal/storage"
-	"github.com/tempoodev/reformaos/api/internal/auth"
 	"github.com/tempoodev/reformaos/api/internal/user"
 )
 
@@ -127,6 +128,27 @@ func main() {
 }
 
 func seedData() {
+	// Cleanup: Ensure all folders have IDs (fix for previous bug)
+	// We check for empty strings, nulls, or zero values in ID
+	var count_corrupt int64
+	config.DB.Model(&gallery.PhotoFolder{}).Where("id = '' OR id IS NULL").Count(&count_corrupt)
+
+	if count_corrupt > 0 {
+		log.Printf("Found %d folders with invalid IDs. Running manual repair...\n", count_corrupt)
+		var corruptFolders []gallery.PhotoFolder
+		config.DB.Where("id = '' OR id IS NULL").Find(&corruptFolders)
+
+		for _, f := range corruptFolders {
+			newID := uuid.New().String()
+			// Use Raw SQL to update records that have an empty primary key,
+			// as GORM might struggle to identify which record to update if the PK is empty.
+			// We target by name and property_id as a best-effort.
+			config.DB.Exec("UPDATE photo_folders SET id = ? WHERE (id = '' OR id IS NULL) AND name = ? AND property_id = ?",
+				newID, f.Name, f.PropertyID)
+			log.Printf("Repaired folder: '%s' (Property: %s) -> New ID: %s\n", f.Name, f.PropertyID, newID)
+		}
+	}
+
 	var count int64
 	config.DB.Model(&property.Property{}).Count(&count)
 	if count == 0 {
@@ -136,7 +158,7 @@ func seedData() {
 		owner := user.User{ID: "USR-OWNER", Email: "dueno@reformaos.com", Role: auth.RoleOwner}
 		architect := user.User{ID: "USR-ARCH", Email: "arquitecto@reformaos.com", Role: auth.RoleArchitect}
 		manager := user.User{ID: "USR-MGR", Email: "gestor@reformaos.com", Role: auth.RoleManager}
-		
+
 		config.DB.Create(&owner)
 		config.DB.Create(&architect)
 		config.DB.Create(&manager)
@@ -158,15 +180,6 @@ func seedData() {
 			{ID: "ASG-3", UserID: manager.ID, PropertyID: p.ID, Role: auth.RoleManager},
 		}
 		config.DB.Create(&assignments)
-
-		// Create default folders
-		f := gallery.PhotoFolder{
-			ID:         "fotos-del-antes",
-			PropertyID: p.ID,
-			Name:       "FOTOS DEL ANTES",
-			CoverURL:   "",
-		}
-		config.DB.Create(&f)
 
 		// Create initial phases
 		phases := []phase.Phase{

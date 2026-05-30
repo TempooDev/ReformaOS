@@ -1,0 +1,40 @@
+@if (isOpen()) {
+<div class="fixed inset-0 z-150 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+     (click)="onBackdropClick($event)">
+  
+  <div #modalContainer 
+       class="bg-surface rounded-[40px] w-full shadow-2xl overflow-hidden flex flex-col animate-in zoom-in duration-300"
+       [ngClass]="maxWidth()">
+    
+    <!-- Header -->
+    <div class="p-8 pb-4 flex justify-between items-center">
+      <div>
+        @if (title()) {
+          <h2 class="text-2xl font-black font-headline text-primary uppercase leading-none">{{ title() }}</h2>
+        }
+        <ng-content select="[modal-subtitle]"></ng-content>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <ng-content select="[modal-header-actions]"></ng-content>
+        @if (showCloseButton()) {
+          <button (click)="onClose()" class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+            <span class="material-symbols-outlined text-2xl">close</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="p-8 pt-4 flex-1 overflow-y-auto">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-8 pt-0">
+        <ng-content select="[modal-footer]"></ng-content>
+    </div>
+
+  </div>
+</div>
+}

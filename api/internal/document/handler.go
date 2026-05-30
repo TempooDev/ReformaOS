@@ -1,7 +1,6 @@
 package document
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -47,9 +46,9 @@ func (h *Handler) Upload(c echo.Context) error {
 		section = config.SectionInvoices
 	}
 
-	url, err := h.storage.UploadMultipartFile(context.Background(), p.Bucket, section, file)
+	url, err := h.storage.UploadMultipartFile(c.Request().Context(), p.Bucket, section, file)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload"})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to upload document to MinIO: " + err.Error()})
 	}
 
 	doc := DocumentOrInvoice{

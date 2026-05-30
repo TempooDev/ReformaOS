@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { httpResource } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { 
   form, FormField, submit, required, applyEach, min, max, disabled
 } from '@angular/forms/signals';
@@ -11,11 +12,13 @@ import {
 } from '@shared';
 import { ReformaService } from '../../core/services/reforma';
 import { AuthService } from '../../core/services/auth';
+import { NotificationService } from '../../core/services/notification';
+import { ModalComponent } from '../../core/components/modal/modal';
 
 @Component({
   selector: 'app-renovation-manager',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, FormField],
+  imports: [CommonModule, NgOptimizedImage, FormField, ModalComponent, FormsModule],
   templateUrl: './renovation-manager.html',
   styleUrl: './renovation-manager.css'
 })
@@ -23,6 +26,7 @@ export class RenovationManagerComponent {
   public reformaService = inject(ReformaService);
   public authService = inject(AuthService);
   private sanitizer = inject(DomSanitizer);
+  private notificationService = inject(NotificationService);
 
   // --- Resources (Auto-fetch based on activePropertyId) ---
   activeId = computed(() => this.reformaService.activePropertyId());
@@ -69,6 +73,14 @@ export class RenovationManagerComponent {
   isAddFolderModalOpen = signal<boolean>(false);
 
   selectedFiles: File[] = [];
+  photoDescription = signal<string>('');
+  newFolderName = signal<string>('');
+
+  // --- Upload State ---
+
+  isUploadingPhotos = signal<boolean>(false);
+  uploadProgress = signal<{ total: number; current: number; failed: number }>({ total: 0, current: 0, failed: 0 });
+  failedFiles = signal<string[]>([]);
 
   // --- Signal Form for Phases ---
   phasesModel = signal<{ phases: PropertyPhase[] }>({ phases: [] });
@@ -138,11 +150,29 @@ export class RenovationManagerComponent {
   openAddDocument() { this.isAddDocumentModalOpen.set(true); }
   closeAddDocument() { this.isAddDocumentModalOpen.set(false); }
 
-  openAddPhoto() { this.isAddPhotoModalOpen.set(true); }
-  closeAddPhoto() { this.isAddPhotoModalOpen.set(false); }
+  openAddPhoto() { 
+    this.resetUploadState();
+    this.isAddPhotoModalOpen.set(true); 
+  }
+  closeAddPhoto() { 
+    if (this.isUploadingPhotos()) return;
+    this.isAddPhotoModalOpen.set(false); 
+    this.resetUploadState();
+  }
+
+  resetUploadState() {
+    this.isUploadingPhotos.set(false);
+    this.uploadProgress.set({ total: 0, current: 0, failed: 0 });
+    this.failedFiles.set([]);
+    this.selectedFiles = [];
+    this.photoDescription.set('');
+  }
 
   openAddFolder() { this.isAddFolderModalOpen.set(true); }
-  closeAddFolder() { this.isAddFolderModalOpen.set(false); }
+  closeAddFolder() { 
+    this.isAddFolderModalOpen.set(false);
+    this.newFolderName.set('');
+  }
 
   onFileSelected(event: any) {
     const files = event.target.files;
@@ -151,30 +181,61 @@ export class RenovationManagerComponent {
     }
   }
 
-  uploadPhotos(description: string) {
+  uploadPhotos() {
     const pId = this.reformaService.activePropertyId();
     const folder = this.selectedFolder();
     if (!pId || !folder || this.selectedFiles.length === 0) return;
 
-    const uploads = this.selectedFiles.map(file => {
+    if (!folder.id) {
+      this.notificationService.error(
+        'Carpeta Inválida',
+        `La carpeta "${folder.name}" no tiene un ID válido. Intenta crear una nueva carpeta para subir fotos.`
+      );
+      return;
+    }
+
+    this.isUploadingPhotos.set(true);
+    const total = this.selectedFiles.length;
+    this.uploadProgress.set({ total, current: 0, failed: 0 });
+    this.failedFiles.set([]);
+
+    const description = this.photoDescription();
+    let completed = 0;
+    let failedCount = 0;
+
+    this.selectedFiles.forEach(file => {
       const formData = new FormData();
       formData.append('photo', file);
       const finalDesc = description || file.name.split('.').slice(0, -1).join('.');
       formData.append('description', finalDesc);
-      return this.reformaService.uploadPhoto(pId, folder.id, formData);
-    });
 
-    let completed = 0;
-    uploads.forEach(u => {
-      u.subscribe(() => {
-        completed++;
-        if (completed === uploads.length) {
-          this.galleryResource.reload();
-          this.closeAddPhoto();
-          this.selectedFiles = [];
+      this.reformaService.uploadPhoto(pId, folder.id, formData).subscribe({
+        next: () => {
+          completed++;
+          this.uploadProgress.update(p => ({ ...p, current: completed }));
+          this.checkUploadComplete(completed, failedCount, total);
+        },
+        error: (err) => {
+          completed++;
+          failedCount++;
+          const errorMsg = err.error?.error || 'Error desconocido';
+          this.failedFiles.update(f => [...f, `${file.name}: ${errorMsg}`]);
+          this.uploadProgress.update(p => ({ ...p, current: completed, failed: failedCount }));
+          this.checkUploadComplete(completed, failedCount, total);
         }
       });
     });
+  }
+
+  private checkUploadComplete(completed: number, failed: number, total: number) {
+    if (completed === total) {
+      this.galleryResource.reload();
+      if (failed === 0) {
+        this.closeAddPhoto();
+      } else {
+        this.isUploadingPhotos.set(false);
+      }
+    }
   }
 
   updatePhotoDescription(photoId: string, newDescription: string) {
@@ -183,12 +244,26 @@ export class RenovationManagerComponent {
     });
   }
 
-  createFolder(name: string) {
+  createFolder() {
+    const name = this.newFolderName();
+    if (!name.trim()) {
+      this.notificationService.warning('Campo Requerido', 'Por favor, introduce un nombre para la carpeta.');
+      return;
+    }
+
     const pId = this.reformaService.activePropertyId();
     if (!pId) return;
-    this.reformaService.createFolder(pId, name).subscribe(() => {
-      this.galleryResource.reload();
-      this.closeAddFolder();
+
+    this.reformaService.createFolder(pId, name).subscribe({
+      next: () => {
+        this.galleryResource.reload();
+        this.closeAddFolder();
+        this.newFolderName.set('');
+      },
+      error: (err) => {
+        const errorMsg = err.error?.error || 'No se pudo crear la carpeta.';
+        this.notificationService.error('Error al Crear Carpeta', errorMsg);
+      }
     });
   }
 

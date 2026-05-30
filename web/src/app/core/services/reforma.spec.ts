@@ -1,13 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ReformaService } from './reforma';
 
-import { Reforma } from './reforma';
-
-describe('Reforma', () => {
-  let service: Reforma;
+describe('ReformaService', () => {
+  let service: ReformaService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Reforma);
+    TestBed.configureTestingModule({
+      providers: [
+        ReformaService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ]
+    });
+    service = TestBed.inject(ReformaService);
   });
 
   it('should be created', () => {

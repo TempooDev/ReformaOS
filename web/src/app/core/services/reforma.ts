@@ -1,5 +1,5 @@
 import { HttpClient, httpResource } from '@angular/common/http';
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { inject, Injectable, signal, computed, effect } from '@angular/core';
 import { 
   Property, PropertyPhase, MortgageProposal, 
   RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unidad, Expense
@@ -10,7 +10,7 @@ import {
 })
 export class ReformaService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api';
+  public apiUrl = 'http://localhost:8080/api';
 
   // Usamos httpResource para una carga reactiva y automática
   unidadesResource = httpResource<Unidad[]>(() => `${this.apiUrl}/unidades`);
@@ -23,11 +23,13 @@ export class ReformaService {
   activePropertyId = signal<string | null>(null);
 
   constructor() {
-    // Inicializamos el activePropertyId cuando carguen las propiedades
-    const properties = this.propertiesResource.value;
-    if (properties()?.length && !this.activePropertyId()) {
-      this.activePropertyId.set(properties()![0].id);
-    }
+    // Inicializamos el activePropertyId de forma limpia cuando carguen las propiedades
+    effect(() => {
+      const props = this.propertiesResource.value();
+      if (props && props.length > 0 && !this.activePropertyId()) {
+        this.activePropertyId.set(props[0].id);
+      }
+    });
   }
 
   // Los métodos de carga manual ya no son necesarios con httpResource,
