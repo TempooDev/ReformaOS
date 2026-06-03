@@ -68,6 +68,12 @@ export const routes: Routes = [
         data: { roles: [UserRole.OWNER, UserRole.ARCHITECT, UserRole.MANAGER] }
       },
       {
+        path: 'maintenance',
+        loadComponent: () => import('./features/maintenance/maintenance').then(m => m.MaintenanceComponent),
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.OWNER, UserRole.MANAGER] }
+      },
+      {
         path: 'wealth-evolution',
         loadComponent: () => import('./features/evolucion-patrimonial/evolucion-patrimonial').then(m => m.EvolucionPatrimonialComponent),
         canActivate: [roleGuard],

@@ -28,6 +28,7 @@
 
   @if (reformaService.properties().length > 0) {
     @let activeProp = reformaService.properties().find(p => p.id === reformaService.activePropertyId());
+    
     @if (activeProp) {
       <!-- Selected Property Details -->
       <div class="mb-8 p-6 bg-surface-container-low rounded-2xl border border-surface-variant/10 flex flex-wrap gap-8 items-center animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
@@ -55,119 +56,105 @@
 
     <!-- 4 Summary Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-    <!-- Facturas Pendientes (Solo Dueño y Gestor) -->
-    @if (authService.getRole() !== authService.Role.ARCHITECT) {
-      <a routerLink="/expenses" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-primary/20 transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer">
-        <div class="flex justify-between items-start">
-          <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined">receipt_long</span>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-1 bg-red-50 text-red-600 rounded uppercase tracking-widest">Urgent</span>
-        </div>
-        <div>
-          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Unpaid Invoices</h4>
-          <p class="font-headline text-3xl font-extrabold text-primary">3</p>
-          <p class="text-xs font-medium text-red-600 mt-1 tabular-nums">Total: €4,250.00</p>
-        </div>
-      </a>
-
-      <!-- Alquiler sin pagar (Solo Dueño y Gestor) -->
-      <a routerLink="/monthly-rental" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-primary/20 transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer">
-        <div class="flex justify-between items-start">
-          <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined">warning</span>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-1 bg-yellow-50 text-yellow-700 rounded uppercase tracking-widest">Warning</span>
-        </div>
-        <div>
-          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Pending Rent</h4>
-          <p class="font-headline text-3xl font-extrabold text-primary">1</p>
-          <p class="text-xs font-medium text-secondary mt-1 tabular-nums">Unit: Downtown</p>
-        </div>
-      </a>
-
-      <!-- Estado de la Hipoteca (Solo Dueño y Gestor) -->
-      <a routerLink="/renovation" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-primary/20 transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer">
-        <div class="flex justify-between items-start">
-          <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined">real_estate_agent</span>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-1 bg-green-50 text-green-700 rounded uppercase tracking-widest">Up to date</span>
-        </div>
-        <div>
-          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Mortgage Status</h4>
-          <p class="font-headline text-2xl font-extrabold text-primary">Approved</p>
-          <p class="text-xs font-medium text-secondary mt-1">Santander (Fixed 2.8%)</p>
-        </div>
-      </a>
-    }
-
-    <!-- Estado de la Reforma (Visible para TODOS) -->
-    <a routerLink="/renovation" class="bg-primary text-white p-6 rounded-xl shadow-lg shadow-primary/20 hover:-translate-y-1 transition-transform duration-300 group flex flex-col justify-between min-h-[160px] cursor-pointer relative overflow-hidden" [class.col-span-full]="authService.getRole() === authService.Role.ARCHITECT">
-      <div class="absolute -bottom-6 -right-6 opacity-10 group-hover:scale-110 transition-transform">
-        <span class="material-symbols-outlined text-[100px]">architecture</span>
-      </div>
-      <div class="relative z-10 flex justify-between items-start">
-        <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white">
-          <span class="material-symbols-outlined">timeline</span>
-        </div>
-        <span class="text-[10px] font-bold px-2 py-1 bg-white/20 text-white rounded uppercase tracking-widest">In Progress</span>
-      </div>
-      <div class="relative z-10">
-        <h4 class="text-xs font-bold text-primary-fixed uppercase tracking-widest mb-1">Renovation Status</h4>
-        <p class="font-headline text-3xl font-extrabold">35%</p>
-        <div class="w-full h-1 bg-white/20 rounded-full mt-2 overflow-hidden">
-          <div class="h-full bg-white w-[35%]"></div>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Recent Activity -->
-  <div class="bg-surface-container-low p-8 rounded-xl">
-    <div class="flex justify-between items-center mb-6">
-      <h5 class="font-headline font-bold text-lg text-primary">Recent Activity</h5>
-      <button class="text-xs font-bold text-secondary hover:underline">View all history</button>
-
-    </div>
-    <div class="space-y-4">
-      <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-slate-50">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded bg-green-50 flex items-center justify-center text-green-600">
-            <span class="material-symbols-outlined">south_west</span>
+      <!-- Facturas Pendientes (Solo Dueño y Gestor) -->
+      @if (authService.getRole() !== authService.Role.ARCHITECT) {
+        <a routerLink="/expenses" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-primary/20 transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer">
+          <div class="flex justify-between items-start">
+            <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+            @if (pendingExpenses().count > 0) {
+              <span class="text-[10px] font-bold px-2 py-1 bg-red-50 text-red-600 rounded uppercase tracking-widest">Urgent</span>
+            }
           </div>
           <div>
-            <p class="text-sm font-bold text-on-surface">Rental Income</p>
-            <p class="text-xs text-on-surface-variant">North Apartment</p>
+            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Unpaid Invoices</h4>
+            <p class="font-headline text-3xl font-extrabold text-primary">{{ pendingExpenses().count }}</p>
+            <p class="text-xs font-medium text-red-600 mt-1 tabular-nums">Total: €{{ pendingExpenses().total | number:'1.2-2' }}</p>
           </div>
-        </div>
-        <span class="text-green-600 font-bold tabular-nums">+€850.00</span>
-      </div>
-      <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-slate-50">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded bg-red-50 flex items-center justify-center text-red-600">
-            <span class="material-symbols-outlined">north_east</span>
-          </div>
-          <div>
-            <p class="text-sm font-bold text-on-surface">Renovation Materials Payment</p>
-            <p class="text-xs text-on-surface-variant">Phase 2: Structure</p>
-          </div>
-        </div>
-        <span class="text-red-600 font-bold tabular-nums">-€1,240.50</span>
-      </div>
-      <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-slate-50">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
-            <span class="material-symbols-outlined">description</span>
+        </a>
+
+        <!-- Alquiler sin pagar (Solo Dueño y Gestor) -->
+        <a routerLink="/monthly-rental" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-primary/20 transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer">
+          <div class="flex justify-between items-start">
+            <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined">warning</span>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-1 bg-yellow-50 text-yellow-700 rounded uppercase tracking-widest">Normal</span>
           </div>
           <div>
-            <p class="text-sm font-bold text-on-surface">New Invoice Uploaded</p>
-            <p class="text-xs text-on-surface-variant">Pending Review</p>
+            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Pending Rent</h4>
+            <p class="font-headline text-3xl font-extrabold text-primary">0</p>
+            <p class="text-xs font-medium text-secondary mt-1 tabular-nums">Status: Balanced</p>
+          </div>
+        </a>
+
+        <!-- Estado de la Hipoteca (Solo Dueño y Gestor) -->
+        <a routerLink="/renovation" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-primary/20 transition-all group flex flex-col justify-between min-h-[160px] cursor-pointer">
+          <div class="flex justify-between items-start">
+            <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined">real_estate_agent</span>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-1 bg-green-50 text-green-700 rounded uppercase tracking-widest">{{ activeMortgage() ? 'Active' : 'No Loan' }}</span>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Mortgage Rate</h4>
+            <p class="font-headline text-2xl font-extrabold text-primary">{{ activeMortgage()?.interest_rate || '--' }}%</p>
+            <p class="text-xs font-medium text-secondary mt-1">{{ activeMortgage()?.provider || 'N/A' }} ({{ activeMortgage()?.type || 'N/A' }})</p>
+          </div>
+        </a>
+      }
+
+      <!-- Estado de la Reforma (Visible para TODOS) -->
+      <a routerLink="/renovation" class="bg-primary text-white p-6 rounded-xl shadow-lg shadow-primary/20 hover:-translate-y-1 transition-transform duration-300 group flex flex-col justify-between min-h-[160px] cursor-pointer relative overflow-hidden" [class.col-span-full]="authService.getRole() === authService.Role.ARCHITECT">
+        <div class="absolute -bottom-6 -right-6 opacity-10 group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-[100px]">architecture</span>
+        </div>
+        <div class="relative z-10 flex justify-between items-start">
+          <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white">
+            <span class="material-symbols-outlined">timeline</span>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-1 bg-white/20 text-white rounded uppercase tracking-widest">In Progress</span>
+        </div>
+        <div class="relative z-10">
+          <h4 class="text-xs font-bold text-primary-fixed uppercase tracking-widest mb-1">Renovation Status</h4>
+          <p class="font-headline text-3xl font-extrabold">{{ renovationProgress() }}%</p>
+          <div class="w-full h-1 bg-white/20 rounded-full mt-2 overflow-hidden">
+            <div class="h-full bg-white transition-all duration-1000" [style.width.%]="renovationProgress()"></div>
           </div>
         </div>
-        <span class="text-secondary font-bold tabular-nums text-xs">Yesterday</span>
+      </a>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-surface-container-low p-8 rounded-xl">
+      <div class="flex justify-between items-center mb-6">
+        <h5 class="font-headline font-bold text-lg text-primary">Recent Activity</h5>
+        <button class="text-xs font-bold text-secondary hover:underline">View all history</button>
+      </div>
+      <div class="space-y-4">
+        @for (activity of recentActivity(); track activity.id) {
+          <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-slate-50">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded bg-red-50 flex items-center justify-center text-red-600">
+                <span class="material-symbols-outlined">north_east</span>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">{{ activity.title }}</p>
+                <p class="text-xs text-on-surface-variant">{{ activity.category }} • {{ activity.unit }}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="font-bold tabular-nums text-red-600">-€{{ activity.amount | number:'1.2-2' }}</p>
+              <p class="text-[10px] text-on-surface-variant uppercase">{{ activity.date | date:'MMM dd' }}</p>
+            </div>
+          </div>
+        }
+        
+        @if (recentActivity().length === 0) {
+          <p class="text-center py-8 text-on-surface-variant italic text-sm">No recent activity found for this property.</p>
+        }
       </div>
     </div>
-    </div>
-    }
-    </section>
+  }
+</section>

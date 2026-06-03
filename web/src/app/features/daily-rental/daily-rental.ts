@@ -1,5 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
-import { DecimalPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { DailyRentalStats, Booking } from '@shared';
 import { StatCardComponent } from '../../core/components/stat-card/stat-card';
@@ -8,7 +8,7 @@ import { ReformaService } from '../../core/services/reforma';
 @Component({
   selector: 'app-daily-rental',
   standalone: true,
-  imports: [DecimalPipe, CommonModule, StatCardComponent],
+  imports: [CommonModule, StatCardComponent],
   templateUrl: './daily-rental.html',
   styleUrl: './daily-rental.css'
 })

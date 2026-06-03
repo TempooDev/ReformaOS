@@ -1,5 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
-import { DecimalPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Property, PropertyPhase, Expense } from '@shared';
 import { StatCardComponent } from '../../core/components/stat-card/stat-card';
@@ -8,7 +8,7 @@ import { ReformaService } from '../../core/services/reforma';
 @Component({
   selector: 'app-finance-construction',
   standalone: true,
-  imports: [DecimalPipe, CommonModule, StatCardComponent],
+  imports: [CommonModule, StatCardComponent],
   templateUrl: './finance-construction.html',
   styleUrl: './finance-construction.css'
 })

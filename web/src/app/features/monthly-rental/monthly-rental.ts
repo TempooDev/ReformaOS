@@ -1,5 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
-import { DecimalPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Tenant, Transaction } from '@shared';
 import { ReformaService } from '../../core/services/reforma';
@@ -7,7 +7,7 @@ import { ReformaService } from '../../core/services/reforma';
 @Component({
   selector: 'app-monthly-rental',
   standalone: true,
-  imports: [DecimalPipe, CommonModule],
+  imports: [CommonModule],
   templateUrl: './monthly-rental.html',
   styleUrl: './monthly-rental.css'
 })

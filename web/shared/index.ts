@@ -136,6 +136,17 @@ export interface Light {
   brightness: number;
 }
 
+export interface MaintenanceTask {
+  id: string;
+  property_id: string;
+  title: string;
+  description: string;
+  category: string;
+  due_date: string;
+  status: 'Pending' | 'In Progress' | 'Completed';
+  priority: 'Low' | 'Medium' | 'High';
+}
+
 export interface PropertyStats {
   totalBudget: number;
   totalSpent: number;

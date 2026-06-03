@@ -1,5 +1,5 @@
 import { Component, inject, computed, signal } from '@angular/core';
-import { DecimalPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Property, MortgageProposal, AmortizationMilestone } from '@shared';
 import { ReformaService } from '../../core/services/reforma';
@@ -7,7 +7,7 @@ import { ReformaService } from '../../core/services/reforma';
 @Component({
   selector: 'app-evolucion-patrimonial',
   standalone: true,
-  imports: [DecimalPipe, CommonModule],
+  imports: [CommonModule],
   templateUrl: './evolucion-patrimonial.html',
   styleUrl: './evolucion-patrimonial.css'
 })

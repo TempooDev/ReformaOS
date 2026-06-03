@@ -15,6 +15,7 @@ import (
 	"github.com/tempoodev/reformaos/api/internal/domotica"
 	"github.com/tempoodev/reformaos/api/internal/expense"
 	"github.com/tempoodev/reformaos/api/internal/gallery"
+	"github.com/tempoodev/reformaos/api/internal/maintenance"
 	"github.com/tempoodev/reformaos/api/internal/mortgage"
 	"github.com/tempoodev/reformaos/api/internal/phase"
 	"github.com/tempoodev/reformaos/api/internal/property"
@@ -49,6 +50,7 @@ func main() {
 		&rental.RentalTransaction{},
 		&domotica.Camera{},
 		&domotica.Light{},
+		&maintenance.MaintenanceTask{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
@@ -68,6 +70,7 @@ func main() {
 	expenseHandler := expense.NewHandler(storageService)
 	rentalHandler := rental.NewHandler()
 	domoticaHandler := domotica.NewHandler()
+	maintenanceHandler := maintenance.NewHandler()
 
 	// Initialize Echo
 	e := echo.New()
@@ -130,6 +133,11 @@ func main() {
 	api.GET("/properties/:propertyId/cameras", domoticaHandler.GetCameras)
 	api.GET("/properties/:propertyId/lights", domoticaHandler.GetLights)
 	api.PUT("/lights/:id", domoticaHandler.UpdateLight)
+
+	// Maintenance
+	api.GET("/properties/:propertyId/maintenance", maintenanceHandler.GetByProperty)
+	api.POST("/properties/:propertyId/maintenance", maintenanceHandler.Create)
+	api.PUT("/maintenance/:id", maintenanceHandler.Update)
 
 	api.GET("/units", func(c echo.Context) error {
 		units := []map[string]interface{}{
@@ -311,6 +319,14 @@ func seedData() {
 			{ID: "LGT-3", PropertyID: p.ID, Name: "Bedroom", Status: true, Brightness: 40},
 		}
 		config.DB.Create(&lights)
+
+		// Seed Maintenance
+		maintenanceTasks := []maintenance.MaintenanceTask{
+			{ID: "MNT-1", PropertyID: p.ID, Title: "Boiler Service", Description: "Annual maintenance for the heating system.", Category: "HVAC", DueDate: time.Now().AddDate(0, 0, 7), Status: "Pending", Priority: "Medium"},
+			{ID: "MNT-2", PropertyID: p.ID, Title: "Pool Cleaning", Description: "Regular pool cleaning and chemical check.", Category: "Cleaning", DueDate: time.Now().AddDate(0, 0, 2), Status: "In Progress", Priority: "High"},
+			{ID: "MNT-3", PropertyID: p.ID, Title: "Garden Irrigation Repair", Description: "Fix the broken sprinkler in the back garden.", Category: "Garden", DueDate: time.Now().AddDate(0, 0, -1), Status: "Completed", Priority: "Low"},
+		}
+		config.DB.Create(&maintenanceTasks)
 
 		// Ensure bucket exists in Minio
 		err := config.EnsureBucketExists(context.Background(), p.Bucket)

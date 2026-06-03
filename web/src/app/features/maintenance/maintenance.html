@@ -1,0 +1,118 @@
+<div class="pt-24 px-10 pb-16 min-h-screen">
+  <!-- Page Header -->
+  <div class="mb-12 flex items-end justify-between">
+    <div>
+      <span class="text-on-surface-variant font-bold text-xs uppercase tracking-[0.2em] mb-2 block">Asset Integrity</span>
+      <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Maintenance Hub.</h2>
+    </div>
+    <div class="text-right">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container/30 text-on-secondary-container rounded-full border border-secondary-container/50 text-sm font-bold mt-2">
+        <span class="material-symbols-outlined text-sm">engineering</span>
+        {{ pendingTasks().length }} Pending Tasks
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-12 gap-8">
+    <!-- Tasks List -->
+    <section class="col-span-12 lg:col-span-7 space-y-8">
+      <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-slate-50">
+        <h3 class="font-headline text-xl font-bold text-primary mb-8 flex items-center gap-2">
+          <span class="material-symbols-outlined">list_alt</span>
+          Pending Operations
+        </h3>
+        
+        <div class="space-y-4">
+          @for (task of pendingTasks(); track task.id) {
+            <div class="p-6 rounded-xl border border-transparent bg-surface-container-low hover:border-secondary/30 transition-all group">
+              <div class="flex justify-between items-start">
+                <div class="flex gap-4">
+                  <button (click)="toggleStatus(task)" 
+                          class="w-6 h-6 rounded border-2 border-secondary/30 flex items-center justify-center hover:bg-secondary/10 transition-colors">
+                    <span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity">check</span>
+                  </button>
+                  <div>
+                    <h4 class="font-bold text-primary">{{ task.title }}</h4>
+                    <p class="text-sm text-on-surface-variant mt-1">{{ task.description }}</p>
+                    <div class="flex gap-3 mt-4">
+                      <span class="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                        {{ task.category }}
+                      </span>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest"
+                            [class.bg-red-50]="task.priority === 'High'"
+                            [class.text-red-700]="task.priority === 'High'"
+                            [class.bg-yellow-50]="task.priority === 'Medium'"
+                            [class.text-yellow-700]="task.priority === 'Medium'"
+                            [class.bg-blue-50]="task.priority === 'Low'"
+                            [class.text-blue-700]="task.priority === 'Low'">
+                        {{ task.priority }} Priority
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Due Date</p>
+                  <p class="text-sm font-bold text-primary mt-1">{{ task.due_date | date:'dd MMM, yyyy' }}</p>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="py-12 text-center text-on-surface-variant italic">
+              All systems go. No pending tasks.
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Completed Tasks (Hidden by default or summary) -->
+      @if (completedTasks().length > 0) {
+        <div class="bg-surface-container-low/50 p-6 rounded-xl border border-slate-50">
+          <button class="w-full flex justify-between items-center text-on-surface-variant hover:text-primary transition-colors">
+            <span class="text-xs font-bold uppercase tracking-widest">Recently Completed ({{ completedTasks().length }})</span>
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+        </div>
+      }
+    </section>
+
+    <!-- Calendar View -->
+    <section class="col-span-12 lg:col-span-5 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-slate-50 h-fit">
+      <h3 class="font-headline text-xl font-bold text-primary mb-8 flex items-center gap-2">
+        <span class="material-symbols-outlined">calendar_month</span>
+        Schedule
+      </h3>
+      
+      <div class="space-y-10">
+        @for (group of groupedTasks(); track group.month) {
+          <div>
+            <h4 class="text-[10px] font-bold text-secondary uppercase tracking-[0.3em] mb-4 border-b border-surface-container-high pb-2">
+              {{ group.month }}
+            </h4>
+            <div class="space-y-6 relative pl-4 border-l-2 border-surface-container-high ml-2">
+              @for (task of group.tasks; track task.id) {
+                <div class="relative">
+                  <div class="absolute -left-[25px] top-1 w-4 h-4 rounded-full border-2 border-white"
+                       [class.bg-primary]="task.status === 'Completed'"
+                       [class.bg-secondary]="task.status === 'In Progress'"
+                       [class.bg-slate-300]="task.status === 'Pending'"></div>
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <p class="text-sm font-bold text-primary">{{ task.title }}</p>
+                      <p class="text-[10px] text-on-surface-variant font-medium mt-0.5">{{ task.due_date | date:'EEEE, dd' }}</p>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-on-surface-variant/50">{{ task.status }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="py-12 text-center">
+            <span class="material-symbols-outlined text-4xl text-slate-200 mb-2">event_busy</span>
+            <p class="text-sm text-slate-400">No events scheduled</p>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</div>

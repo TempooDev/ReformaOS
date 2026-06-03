@@ -1,0 +1,12 @@
+/* Maintenance Hub Specific Styles */
+:host {
+    display: block;
+}
+
+.status-monolith {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
