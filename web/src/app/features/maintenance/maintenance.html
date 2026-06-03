@@ -127,22 +127,28 @@
 <!-- Add Task Modal -->
 <app-modal [isOpen]="isAddModalOpen()" (close)="isAddModalOpen.set(false)" title="Register New Operation">
   <div class="space-y-6">
-    <app-form-field label="Task Title" [error]="newTaskForm.fields.title.error()">
-      <input [(ngModel)]="newTaskModel().title" 
-             class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none" 
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Task Title</label>
+      <input [formField]="newTaskForm.title" type="text" 
+             class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" 
              placeholder="e.g. Annual Boiler Review">
-    </app-form-field>
+      @if (newTaskForm.title().touched() && newTaskForm.title().errors().length) {
+        <span class="text-[10px] text-error font-bold mt-1 block">{{ newTaskForm.title().errors()[0].message }}</span>
+      }
+    </div>
 
-    <app-form-field label="Description">
-      <textarea [(ngModel)]="newTaskModel().description" 
-                class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none min-h-[100px]" 
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Description</label>
+      <textarea [formField]="newTaskForm.description" 
+                class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary min-h-[100px]" 
                 placeholder="Details of the maintenance task..."></textarea>
-    </app-form-field>
+    </div>
 
     <div class="grid grid-cols-2 gap-4">
-      <app-form-field label="Category">
-        <select [(ngModel)]="newTaskModel().category" 
-                class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none">
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Category</label>
+        <select [formField]="newTaskForm.category" 
+                class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 text-xs font-bold uppercase text-primary">
           <option value="Plumbing">Plumbing</option>
           <option value="Electrical">Electrical</option>
           <option value="Cleaning">Cleaning</option>
@@ -150,26 +156,34 @@
           <option value="Garden">Garden</option>
           <option value="Other">Other</option>
         </select>
-      </app-form-field>
+      </div>
 
-      <app-form-field label="Priority">
-        <select [(ngModel)]="newTaskModel().priority" 
-                class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none">
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Priority</label>
+        <select [formField]="newTaskForm.priority" 
+                class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 text-xs font-bold uppercase text-primary">
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>
           <option value="High">High</option>
         </select>
-      </app-form-field>
+      </div>
     </div>
 
-    <app-form-field label="Due Date" [error]="newTaskForm.fields.due_date.error()">
-      <input type="date" [(ngModel)]="newTaskModel().due_date" 
-             class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none">
-    </app-form-field>
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Due Date</label>
+      <input type="date" [formField]="newTaskForm.due_date" 
+             class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 font-bold text-primary">
+      @if (newTaskForm.due_date().touched() && newTaskForm.due_date().errors().length) {
+        <span class="text-[10px] text-error font-bold mt-1 block">{{ newTaskForm.due_date().errors()[0].message }}</span>
+      }
+    </div>
 
     <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-50">
-      <button (click)="isAddModalOpen.set(false)" class="px-6 py-2 text-sm font-bold text-secondary uppercase tracking-widest hover:underline">Cancel</button>
-      <button (click)="createMaintenanceTask()" class="px-8 py-2 bg-primary text-white rounded-lg text-sm font-bold uppercase tracking-widest hover:brightness-110 transition-all">Save Task</button>
+      <button (click)="isAddModalOpen.set(false)" class="px-6 py-4 rounded-xl text-xs font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-all">Cancel</button>
+      <button (click)="createMaintenanceTask()" [disabled]="newTaskForm().invalid()" 
+              class="px-8 py-4 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+        Save Task
+      </button>
     </div>
   </div>
 </app-modal>

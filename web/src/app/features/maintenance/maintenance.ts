@@ -73,7 +73,7 @@ export class MaintenanceComponent {
     const newStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
     this.reformaService.updateMaintenanceTask(task.id, { status: newStatus }).subscribe(() => {
       this.tasksResource.reload();
-      this.notificationService.show('Estado de tarea actualizado', 'success');
+      this.notificationService.success('Task updated', 'The task status has been successfully updated.');
     });
   }
 
@@ -96,10 +96,10 @@ export class MaintenanceComponent {
             priority: 'Medium',
             due_date: new Date().toISOString().split('T')[0]
           });
-          this.notificationService.show('Tarea creada correctamente', 'success');
+          this.notificationService.success('Task created', 'The maintenance operation has been registered.');
         },
         error: () => {
-          this.notificationService.show('Error al crear la tarea', 'error');
+          this.notificationService.error('Error', 'Could not create the maintenance task.');
         }
       });
     });
