@@ -69,6 +69,14 @@ export class ReformaService {
     return `${this.apiUrl}/properties/${propertyId}/rental-stats`;
   }
 
+  getTenantUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/tenant`;
+  }
+
+  getTransactionsUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/transactions`;
+  }
+
   // Métodos de mutación (POST/PUT/DELETE) se mantienen con HttpClient
   updateProperty(id: string, prop: Partial<Property>) {
     return this.http.put<Property>(`${this.apiUrl}/properties/${id}`, prop);

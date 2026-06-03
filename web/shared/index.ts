@@ -176,15 +176,21 @@ export interface Booking {
 }
 
 export interface Tenant {
+  id: string;
+  property_id: string;
   name: string;
   location: string;
   image: string;
   rent: number;
-  nextPayment: string;
+  start_date: string;
+  next_payment: string;
   deposit: number;
 }
 
 export interface Transaction {
+  id: string;
+  property_id: string;
+  tenant_id: string;
   title: string;
   date: string;
   amount: number;

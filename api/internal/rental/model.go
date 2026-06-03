@@ -24,3 +24,29 @@ type DailyRentalStats struct {
 	RevenueMonth      float64 `json:"revenue_month"`      // Total revenue this month
 	UpcomingCheckouts int     `json:"upcoming_checkouts"` // Count
 }
+
+type Tenant struct {
+	ID         string    `gorm:"primaryKey" json:"id"`
+	PropertyID string    `gorm:"index" json:"property_id"`
+	Name       string    `json:"name"`
+	Location   string    `json:"location"`
+	Image      string    `json:"image"`
+	Rent       float64   `json:"rent"`
+	StartDate  time.Time `json:"start_date"`
+	NextPayment time.Time `json:"next_payment"`
+	Deposit    float64   `json:"deposit"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+type RentalTransaction struct {
+	ID         string    `gorm:"primaryKey" json:"id"`
+	PropertyID string    `gorm:"index" json:"property_id"`
+	TenantID   string    `gorm:"index" json:"tenant_id"`
+	Title      string    `json:"title"`
+	Date       time.Time `json:"date"`
+	Amount     float64   `json:"amount"`
+	Status     string    `json:"status"` // Success, Pending, Failed
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}

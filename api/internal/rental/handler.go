@@ -23,6 +23,24 @@ func (h *Handler) GetByProperty(c echo.Context) error {
 	return c.JSON(http.StatusOK, bookings)
 }
 
+func (h *Handler) GetTenantByProperty(c echo.Context) error {
+	propertyID := c.Param("propertyId")
+	var tenant Tenant
+	if err := config.DB.Where("property_id = ?", propertyID).First(&tenant).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Tenant not found"})
+	}
+	return c.JSON(http.StatusOK, tenant)
+}
+
+func (h *Handler) GetTransactionsByProperty(c echo.Context) error {
+	propertyID := c.Param("propertyId")
+	var transactions []RentalTransaction
+	if err := config.DB.Where("property_id = ?", propertyID).Order("date desc").Find(&transactions).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not fetch transactions"})
+	}
+	return c.JSON(http.StatusOK, transactions)
+}
+
 func (h *Handler) GetStats(c echo.Context) error {
 	propertyID := c.Param("propertyId")
 	

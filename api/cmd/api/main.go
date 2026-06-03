@@ -44,6 +44,8 @@ func main() {
 		&document.DocumentOrInvoice{},
 		&expense.Expense{},
 		&rental.Booking{},
+		&rental.Tenant{},
+		&rental.RentalTransaction{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
@@ -116,6 +118,8 @@ func main() {
 	// Rentals
 	api.GET("/properties/:propertyId/bookings", rentalHandler.GetByProperty)
 	api.GET("/properties/:propertyId/rental-stats", rentalHandler.GetStats)
+	api.GET("/properties/:propertyId/tenant", rentalHandler.GetTenantByProperty)
+	api.GET("/properties/:propertyId/transactions", rentalHandler.GetTransactionsByProperty)
 	api.POST("/properties/:propertyId/bookings", rentalHandler.Create)
 
 	api.GET("/units", func(c echo.Context) error {
@@ -263,6 +267,27 @@ func seedData() {
 			},
 		}
 		config.DB.Create(&bookings)
+
+		// Seed Tenant
+		t := rental.Tenant{
+			ID:          "TNT-1",
+			PropertyID:  p.ID,
+			Name:        "Julian M. Rodriguez",
+			Location:    "Calle de Velázquez 45, Apt 4B",
+			Image:       "https://lh3.googleusercontent.com/aida-public/AB6AXuCX0pqTqqB0g7LRGcBnaAofBJGPEIigyndCeS6mrMGZCGNr_eCZjDyUERIWQLm-M5i2hs6E7EPeuvQmyYLx768RvH6A7YTohBx_D5k2oabjT-dqQ9rT--QPk-hMQHKvRn-zDEandLwXDXCUH9nJgpprbSbzGetdduuu3h_Wyp_RPjb1TurF9nTgUyt3blz3u_LXxazeLP8fQr6ldwCrUtwuArqaOBXu5dTV7SFtQ2Y_LTxBLcvKezxHsGSst-0UP4yqGfbd2emAA2g",
+			Rent:        2450.0,
+			StartDate:   time.Now().AddDate(-1, 0, 0),
+			NextPayment: time.Now().AddDate(0, 1, 0),
+			Deposit:     4900.0,
+		}
+		config.DB.Create(&t)
+
+		// Seed Transactions
+		transactions := []rental.RentalTransaction{
+			{ID: "TRX-1", PropertyID: p.ID, TenantID: t.ID, Title: "September 2024 Rent", Date: time.Now().AddDate(0, 0, -5), Amount: 2450.0, Status: "Success"},
+			{ID: "TRX-2", PropertyID: p.ID, TenantID: t.ID, Title: "August 2024 Rent", Date: time.Now().AddDate(0, -1, -5), Amount: 2450.0, Status: "Success"},
+		}
+		config.DB.Create(&transactions)
 
 		// Ensure bucket exists in Minio
 		err := config.EnsureBucketExists(context.Background(), p.Bucket)

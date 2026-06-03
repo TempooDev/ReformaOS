@@ -1,26 +1,31 @@
-import { Component, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { Component, inject, computed } from '@angular/core';
+import { DecimalPipe, CommonModule } from '@angular/common';
+import { httpResource } from '@angular/common/http';
 import { Tenant, Transaction } from '@shared';
+import { ReformaService } from '../../core/services/reforma';
 
 @Component({
   selector: 'app-monthly-rental',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, CommonModule],
   templateUrl: './monthly-rental.html',
   styleUrl: './monthly-rental.css'
 })
 export class MonthlyRentalComponent {
-  tenant = input<Tenant>({
-    name: 'Julian M. Rodriguez',
-    location: 'Calle de Velázquez 45, Apt 4B',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCX0pqTqqB0g7LRGcBnaAofBJGPEIigyndCeS6mrMGZCGNr_eCZjDyUERIWQLm-M5i2hs6E7EPeuvQmyYLx768RvH6A7YTohBx_D5k2oabjT-dqQ9rT--QPk-hMQHKvRn-zDEandLwXDXCUH9nJgpprbSbzGetdduuu3h_Wyp_RPjb1TurF9nTgUyt3blz3u_LXxazeLP8fQr6ldwCrUtwuArqaOBXu5dTV7SFtQ2Y_LTxBLcvKezxHsGSst-0UP4yqGfbd2emAA2g',
-    rent: 2450,
-    nextPayment: 'Oct 01',
-    deposit: 4900
-  });
+  private reformaService = inject(ReformaService);
 
-  transactions = input<Transaction[]>([
-    { title: 'September 2024 Rent', date: 'Sep 02, 2024', amount: 2450, status: 'Success' },
-    { title: 'August 2024 Rent', date: 'Aug 01, 2024', amount: 2450, status: 'Success' }
-  ]);
+  // --- Resources ---
+  activeId = computed(() => this.reformaService.activePropertyId());
+
+  tenantResource = httpResource<Tenant>(() => 
+    this.activeId() ? this.reformaService.getTenantUrl(this.activeId()!) : undefined
+  );
+
+  transactionsResource = httpResource<Transaction[]>(() => 
+    this.activeId() ? this.reformaService.getTransactionsUrl(this.activeId()!) : undefined
+  );
+
+  // --- Derived Signals ---
+  tenant = computed(() => this.tenantResource.value() ?? null);
+  transactions = computed(() => this.transactionsResource.value() ?? []);
 }
