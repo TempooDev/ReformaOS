@@ -180,6 +180,7 @@ func seedData() {
 			Budget:             150000,
 			AcquisitionPrice:   240000,
 			ProjectedValue:     385000,
+			AnnualAppreciation: 4.2,
 			Bucket:             "reforma-arroyo",
 			OwnerID:            owner.ID,
 			CadastralReference: "9876543AA1234B0001XY",
@@ -202,6 +203,22 @@ func seedData() {
 			{ID: "PHS-4", PropertyID: p.ID, Name: "Phase 4: Finishes", Progress: 0, Status: config.PhaseStatusPending, Budget: 58000, Spent: 0},
 		}
 		config.DB.Create(&phases)
+
+		// Seed Mortgage
+		m := mortgage.MortgageProposal{
+			ID:             "MTG-1",
+			PropertyID:     p.ID,
+			Provider:       "Banco Santander",
+			Amount:         802320,
+			InterestRate:   3.75,
+			Type:           "Fija",
+			TermMonths:     360,
+			StartDate:      time.Now().AddDate(-5, 0, 0), // 5 years ago
+			MonthlyPayment: 4285.00,
+			Status:         config.StatusApproved,
+			Details:        "Hipotetca de adquisición y reforma con condiciones preferentes.",
+		}
+		config.DB.Create(&m)
 
 		// Ensure bucket exists in Minio
 		err := config.EnsureBucketExists(context.Background(), p.Bucket)

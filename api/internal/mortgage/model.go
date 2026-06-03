@@ -13,6 +13,8 @@ type MortgageProposal struct {
 	Amount         float64        `json:"amount"`
 	InterestRate   float64        `json:"interest_rate"`
 	Type           string         `json:"type"` // Fija, Variable, Mixta
+	TermMonths     int            `json:"term_months"`
+	StartDate      time.Time      `json:"start_date"`
 	Bonuses        pq.StringArray `gorm:"type:text[]" json:"bonuses"`
 	MonthlyPayment float64        `json:"monthly_payment"`
 	Status         string         `json:"status"` // In Review, Approved, Rejected

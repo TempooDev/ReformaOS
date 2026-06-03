@@ -25,6 +25,7 @@ export interface Property {
   budget: number;
   acquisition_price: number;
   projected_value: number;
+  annual_appreciation: number;
   bucket: string;
   owner_id?: string;
   cadastral_reference?: string;
@@ -39,6 +40,8 @@ export interface MortgageProposal {
   amount: number;
   interest_rate: number;
   type: 'Fija' | 'Variable' | 'Mixta';
+  term_months: number;
+  start_date: string;
   bonuses: string[];
   monthly_payment: number;
   status: 'In Review' | 'Approved' | 'Rejected';
