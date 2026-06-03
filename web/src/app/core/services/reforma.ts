@@ -2,7 +2,8 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable, signal, computed, effect } from '@angular/core';
 import { 
   Property, PropertyPhase, MortgageProposal, 
-  RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unit, Expense
+  RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unit, Expense,
+  Light, Camera
 } from '@shared';
 
 @Injectable({
@@ -77,9 +78,21 @@ export class ReformaService {
     return `${this.apiUrl}/properties/${propertyId}/transactions`;
   }
 
+  getCamerasUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/cameras`;
+  }
+
+  getLightsUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/lights`;
+  }
+
   // Métodos de mutación (POST/PUT/DELETE) se mantienen con HttpClient
   updateProperty(id: string, prop: Partial<Property>) {
     return this.http.put<Property>(`${this.apiUrl}/properties/${id}`, prop);
+  }
+
+  updateLight(id: string, light: Partial<Light>) {
+    return this.http.put<Light>(`${this.apiUrl}/lights/${id}`, light);
   }
 
   updatePhasesBatch(propertyId: string, phases: PropertyPhase[]) {

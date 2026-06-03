@@ -1,23 +1,43 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { httpResource } from '@angular/common/http';
 import { Camera, Light } from '@shared';
+import { ReformaService } from '../../core/services/reforma';
 
 @Component({
   selector: 'app-domotica',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './domotica.html',
   styleUrl: './domotica.css'
 })
 export class DomoticaComponent {
-  // Usamos inputs con valores por defecto para mantener el dinamismo
-  cameras = input<Camera[]>([
-    { name: 'Main Entrance', status: 'Live', icon: 'nest_cam_outdoor', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAAa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z' },
-    { name: 'Living Room', status: 'Live', icon: 'videocam', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBb1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5a' },
-  ]);
+  private reformaService = inject(ReformaService);
 
-  lights = input<Light[]>([
-    { name: 'Living Room', status: true, brightness: 80 },
-    { name: 'Kitchen', status: false, brightness: 0 },
-    { name: 'Bedroom', status: true, brightness: 40 },
-  ]);
+  // --- Resources ---
+  activeId = computed(() => this.reformaService.activePropertyId());
+
+  camerasResource = httpResource<Camera[]>(() => 
+    this.activeId() ? this.reformaService.getCamerasUrl(this.activeId()!) : undefined
+  );
+
+  lightsResource = httpResource<Light[]>(() => 
+    this.activeId() ? this.reformaService.getLightsUrl(this.activeId()!) : undefined
+  );
+
+  // --- Derived Signals ---
+  cameras = computed(() => this.camerasResource.value() ?? []);
+  lights = computed(() => this.lightsResource.value() ?? []);
+
+  toggleLight(light: Light) {
+    const updatedStatus = !light.status;
+    const updatedBrightness = updatedStatus ? (light.brightness || 80) : 0;
+    
+    this.reformaService.updateLight(light.id, { 
+      status: updatedStatus,
+      brightness: updatedBrightness 
+    }).subscribe(() => {
+      this.lightsResource.reload();
+    });
+  }
 }

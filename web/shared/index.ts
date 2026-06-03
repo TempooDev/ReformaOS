@@ -120,6 +120,8 @@ export interface Expense {
 }
 
 export interface Camera {
+  id: string;
+  property_id: string;
   name: string;
   status: string;
   icon: string;
@@ -127,6 +129,8 @@ export interface Camera {
 }
 
 export interface Light {
+  id: string;
+  property_id: string;
   name: string;
   status: boolean;
   brightness: number;

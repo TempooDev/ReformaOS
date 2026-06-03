@@ -12,6 +12,7 @@ import (
 	"github.com/tempoodev/reformaos/api/internal/auth"
 	"github.com/tempoodev/reformaos/api/internal/config"
 	"github.com/tempoodev/reformaos/api/internal/document"
+	"github.com/tempoodev/reformaos/api/internal/domotica"
 	"github.com/tempoodev/reformaos/api/internal/expense"
 	"github.com/tempoodev/reformaos/api/internal/gallery"
 	"github.com/tempoodev/reformaos/api/internal/mortgage"
@@ -46,6 +47,8 @@ func main() {
 		&rental.Booking{},
 		&rental.Tenant{},
 		&rental.RentalTransaction{},
+		&domotica.Camera{},
+		&domotica.Light{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
@@ -64,6 +67,7 @@ func main() {
 	documentHandler := document.NewHandler(storageService)
 	expenseHandler := expense.NewHandler(storageService)
 	rentalHandler := rental.NewHandler()
+	domoticaHandler := domotica.NewHandler()
 
 	// Initialize Echo
 	e := echo.New()
@@ -121,6 +125,11 @@ func main() {
 	api.GET("/properties/:propertyId/tenant", rentalHandler.GetTenantByProperty)
 	api.GET("/properties/:propertyId/transactions", rentalHandler.GetTransactionsByProperty)
 	api.POST("/properties/:propertyId/bookings", rentalHandler.Create)
+
+	// Domotica
+	api.GET("/properties/:propertyId/cameras", domoticaHandler.GetCameras)
+	api.GET("/properties/:propertyId/lights", domoticaHandler.GetLights)
+	api.PUT("/lights/:id", domoticaHandler.UpdateLight)
 
 	api.GET("/units", func(c echo.Context) error {
 		units := []map[string]interface{}{
@@ -288,6 +297,20 @@ func seedData() {
 			{ID: "TRX-2", PropertyID: p.ID, TenantID: t.ID, Title: "August 2024 Rent", Date: time.Now().AddDate(0, -1, -5), Amount: 2450.0, Status: "Success"},
 		}
 		config.DB.Create(&transactions)
+
+		// Seed Domotica
+		cameras := []domotica.Camera{
+			{ID: "CAM-1", PropertyID: p.ID, Name: "Main Entrance", Status: "Live", Icon: "nest_cam_outdoor", Image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAAa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z"},
+			{ID: "CAM-2", PropertyID: p.ID, Name: "Living Room", Status: "Live", Icon: "videocam", Image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBBb1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5a"},
+		}
+		config.DB.Create(&cameras)
+
+		lights := []domotica.Light{
+			{ID: "LGT-1", PropertyID: p.ID, Name: "Living Room", Status: true, Brightness: 80},
+			{ID: "LGT-2", PropertyID: p.ID, Name: "Kitchen", Status: false, Brightness: 0},
+			{ID: "LGT-3", PropertyID: p.ID, Name: "Bedroom", Status: true, Brightness: 40},
+		}
+		config.DB.Create(&lights)
 
 		// Ensure bucket exists in Minio
 		err := config.EnsureBucketExists(context.Background(), p.Bucket)
