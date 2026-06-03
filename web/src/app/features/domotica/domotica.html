@@ -2,13 +2,13 @@
   <!-- Page Header -->
   <div class="mb-12 flex items-end justify-between">
     <div>
-      <span class="text-on-surface-variant font-bold text-xs uppercase tracking-[0.2em] mb-2 block">Control Inteligente</span>
-      <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Seguridad y Domótica.</h2>
+      <span class="text-on-surface-variant font-bold text-xs uppercase tracking-[0.2em] mb-2 block">Smart Control</span>
+      <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Security & Automation.</h2>
     </div>
     <div class="text-right">
       <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full border border-green-100 text-sm font-bold">
         <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
-        Sistema Armado y Seguro
+        System Armed & Secure
       </div>
     </div>
   </div>
@@ -20,10 +20,10 @@
       <div class="p-6 border-b border-slate-100 flex justify-between items-center">
         <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
           <span class="material-symbols-outlined">videocam</span>
-          Cámaras de Seguridad
+          Security Cameras
         </h3>
         <div class="flex gap-2">
-          <span class="px-2 py-1 bg-surface-container text-xs font-bold rounded">2 Canales Activos</span>
+          <span class="px-2 py-1 bg-surface-container text-xs font-bold rounded">2 Active Channels</span>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
@@ -54,18 +54,19 @@
     <section class="col-span-12 lg:col-span-4 flex flex-col gap-6">
       <div class="bg-primary text-white p-8 rounded-xl shadow-xl shadow-primary/20 relative overflow-hidden group">
         <div class="relative z-10">
-          <h3 class="font-headline text-2xl font-bold mb-8 tracking-tight">Estado de Alarma</h3>
+          <h3 class="font-headline text-2xl font-bold mb-8 tracking-tight">Alarm Status</h3>
           <div class="flex flex-col items-center justify-center py-6">
             <div class="w-32 h-32 rounded-full border-4 border-on-primary-container flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(247,125,0,0.3)]">
               <span class="material-symbols-outlined text-6xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
             </div>
-            <p class="text-xl font-headline font-bold mb-1">Totalmente Protegido</p>
-            <p class="text-primary-fixed text-sm opacity-80">Armado hace 6h 12m</p>
-          </div>
-          <button class="w-full mt-8 bg-on-primary-container text-white py-4 rounded-xl font-bold text-sm hover:brightness-110 transition-all flex items-center justify-center gap-2">
-            Desarmar Sistema
+            <p class="text-xl font-headline font-bold mb-1">Fully Protected</p>
+            <p class="text-primary-fixed text-sm opacity-80">Armed 6h 12m ago</p>
+            </div>
+            <button class="w-full mt-8 bg-on-primary-container text-white py-4 rounded-xl font-bold text-sm hover:brightness-110 transition-all flex items-center justify-center gap-2">
+            Disarm System
             <span class="material-symbols-outlined text-sm">lock_open</span>
-          </button>
+            </button>
+
         </div>
         <!-- Background Icon -->
         <span class="material-symbols-outlined absolute -bottom-10 -right-10 text-[180px] text-white/5 rotate-12">verified_user</span>
@@ -75,22 +76,22 @@
       <div class="bg-surface-container-low p-6 rounded-xl border border-slate-100">
         <h4 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
           <span class="material-symbols-outlined text-secondary">door_front</span>
-          Cerraduras Inteligentes
+          Smart Locks
         </h4>
         <div class="space-y-3">
           <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-slate-50">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-on-primary-container">lock</span>
-              <span class="text-sm font-bold text-primary">Puerta Principal</span>
+              <span class="text-sm font-bold text-primary">Main Door</span>
             </div>
-            <span class="text-[10px] font-bold text-green-600 uppercase">Cerrada</span>
+            <span class="text-[10px] font-bold text-green-600 uppercase">Locked</span>
           </div>
           <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-slate-50">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-on-primary-container">lock</span>
-              <span class="text-sm font-bold text-primary">Garaje</span>
+              <span class="text-sm font-bold text-primary">Garage</span>
             </div>
-            <span class="text-[10px] font-bold text-green-600 uppercase">Cerrada</span>
+            <span class="text-[10px] font-bold text-green-600 uppercase">Locked</span>
           </div>
         </div>
       </div>
@@ -102,8 +103,8 @@
     <!-- Lighting Control -->
     <section class="col-span-12 lg:col-span-7 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
       <div class="flex justify-between items-center mb-8">
-        <h3 class="font-headline text-2xl font-bold text-primary tracking-tight">Iluminación Inteligente</h3>
-        <button class="text-sm font-bold text-secondary hover:text-primary transition-colors">Apagar Todo</button>
+        <h3 class="font-headline text-2xl font-bold text-primary tracking-tight">Smart Lighting</h3>
+        <button class="text-sm font-bold text-secondary hover:text-primary transition-colors">Turn Off All</button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         @for (light of lights(); track light.name) {
@@ -136,7 +137,7 @@
 
     <!-- Climate Control -->
     <section class="col-span-12 lg:col-span-5 bg-surface-container-low rounded-xl p-8 relative overflow-hidden">
-      <h3 class="font-headline text-2xl font-bold text-primary tracking-tight mb-8">Climatización</h3>
+      <h3 class="font-headline text-2xl font-bold text-primary tracking-tight mb-8">Climate Control</h3>
       <div class="flex flex-col items-center">
         <div class="relative w-48 h-48 flex items-center justify-center">
           <svg class="w-full h-full transform -rotate-90">
@@ -158,11 +159,11 @@
         </div>
         <div class="w-full mt-10 grid grid-cols-2 gap-4">
           <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-50">
-            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Humedad</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Humidity</span>
             <span class="text-lg font-bold text-primary">45%</span>
           </div>
           <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-50">
-            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Exterior</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Outdoor</span>
             <span class="text-lg font-bold text-primary">18°C</span>
           </div>
         </div>

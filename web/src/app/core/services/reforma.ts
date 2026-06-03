@@ -2,7 +2,7 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable, signal, computed, effect } from '@angular/core';
 import { 
   Property, PropertyPhase, MortgageProposal, 
-  RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unidad, Expense
+  RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unit, Expense
 } from '@shared';
 
 @Injectable({
@@ -13,11 +13,11 @@ export class ReformaService {
   public apiUrl = 'http://localhost:8080/api';
 
   // Usamos httpResource para una carga reactiva y automática
-  unidadesResource = httpResource<Unidad[]>(() => `${this.apiUrl}/unidades`);
+  unitsResource = httpResource<Unit[]>(() => `${this.apiUrl}/units`);
   propertiesResource = httpResource<Property[]>(() => `${this.apiUrl}/properties`);
 
   // Signals derivadas para mantener compatibilidad con el resto de la app
-  unidades = computed(() => this.unidadesResource.value() ?? []);
+  units = computed(() => this.unitsResource.value() ?? []);
   properties = computed(() => this.propertiesResource.value() ?? []);
   
   activePropertyId = signal<string | null>(null);

@@ -15,5 +15,5 @@ export class DashboardComponent {
   authService = inject(AuthService);
   
   // These are now computed signals from httpResource
-  unidades = this.reformaService.unidades;
+  units = this.reformaService.units;
 }

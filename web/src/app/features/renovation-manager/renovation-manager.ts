@@ -86,7 +86,7 @@ export class RenovationManagerComponent {
   phasesModel = signal<{ phases: PropertyPhase[] }>({ phases: [] });
   phasesForm = form(this.phasesModel, (s) => {
     applyEach(s.phases, (phase) => {
-      required(phase.name, { message: 'El nombre es obligatorio' });
+      required(phase.name, { message: 'Name is required' });
       min(phase.progress, 0);
       max(phase.progress, 100);
       required(phase.status);
@@ -117,7 +117,7 @@ export class RenovationManagerComponent {
       ...m,
       phases: [
         ...m.phases,
-        { id: newPhaseId, property_id: pId, name: `Nueva Fase`, progress: 0, status: 'Pendiente' }
+        { id: newPhaseId, property_id: pId, name: `New Phase`, progress: 0, status: 'Pending' }
       ]
     }));
   }
@@ -188,8 +188,8 @@ export class RenovationManagerComponent {
 
     if (!folder.id) {
       this.notificationService.error(
-        'Carpeta Inválida',
-        `La carpeta "${folder.name}" no tiene un ID válido. Intenta crear una nueva carpeta para subir fotos.`
+        'Invalid Folder',
+        `The folder "${folder.name}" does not have a valid ID. Please try creating a new folder to upload photos.`
       );
       return;
     }
@@ -218,7 +218,7 @@ export class RenovationManagerComponent {
         error: (err) => {
           completed++;
           failedCount++;
-          const errorMsg = err.error?.error || 'Error desconocido';
+          const errorMsg = err.error?.error || 'Unknown error';
           this.failedFiles.update(f => [...f, `${file.name}: ${errorMsg}`]);
           this.uploadProgress.update(p => ({ ...p, current: completed, failed: failedCount }));
           this.checkUploadComplete(completed, failedCount, total);
@@ -247,7 +247,7 @@ export class RenovationManagerComponent {
   createFolder() {
     const name = this.newFolderName();
     if (!name.trim()) {
-      this.notificationService.warning('Campo Requerido', 'Por favor, introduce un nombre para la carpeta.');
+      this.notificationService.warning('Field Required', 'Please enter a name for the folder.');
       return;
     }
 
@@ -261,8 +261,8 @@ export class RenovationManagerComponent {
         this.newFolderName.set('');
       },
       error: (err) => {
-        const errorMsg = err.error?.error || 'No se pudo crear la carpeta.';
-        this.notificationService.error('Error al Crear Carpeta', errorMsg);
+        const errorMsg = err.error?.error || 'Could not create folder.';
+        this.notificationService.error('Error Creating Folder', errorMsg);
       }
     });
   }

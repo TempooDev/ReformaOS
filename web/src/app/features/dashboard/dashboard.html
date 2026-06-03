@@ -7,7 +7,7 @@
     </div>
     <div class="text-right">
       <p class="text-secondary font-medium tabular-nums text-lg">24 Oct, 2023</p>
-      <p class="text-on-surface-variant text-sm">Actualizado hace 5 min</p>
+      <p class="text-on-surface-variant text-sm">Updated 5 min ago</p>
     </div>
   </div>
 
@@ -32,17 +32,17 @@
       <!-- Selected Property Details -->
       <div class="mb-8 p-6 bg-surface-container-low rounded-2xl border border-surface-variant/10 flex flex-wrap gap-8 items-center animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
         <div class="flex-1 min-w-[200px]">
-          <h3 class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Propiedad Seleccionada</h3>
+          <h3 class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Selected Property</h3>
           <p class="text-2xl font-headline font-extrabold text-primary">{{ activeProp.name }}</p>
           <p class="text-xs text-on-surface-variant font-medium mt-1 flex items-center gap-1">
             <span class="material-symbols-outlined text-sm">location_on</span>
-            {{ activeProp.address || 'Sin dirección' }}
+            {{ activeProp.address || 'No address provided' }}
           </p>
         </div>
         <div class="h-10 w-px bg-surface-variant/20 hidden md:block"></div>
         <div>
-          <h4 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-0.5">Ref. Catastral</h4>
-          <p class="font-mono text-sm font-bold text-on-surface">{{ activeProp.cadastral_reference || 'No disp.' }}</p>
+          <h4 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-0.5">Cadastral Reference</h4>
+          <p class="font-mono text-sm font-bold text-on-surface">{{ activeProp.cadastral_reference || 'N/A' }}</p>
         </div>
 
         @if (authService.getRole() === authService.Role.OWNER) {
@@ -62,10 +62,10 @@
           <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined">receipt_long</span>
           </div>
-          <span class="text-[10px] font-bold px-2 py-1 bg-red-50 text-red-600 rounded uppercase tracking-widest">Urgente</span>
+          <span class="text-[10px] font-bold px-2 py-1 bg-red-50 text-red-600 rounded uppercase tracking-widest">Urgent</span>
         </div>
         <div>
-          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Facturas sin Pagar</h4>
+          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Unpaid Invoices</h4>
           <p class="font-headline text-3xl font-extrabold text-primary">3</p>
           <p class="text-xs font-medium text-red-600 mt-1 tabular-nums">Total: €4,250.00</p>
         </div>
@@ -77,12 +77,12 @@
           <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined">warning</span>
           </div>
-          <span class="text-[10px] font-bold px-2 py-1 bg-yellow-50 text-yellow-700 rounded uppercase tracking-widest">Aviso</span>
+          <span class="text-[10px] font-bold px-2 py-1 bg-yellow-50 text-yellow-700 rounded uppercase tracking-widest">Warning</span>
         </div>
         <div>
-          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Alquileres Pendientes</h4>
+          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Pending Rent</h4>
           <p class="font-headline text-3xl font-extrabold text-primary">1</p>
-          <p class="text-xs font-medium text-secondary mt-1 tabular-nums">Unidad: Centro</p>
+          <p class="text-xs font-medium text-secondary mt-1 tabular-nums">Unit: Downtown</p>
         </div>
       </a>
 
@@ -92,12 +92,12 @@
           <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined">real_estate_agent</span>
           </div>
-          <span class="text-[10px] font-bold px-2 py-1 bg-green-50 text-green-700 rounded uppercase tracking-widest">Al día</span>
+          <span class="text-[10px] font-bold px-2 py-1 bg-green-50 text-green-700 rounded uppercase tracking-widest">Up to date</span>
         </div>
         <div>
-          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Estado Hipoteca</h4>
-          <p class="font-headline text-2xl font-extrabold text-primary">Aprobada</p>
-          <p class="text-xs font-medium text-secondary mt-1">Santander (Fija 2.8%)</p>
+          <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Mortgage Status</h4>
+          <p class="font-headline text-2xl font-extrabold text-primary">Approved</p>
+          <p class="text-xs font-medium text-secondary mt-1">Santander (Fixed 2.8%)</p>
         </div>
       </a>
     }
@@ -111,10 +111,10 @@
         <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white">
           <span class="material-symbols-outlined">timeline</span>
         </div>
-        <span class="text-[10px] font-bold px-2 py-1 bg-white/20 text-white rounded uppercase tracking-widest">En curso</span>
+        <span class="text-[10px] font-bold px-2 py-1 bg-white/20 text-white rounded uppercase tracking-widest">In Progress</span>
       </div>
       <div class="relative z-10">
-        <h4 class="text-xs font-bold text-primary-fixed uppercase tracking-widest mb-1">Estado de Reforma</h4>
+        <h4 class="text-xs font-bold text-primary-fixed uppercase tracking-widest mb-1">Renovation Status</h4>
         <p class="font-headline text-3xl font-extrabold">35%</p>
         <div class="w-full h-1 bg-white/20 rounded-full mt-2 overflow-hidden">
           <div class="h-full bg-white w-[35%]"></div>
@@ -123,11 +123,12 @@
     </a>
   </div>
 
-  <!-- Actividad Reciente -->
+  <!-- Recent Activity -->
   <div class="bg-surface-container-low p-8 rounded-xl">
     <div class="flex justify-between items-center mb-6">
-      <h5 class="font-headline font-bold text-lg text-primary">Actividad Reciente</h5>
-      <button class="text-xs font-bold text-secondary hover:underline">Ver todo el historial</button>
+      <h5 class="font-headline font-bold text-lg text-primary">Recent Activity</h5>
+      <button class="text-xs font-bold text-secondary hover:underline">View all history</button>
+
     </div>
     <div class="space-y-4">
       <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-slate-50">
@@ -136,8 +137,8 @@
             <span class="material-symbols-outlined">south_west</span>
           </div>
           <div>
-            <p class="text-sm font-bold text-on-surface">Ingreso Alquiler</p>
-            <p class="text-xs text-on-surface-variant">Apartamento Norte</p>
+            <p class="text-sm font-bold text-on-surface">Rental Income</p>
+            <p class="text-xs text-on-surface-variant">North Apartment</p>
           </div>
         </div>
         <span class="text-green-600 font-bold tabular-nums">+€850.00</span>
@@ -148,8 +149,8 @@
             <span class="material-symbols-outlined">north_east</span>
           </div>
           <div>
-            <p class="text-sm font-bold text-on-surface">Pago Materiales Reforma</p>
-            <p class="text-xs text-on-surface-variant">Fase 2: Estructura</p>
+            <p class="text-sm font-bold text-on-surface">Renovation Materials Payment</p>
+            <p class="text-xs text-on-surface-variant">Phase 2: Structure</p>
           </div>
         </div>
         <span class="text-red-600 font-bold tabular-nums">-€1,240.50</span>
@@ -160,11 +161,11 @@
             <span class="material-symbols-outlined">description</span>
           </div>
           <div>
-            <p class="text-sm font-bold text-on-surface">Nueva Factura Subida</p>
-            <p class="text-xs text-on-surface-variant">Pendiente de Revisión</p>
+            <p class="text-sm font-bold text-on-surface">New Invoice Uploaded</p>
+            <p class="text-xs text-on-surface-variant">Pending Review</p>
           </div>
         </div>
-        <span class="text-secondary font-bold tabular-nums text-xs">Ayer</span>
+        <span class="text-secondary font-bold tabular-nums text-xs">Yesterday</span>
       </div>
     </div>
     </div>

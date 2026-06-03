@@ -5,13 +5,13 @@
         <span class="material-symbols-outlined text-white text-3xl">architecture</span>
       </div>
       <h1 class="font-headline text-4xl font-extrabold text-primary tracking-tight">ReformaOS.</h1>
-      <p class="text-on-surface-variant mt-2 font-medium">Panel de Control de Propiedades</p>
+      <p class="text-on-surface-variant mt-2 font-medium">Property Control Panel</p>
     </div>
 
     <div class="space-y-6">
       <div class="text-center mb-6">
-        <h2 class="text-lg font-bold text-on-surface">Selecciona tu perfil de acceso</h2>
-        <p class="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Entorno de Pruebas</p>
+        <h2 class="text-lg font-bold text-on-surface">Select your access profile</h2>
+        <p class="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Testing Environment</p>
       </div>
 
       @for (user of testUsers; track user.id) {
@@ -26,7 +26,7 @@
               </span>
             </div>
             <div class="text-left">
-              <p class="font-bold text-on-surface">{{ user.role === authService.Role.OWNER ? 'Dueño' : user.role === authService.Role.ARCHITECT ? 'Arquitecto' : 'Gestor' }}</p>
+              <p class="font-bold text-on-surface">{{ user.role === authService.Role.OWNER ? 'Owner' : user.role === authService.Role.ARCHITECT ? 'Architect' : 'Manager' }}</p>
               <p class="text-xs text-on-surface-variant">{{ user.email }}</p>
             </div>
           </div>

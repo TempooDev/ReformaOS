@@ -110,6 +110,16 @@ func main() {
 	api.PUT("/expenses/:id", expenseHandler.Update)
 	api.DELETE("/expenses/:id", expenseHandler.Delete)
 
+	api.GET("/units", func(c echo.Context) error {
+		units := []map[string]interface{}{
+			{"id": 1, "name": "Calle Mayor 12", "budget": 150000, "spent": 42500, "status": "under_construction"},
+			{"id": 2, "name": "Apartamento Centro", "budget": 80000, "spent": 80000, "status": "ready"},
+			{"id": 3, "name": "Apartamento Norte", "budget": 95000, "spent": 95000, "status": "rented"},
+		}
+		return c.JSON(http.StatusOK, units)
+	})
+
+	// Deprecated: use /api/units instead
 	api.GET("/unidades", func(c echo.Context) error {
 		unidades := []map[string]interface{}{
 			{"id": 1, "nombre": "Calle Mayor 12", "presupuesto": 150000, "gastado": 42500, "estado": "en_obra"},
@@ -183,10 +193,11 @@ func seedData() {
 
 		// Create initial phases
 		phases := []phase.Phase{
-			{ID: "PHS-1", PropertyID: p.ID, Name: "Fase 1: Demolición", Progress: 100, Status: config.PhaseStatusCompleted},
-			{ID: "PHS-2", PropertyID: p.ID, Name: "Fase 2: Estructura", Progress: 35, Status: config.PhaseStatusInProgress},
-			{ID: "PHS-3", PropertyID: p.ID, Name: "Fase 3: Instalaciones", Progress: 0, Status: config.PhaseStatusPending},
-			{ID: "PHS-4", PropertyID: p.ID, Name: "Fase 4: Acabados", Progress: 0, Status: config.PhaseStatusPending},
+			{ID: "PHS-1", PropertyID: p.ID, Name: "Phase 1: Demolition", Progress: 100, Status: config.PhaseStatusCompleted},
+			{ID: "PHS-2", PropertyID: p.ID, Name: "Phase 2: Structure", Progress: 35, Status: config.PhaseStatusInProgress},
+			{ID: "PHS-3", PropertyID: p.ID, Name: "Phase 3: Installations", Progress: 0, Status: config.PhaseStatusPending},
+			{ID: "PHS-4", PropertyID: p.ID, Name: "Phase 4: Finishes", Progress: 0, Status: config.PhaseStatusPending},
+
 		}
 		config.DB.Create(&phases)
 

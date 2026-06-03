@@ -73,9 +73,9 @@ const (
 )
 
 const (
-	PhaseStatusCompleted  = "Completado"
-	PhaseStatusInProgress = "En curso"
-	PhaseStatusPending    = "Pendiente"
+	PhaseStatusCompleted  = "Completed"
+	PhaseStatusInProgress = "In Progress"
+	PhaseStatusPending    = "Pending"
 )
 
 const (

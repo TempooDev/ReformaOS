@@ -1,9 +1,9 @@
-export interface Unidad {
+export interface Unit {
   id: number;
-  nombre: string;
-  presupuesto: number;
-  gastado: number;
-  estado: 'en_obra' | 'listo' | 'alquilado';
+  name: string;
+  budget: number;
+  spent: number;
+  status: 'under_construction' | 'ready' | 'rented';
 }
 
 export enum UserRole {
@@ -65,7 +65,7 @@ export interface PropertyPhase {
   property_id: string;
   name: string;
   progress: number;
-  status: 'Completado' | 'En curso' | 'Pendiente';
+  status: 'Completed' | 'In Progress' | 'Pending';
 }
 
 export interface DocumentOrInvoice {

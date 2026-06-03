@@ -57,6 +57,12 @@ func RequireRole(roles ...string) echo.MiddlewareFunc {
 // It assumes the URL has a :propertyId param
 func RequirePropertyAccess(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		path := c.Request().URL.Path
+		// Skip for global endpoints
+		if path == "/api/properties" || path == "/api/units" || path == "/api/unidades" {
+			return next(c)
+		}
+
 		userRole := c.Get("userRole").(string)
 		// userId := c.Get("userId").(string)
 		// propertyId := c.Param("propertyId")

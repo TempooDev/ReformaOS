@@ -37,7 +37,7 @@
   @if (isLoading()) {
     <div class="flex flex-col items-center justify-center py-20">
       <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
-      <p class="text-on-surface-variant font-bold text-sm uppercase tracking-widest">Cargando gastos...</p>
+      <p class="text-on-surface-variant font-bold text-sm uppercase tracking-widest">Loading expenses...</p>
     </div>
   }
 
@@ -45,9 +45,9 @@
   @if (error()) {
     <div class="max-w-md mx-auto p-8 bg-error/5 rounded-3xl border border-error/10 text-center">
       <span class="material-symbols-outlined text-error text-5xl mb-4">error</span>
-      <h3 class="text-error font-black uppercase tracking-widest mb-2">Error de Conexión</h3>
-      <p class="text-on-surface-variant text-sm mb-6">No hemos podido sincronizar los datos con el servidor.</p>
-      <button (click)="refreshExpenses()" class="px-8 py-3 bg-error text-white rounded-full font-bold text-xs uppercase tracking-widest shadow-lg shadow-error/20">Reintentar</button>
+      <h3 class="text-error font-black uppercase tracking-widest mb-2">Connection Error</h3>
+      <p class="text-on-surface-variant text-sm mb-6">We couldn't synchronize data with the server.</p>
+      <button (click)="refreshExpenses()" class="px-8 py-3 bg-error text-white rounded-full font-bold text-xs uppercase tracking-widest shadow-lg shadow-error/20">Retry</button>
     </div>
   }
 
@@ -104,12 +104,12 @@
 
             <!-- Action Buttons based on status -->
             @if (expense.status === 'PENDING') {
-              <button (click)="updateStatus(expense, 'APPROVED')" class="px-4 py-2 rounded-xl bg-blue-500/10 text-blue-600 text-[11px] font-black uppercase hover:bg-blue-500 hover:text-white transition-all flex items-center gap-2"><span class="material-symbols-outlined text-base">check_circle</span> Aprobar</button>
-              <button (click)="updateStatus(expense, 'REJECTED')" class="px-4 py-2 rounded-xl bg-red-500/10 text-red-600 text-[11px] font-black uppercase hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"><span class="material-symbols-outlined text-base">cancel</span> Rechazar</button>
+              <button (click)="updateStatus(expense, 'APPROVED')" class="px-4 py-2 rounded-xl bg-blue-500/10 text-blue-600 text-[11px] font-black uppercase hover:bg-blue-500 hover:text-white transition-all flex items-center gap-2"><span class="material-symbols-outlined text-base">check_circle</span> Approve</button>
+              <button (click)="updateStatus(expense, 'REJECTED')" class="px-4 py-2 rounded-xl bg-red-500/10 text-red-600 text-[11px] font-black uppercase hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"><span class="material-symbols-outlined text-base">cancel</span> Reject</button>
             } @else if (expense.status === 'APPROVED') {
-              <button (click)="updateStatus(expense, 'RECONCILED')" class="px-4 py-2 rounded-xl bg-green-500/10 text-green-600 text-[11px] font-black uppercase hover:bg-green-500 hover:text-white transition-all flex items-center gap-2"><span class="material-symbols-outlined text-base">account_balance_wallet</span> Conciliar</button>
+              <button (click)="updateStatus(expense, 'RECONCILED')" class="px-4 py-2 rounded-xl bg-green-500/10 text-green-600 text-[11px] font-black uppercase hover:bg-green-500 hover:text-white transition-all flex items-center gap-2"><span class="material-symbols-outlined text-base">account_balance_wallet</span> Reconcile</button>
             } @else if (expense.status === 'RECONCILED') {
-              <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500/5 text-green-600/60 text-[11px] font-bold uppercase tracking-widest"><span class="material-symbols-outlined text-base">verified_user</span> Finalizado</div>
+              <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500/5 text-green-600/60 text-[11px] font-bold uppercase tracking-widest"><span class="material-symbols-outlined text-base">verified_user</span> Finalized</div>
             }
           </div>
 
@@ -128,10 +128,10 @@
         <div class="w-24 h-24 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
           <span class="material-symbols-outlined text-5xl text-outline-variant">receipt_long</span>
         </div>
-        <h3 class="text-2xl font-black text-primary font-headline mb-3 tracking-tight">Sin documentos registrados</h3>
-        <p class="text-on-surface-variant/70 font-medium max-w-sm mx-auto mb-10 text-sm leading-relaxed">Aún no has subido ningún ticket o factura para esta unidad. Comienza capturando tu primer documento.</p>
+        <h3 class="text-2xl font-black text-primary font-headline mb-3 tracking-tight">No documents registered</h3>
+        <p class="text-on-surface-variant/70 font-medium max-w-sm mx-auto mb-10 text-sm leading-relaxed">You haven't uploaded any receipts or invoices for this unit yet. Start by capturing your first document.</p>
         <button (click)="openUploadModal()" class="px-10 py-5 bg-on-primary-container text-white rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-orange-500/30 hover:scale-105 transition-all active:scale-95">
-          Comenzar Subida
+          Start Upload
         </button>
       </div>
     }
@@ -142,12 +142,12 @@
 <div class="fixed bottom-10 right-10 z-60">
   <button (click)="openUploadModal()" class="bg-on-primary-container text-white px-8 py-5 rounded-full flex items-center gap-3 shadow-2xl shadow-orange-500/40 hover:-translate-y-1 transition-all">
     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
-    <span class="font-bold text-sm uppercase tracking-widest">Subir Ticket</span>
+    <span class="font-bold text-sm uppercase tracking-widest">Upload Receipt</span>
   </button>
 </div>
 
 <!-- Modal Detalle Gasto -->
-<app-modal [isOpen]="isDetailModalOpen()" title="Detalle del Gasto" maxWidth="max-w-6xl" (close)="closeDetail()">
+<app-modal [isOpen]="isDetailModalOpen()" title="Expense Detail" maxWidth="max-w-6xl" (close)="closeDetail()">
   @if (selectedExpense()) {
   <div class="flex flex-col md:flex-row -m-8 h-[90vh]">
     <!-- Image Preview Side -->
@@ -287,28 +287,28 @@
   </div>
 
   <div modal-footer class="flex gap-4">
-    <button (click)="closeUploadModal()" class="flex-1 py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-colors">Cancelar</button>
-    <button (click)="onSaveNew()" [disabled]="newExpenseForm().invalid()" class="flex-1 py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-primary text-on-primary hover:bg-primary-variant transition-colors shadow-lg shadow-primary/20 disabled:opacity-50">Guardar Gasto</button>
+    <button (click)="closeUploadModal()" class="flex-1 py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-colors">Cancel</button>
+    <button (click)="onSaveNew()" [disabled]="newExpenseForm().invalid()" class="flex-1 py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-primary text-on-primary hover:bg-primary-variant transition-colors shadow-lg shadow-primary/20 disabled:opacity-50">Save Expense</button>
   </div>
 </app-modal>
 
 <!-- Delete Confirmation Modal -->
-<app-modal [isOpen]="isDeleteModalOpen()" title="¿Confirmar Eliminación?" maxWidth="max-w-sm" [showCloseButton]="false" (close)="closeDeleteModal()">
+<app-modal [isOpen]="isDeleteModalOpen()" title="Confirm Deletion?" maxWidth="max-w-sm" [showCloseButton]="false" (close)="closeDeleteModal()">
   <div class="text-center">
     <div class="w-16 h-16 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-6">
       <span class="material-symbols-outlined text-3xl">delete_forever</span>
     </div>
-    <p class="text-sm text-on-surface-variant/70 font-medium mb-8">Esta acción no se puede deshacer. El registro y su documento adjunto serán borrados permanentemente.</p>
+    <p class="text-sm text-on-surface-variant/70 font-medium mb-8">This action cannot be undone. The record and its attached document will be permanently deleted.</p>
   </div>
   
   <div modal-footer class="flex gap-3">
     <button (click)="closeDeleteModal()" 
             class="flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-all">
-      Cancelar
+      Cancel
     </button>
     <button (click)="confirmDelete()" 
             class="flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest bg-error text-white hover:bg-error-variant shadow-lg shadow-error/20 transition-all">
-      Eliminar
+      Delete
     </button>
   </div>
 </app-modal>

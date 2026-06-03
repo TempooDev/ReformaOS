@@ -19,16 +19,16 @@ export class FinanceConstructionComponent {
   });
 
   phases = input<Phase[]>([
-    { name: 'Demolición y Desescombro', progress: 100, status: 'Completado', budget: 12000, spent: 11500 },
-    { name: 'Fontanería y Calefacción', progress: 85, status: 'En curso', budget: 25000, spent: 21000 },
-    { name: 'Instalación Eléctrica', progress: 40, status: 'En curso', budget: 18000, spent: 7200 },
-    { name: 'Tabiquería y Pladur', progress: 20, status: 'Iniciado', budget: 30000, spent: 6000 },
-    { name: 'Acabados y Pintura', progress: 0, status: 'Pendiente', budget: 25000, spent: 0 }
+    { name: 'Demolition & Debris Removal', progress: 100, status: 'Completed', budget: 12000, spent: 11500 },
+    { name: 'Plumbing & Heating', progress: 85, status: 'In Progress', budget: 25000, spent: 21000 },
+    { name: 'Electrical Installation', progress: 40, status: 'In Progress', budget: 18000, spent: 7200 },
+    { name: 'Partitioning & Plasterboard', progress: 20, status: 'Started', budget: 30000, spent: 6000 },
+    { name: 'Finishes & Painting', progress: 0, status: 'Pending', budget: 25000, spent: 0 }
   ]);
 
   recentInvoices = input<Invoice[]>([
-    { provider: 'Materiales Pro S.A.', amount: 4200.50, date: '25 Oct, 2023', status: 'Pagado' },
-    { provider: 'Fontanería López', amount: 1500.00, date: '28 Oct, 2023', status: 'Pendiente' },
-    { provider: 'Electricidad Voltio', amount: 2800.00, date: '30 Oct, 2023', status: 'En Revisión' }
+    { provider: 'Materiales Pro S.A.', amount: 4200.50, date: '25 Oct, 2023', status: 'Paid' },
+    { provider: 'Fontanería López', amount: 1500.00, date: '28 Oct, 2023', status: 'Pending' },
+    { provider: 'Electricidad Voltio', amount: 2800.00, date: '30 Oct, 2023', status: 'In Review' }
   ]);
 }

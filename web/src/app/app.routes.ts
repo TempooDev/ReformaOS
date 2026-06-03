@@ -32,7 +32,7 @@ export const routes: Routes = [
         data: { roles: [UserRole.OWNER, UserRole.MANAGER] }
       },
       {
-        path: 'domotica',
+        path: 'smart-home',
         loadComponent: () => import('./features/domotica/domotica').then(m => m.DomoticaComponent),
         canActivate: [roleGuard],
         data: { roles: [UserRole.OWNER, UserRole.MANAGER] }
@@ -68,7 +68,7 @@ export const routes: Routes = [
         data: { roles: [UserRole.OWNER, UserRole.ARCHITECT, UserRole.MANAGER] }
       },
       {
-        path: 'evolucion-patrimonial',
+        path: 'wealth-evolution',
         loadComponent: () => import('./features/evolucion-patrimonial/evolucion-patrimonial').then(m => m.EvolucionPatrimonialComponent),
         canActivate: [roleGuard],
         data: { roles: [UserRole.OWNER] }
