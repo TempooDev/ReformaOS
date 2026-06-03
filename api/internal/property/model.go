@@ -8,6 +8,9 @@ type Property struct {
 	ID                  string    `gorm:"primaryKey" json:"id"`
 	Name                string    `json:"name"`
 	Address             string    `json:"address"`
+	Budget              float64   `json:"budget"`
+	AcquisitionPrice    float64   `json:"acquisition_price"`
+	ProjectedValue      float64   `json:"projected_value"`
 	Bucket              string    `json:"bucket"`
 	OwnerID             string    `json:"owner_id"`
 	CadastralReference  string    `json:"cadastral_reference"`

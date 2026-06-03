@@ -1,34 +1,76 @@
-import { Component, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { PropertyStats, Phase, Invoice } from '@shared';
+import { Component, inject, computed } from '@angular/core';
+import { DecimalPipe, CommonModule } from '@angular/common';
+import { httpResource } from '@angular/common/http';
+import { Property, PropertyPhase, Expense } from '@shared';
 import { StatCardComponent } from '../../core/components/stat-card/stat-card';
+import { ReformaService } from '../../core/services/reforma';
 
 @Component({
   selector: 'app-finance-construction',
   standalone: true,
-  imports: [DecimalPipe, StatCardComponent],
+  imports: [DecimalPipe, CommonModule, StatCardComponent],
   templateUrl: './finance-construction.html',
   styleUrl: './finance-construction.css'
 })
 export class FinanceConstructionComponent {
-  propertyStats = input<PropertyStats>({
-    totalBudget: 150000,
-    totalSpent: 85400,
-    remaining: 64600,
-    progress: 57
+  private reformaService = inject(ReformaService);
+
+  // --- Resources ---
+  activeId = computed(() => this.reformaService.activePropertyId());
+
+  // Resource to fetch all properties to find the active one
+  // (Alternatively, we could have a getPropertyById endpoint that we use here)
+  propertiesResource = this.reformaService.propertiesResource;
+
+  activeProperty = computed(() => {
+    const id = this.activeId();
+    if (!id) return null;
+    return this.propertiesResource.value()?.find(p => p.id === id) ?? null;
   });
 
-  phases = input<Phase[]>([
-    { name: 'Demolition & Debris Removal', progress: 100, status: 'Completed', budget: 12000, spent: 11500 },
-    { name: 'Plumbing & Heating', progress: 85, status: 'In Progress', budget: 25000, spent: 21000 },
-    { name: 'Electrical Installation', progress: 40, status: 'In Progress', budget: 18000, spent: 7200 },
-    { name: 'Partitioning & Plasterboard', progress: 20, status: 'Started', budget: 30000, spent: 6000 },
-    { name: 'Finishes & Painting', progress: 0, status: 'Pending', budget: 25000, spent: 0 }
-  ]);
+  phasesResource = httpResource<PropertyPhase[]>(() => 
+    this.activeId() ? this.reformaService.getPhasesUrl(this.activeId()!) : undefined
+  );
 
-  recentInvoices = input<Invoice[]>([
-    { provider: 'Materiales Pro S.A.', amount: 4200.50, date: '25 Oct, 2023', status: 'Paid' },
-    { provider: 'Fontanería López', amount: 1500.00, date: '28 Oct, 2023', status: 'Pending' },
-    { provider: 'Electricidad Voltio', amount: 2800.00, date: '30 Oct, 2023', status: 'In Review' }
-  ]);
+  expensesResource = httpResource<Expense[]>(() => {
+    const pId = this.activeId();
+    if (!pId) return undefined;
+    return `${this.reformaService.apiUrl}/properties/${pId}/expenses`;
+  });
+
+  // --- Derived Signals ---
+  phases = computed(() => this.phasesResource.value() ?? []);
+  recentExpenses = computed(() => (this.expensesResource.value() ?? []).slice(0, 5));
+
+  propertyStats = computed(() => {
+    const prop = this.activeProperty();
+    const phases = this.phases();
+    
+    if (!prop) return {
+      totalBudget: 0,
+      totalSpent: 0,
+      remaining: 0,
+      progress: 0
+    };
+
+    const totalBudget = prop.budget || 0;
+    const totalSpent = phases.reduce((acc, p) => acc + (p.spent || 0), 0);
+    const remaining = totalBudget - totalSpent;
+    
+    // Weighted progress based on phase budgets
+    let weightedProgress = 0;
+    if (totalBudget > 0) {
+      weightedProgress = phases.reduce((acc, p) => acc + (p.progress * (p.budget || 0)), 0) / totalBudget;
+    } else if (phases.length > 0) {
+      // Fallback to simple average if no budgets
+      weightedProgress = phases.reduce((acc, p) => acc + p.progress, 0) / phases.length;
+    }
+
+    return {
+      totalBudget,
+      totalSpent,
+      remaining,
+      progress: Math.round(weightedProgress)
+    };
+  });
 }

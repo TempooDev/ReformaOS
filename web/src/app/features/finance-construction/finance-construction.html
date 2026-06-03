@@ -6,10 +6,10 @@
       <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Finance & Construction.</h2>
     </div>
     <div class="text-right">
-      <p class="text-secondary font-medium tabular-nums text-lg">Budget Q4 2023</p>
+      <p class="text-secondary font-medium tabular-nums text-lg">Current Property: {{ activeProperty()?.name }}</p>
       <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container/30 text-on-secondary-container rounded-full border border-secondary-container/50 text-sm font-bold mt-2">
         <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
-        €150,000 Total
+        €{{ (activeProperty()?.budget ?? 0) | number:'1.0-0' }} Total
       </div>
     </div>
   </div>
@@ -53,20 +53,24 @@
         <button class="text-xs font-bold text-secondary uppercase tracking-widest hover:text-primary transition-colors">Timeline</button>
       </div>
       <div class="space-y-6">
-        @for (phase of phases(); track phase.name) {
+        @for (phase of phases(); track phase.id) {
         <div class="relative">
           <div class="flex justify-between items-start mb-2">
             <div>
               <h4 class="font-bold text-primary text-sm">{{ phase.name }}</h4>
-              <span class="text-[10px] font-bold uppercase tracking-tighter" [class.text-green-600]="phase.status === 'Completado'"
-                    [class.text-secondary]="phase.status === 'En curso'"
-                    [class.text-[#f77d00]]="phase.status === 'Iniciado'"
-                    [class.text-slate-400]="phase.status === 'Pendiente'">{{ phase.status === 'Completado' ? 'Completed' : phase.status === 'En curso' ? 'In Progress' : phase.status === 'Iniciado' ? 'Started' : 'Pending' }}</span>
+              <span class="text-[10px] font-bold uppercase tracking-tighter" 
+                    [class.text-green-600]="phase.status === 'Completed'"
+                    [class.text-secondary]="phase.status === 'In Progress'"
+                    [class.text-slate-400]="phase.status === 'Pending'">{{ phase.status }}</span>
             </div>
             <span class="text-xs font-bold tabular-nums text-primary">{{ phase.progress }}%</span>
           </div>
           <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
             <div class="h-full bg-primary rounded-full transition-all duration-700 ease-out" [style.width.%]="phase.progress"></div>
+          </div>
+          <div class="flex justify-between mt-1">
+             <span class="text-[9px] text-on-surface-variant font-medium">Spent: €{{ phase.spent | number:'1.0-0' }}</span>
+             <span class="text-[9px] text-on-surface-variant font-medium">Budget: €{{ phase.budget | number:'1.0-0' }}</span>
           </div>
         </div>
         }
@@ -88,33 +92,35 @@
         <table class="w-full text-left">
           <thead>
             <tr class="bg-surface-container-low/50">
-              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Provider</th>
+              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Concept</th>
               <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70 text-right">Amount</th>
               <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Date</th>
               <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Status</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            @for (invoice of recentInvoices(); track invoice.provider) {
-            <tr class="hover:bg-surface-container-low transition-colors group">
+            @for (expense of recentExpenses(); track expense.id) {
+            <tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
               <td class="px-6 py-4">
-                <p class="font-bold text-primary text-sm">{{ invoice.provider }}</p>
-                <p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Invoice No. 2023-{{ 100 + $index }}</p>
+                <p class="font-bold text-primary text-sm">{{ expense.title }}</p>
+                <p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">{{ expense.category }}</p>
               </td>
               <td class="px-6 py-4 text-right">
-                <span class="font-body font-black text-primary tabular-nums">€{{ invoice.amount | number:'1.2-2' }}</span>
+                <span class="font-body font-black text-primary tabular-nums">€{{ expense.amount | number:'1.2-2' }}</span>
               </td>
               <td class="px-6 py-4">
-                <span class="text-xs font-medium text-on-surface-variant">{{ invoice.date }}</span>
+                <span class="text-xs font-medium text-on-surface-variant">{{ expense.date | date:'dd MMM, yyyy' }}</span>
               </td>
               <td class="px-6 py-4">
                 <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest"
-                      [class.bg-green-50]="invoice.status === 'Pagado'"
-                      [class.text-green-700]="invoice.status === 'Pagado'"
-                      [class.bg-[#ffdcc6]]="invoice.status === 'Pendiente'"
-                      [class.text-[#301400]]="invoice.status === 'Pendiente'"
-                      [class.bg-slate-100]="invoice.status === 'En Revisión'"
-                      [class.text-slate-600]="invoice.status === 'En Revisión'">{{ invoice.status === 'Pagado' ? 'Paid' : invoice.status === 'Pendiente' ? 'Pending' : 'In Review' }}</span>
+                      [class.bg-green-50]="expense.status === 'RECONCILED'"
+                      [class.text-green-700]="expense.status === 'RECONCILED'"
+                      [class.bg-[#ffdcc6]]="expense.status === 'PENDING'"
+                      [class.text-[#301400]]="expense.status === 'PENDING'"
+                      [class.bg-blue-50]="expense.status === 'APPROVED'"
+                      [class.text-blue-700]="expense.status === 'APPROVED'"
+                      [class.bg-red-50]="expense.status === 'REJECTED'"
+                      [class.text-red-700]="expense.status === 'REJECTED'">{{ expense.status }}</span>
               </td>
             </tr>
             }
@@ -129,19 +135,20 @@
         <h3 class="font-headline text-2xl font-bold mb-8 tracking-tight">Appreciation</h3>
         <div class="flex flex-col items-center justify-center py-6">
           <div class="w-32 h-32 rounded-full border-4 border-on-primary-container flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(247,125,0,0.3)]">
-            <span class="text-3xl font-headline font-black text-on-primary-container tabular-nums">+24%</span>
+            @let appreciation = activeProperty()?.projected_value && activeProperty()?.acquisition_price ? (((activeProperty()!.projected_value - activeProperty()!.acquisition_price) / activeProperty()!.acquisition_price) * 100) : 0;
+            <span class="text-3xl font-headline font-black text-on-primary-container tabular-nums">+{{ appreciation | number:'1.0-0' }}%</span>
           </div>
           <p class="text-xl font-headline font-bold mb-1">Projected ROI</p>
-          <p class="text-primary-fixed text-sm opacity-80">Market estimate Q1 2024</p>
+          <p class="text-primary-fixed text-sm opacity-80">Market estimate {{ activeProperty()?.updated_at | date:'MMM yyyy' }}</p>
         </div>
         <div class="mt-8 grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
           <div>
             <span class="text-[10px] font-bold text-on-primary-container uppercase tracking-widest block mb-1">Acquisition</span>
-            <span class="text-lg font-bold">€240K</span>
+            <span class="text-lg font-bold">€{{ (activeProperty()?.acquisition_price ?? 0) / 1000 | number:'1.0-0' }}K</span>
           </div>
           <div class="text-right">
             <span class="text-[10px] font-bold text-on-primary-container uppercase tracking-widest block mb-1">Final Value</span>
-            <span class="text-lg font-bold">€385K</span>
+            <span class="text-lg font-bold">€{{ (activeProperty()?.projected_value ?? 0) / 1000 | number:'1.0-0' }}K</span>
           </div>
         </div>
       </div>

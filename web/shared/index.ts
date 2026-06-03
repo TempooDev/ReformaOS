@@ -22,6 +22,9 @@ export interface Property {
   id: string;
   name: string;
   address?: string;
+  budget: number;
+  acquisition_price: number;
+  projected_value: number;
   bucket: string;
   owner_id?: string;
   cadastral_reference?: string;
@@ -66,6 +69,8 @@ export interface PropertyPhase {
   name: string;
   progress: number;
   status: 'Completed' | 'In Progress' | 'Pending';
+  budget: number;
+  spent: number;
 }
 
 export interface DocumentOrInvoice {

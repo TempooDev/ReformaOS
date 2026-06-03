@@ -10,6 +10,8 @@ type Phase struct {
 	Name       string    `json:"name"`
 	Progress   int       `json:"progress"` // 0 to 100
 	Status     string    `json:"status"`   // Completado, En curso, Pendiente
+	Budget     float64   `json:"budget"`
+	Spent      float64   `json:"spent"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }

@@ -42,15 +42,15 @@
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-8 border-t border-surface-container">
         <div>
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1">Monthly Rent</p>
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Monthly Rent</p>
           <p class="text-3xl font-headline font-extrabold text-primary tabular-nums">€{{ tenant().rent | number:'1.2-2' }}</p>
         </div>
         <div>
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1">Next Payment</p>
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Next Payment</p>
           <p class="text-3xl font-headline font-extrabold text-primary tabular-nums">{{ tenant().nextPayment }}</p>
         </div>
         <div>
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.1em] mb-1">Security Deposit</p>
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Security Deposit</p>
           <p class="text-3xl font-headline font-extrabold text-secondary tabular-nums">€{{ tenant().deposit | number:'1.2-2' }}</p>
         </div>
       </div>

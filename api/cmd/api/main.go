@@ -177,6 +177,9 @@ func seedData() {
 			ID:                 "PRJ-1",
 			Name:               "Casa Arroyo",
 			Address:            "Calle Jardines, 3 Sedella",
+			Budget:             150000,
+			AcquisitionPrice:   240000,
+			ProjectedValue:     385000,
 			Bucket:             "reforma-arroyo",
 			OwnerID:            owner.ID,
 			CadastralReference: "9876543AA1234B0001XY",
@@ -193,11 +196,10 @@ func seedData() {
 
 		// Create initial phases
 		phases := []phase.Phase{
-			{ID: "PHS-1", PropertyID: p.ID, Name: "Phase 1: Demolition", Progress: 100, Status: config.PhaseStatusCompleted},
-			{ID: "PHS-2", PropertyID: p.ID, Name: "Phase 2: Structure", Progress: 35, Status: config.PhaseStatusInProgress},
-			{ID: "PHS-3", PropertyID: p.ID, Name: "Phase 3: Installations", Progress: 0, Status: config.PhaseStatusPending},
-			{ID: "PHS-4", PropertyID: p.ID, Name: "Phase 4: Finishes", Progress: 0, Status: config.PhaseStatusPending},
-
+			{ID: "PHS-1", PropertyID: p.ID, Name: "Phase 1: Demolition", Progress: 100, Status: config.PhaseStatusCompleted, Budget: 12000, Spent: 11500},
+			{ID: "PHS-2", PropertyID: p.ID, Name: "Phase 2: Structure", Progress: 35, Status: config.PhaseStatusInProgress, Budget: 45000, Spent: 15750},
+			{ID: "PHS-3", PropertyID: p.ID, Name: "Phase 3: Installations", Progress: 0, Status: config.PhaseStatusPending, Budget: 35000, Spent: 0},
+			{ID: "PHS-4", PropertyID: p.ID, Name: "Phase 4: Finishes", Progress: 0, Status: config.PhaseStatusPending, Budget: 58000, Spent: 0},
 		}
 		config.DB.Create(&phases)
 

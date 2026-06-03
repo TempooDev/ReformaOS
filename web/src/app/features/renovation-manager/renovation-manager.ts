@@ -117,7 +117,7 @@ export class RenovationManagerComponent {
       ...m,
       phases: [
         ...m.phases,
-        { id: newPhaseId, property_id: pId, name: `New Phase`, progress: 0, status: 'Pending' }
+        { id: newPhaseId, property_id: pId, name: `New Phase`, progress: 0, status: 'Pending', budget: 0, spent: 0 }
       ]
     }));
   }
