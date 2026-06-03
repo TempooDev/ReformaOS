@@ -103,6 +103,10 @@ export class ReformaService {
     return this.http.put<MaintenanceTask>(`${this.apiUrl}/maintenance/${id}`, task);
   }
 
+  createMaintenanceTask(propertyId: string, task: Partial<MaintenanceTask>) {
+    return this.http.post<MaintenanceTask>(`${this.apiUrl}/properties/${propertyId}/maintenance`, task);
+  }
+
   updatePhasesBatch(propertyId: string, phases: PropertyPhase[]) {
     return this.http.put<PropertyPhase[]>(`${this.apiUrl}/properties/${propertyId}/phases/batch`, phases);
   }

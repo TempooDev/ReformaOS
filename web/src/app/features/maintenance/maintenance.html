@@ -5,11 +5,18 @@
       <span class="text-on-surface-variant font-bold text-xs uppercase tracking-[0.2em] mb-2 block">Asset Integrity</span>
       <h2 class="font-headline text-5xl font-extrabold text-primary tracking-tighter">Maintenance Hub.</h2>
     </div>
-    <div class="text-right">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container/30 text-on-secondary-container rounded-full border border-secondary-container/50 text-sm font-bold mt-2">
-        <span class="material-symbols-outlined text-sm">engineering</span>
-        {{ pendingTasks().length }} Pending Tasks
+    <div class="flex items-center gap-4">
+      <div class="text-right hidden sm:block">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container/30 text-on-secondary-container rounded-full border border-secondary-container/50 text-sm font-bold">
+          <span class="material-symbols-outlined text-sm">engineering</span>
+          {{ pendingTasks().length }} Pending Tasks
+        </div>
       </div>
+      <button (click)="isAddModalOpen.set(true)" 
+              class="bg-primary text-white px-6 py-2 rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">add</span>
+        New Operation
+      </button>
     </div>
   </div>
 
@@ -116,3 +123,53 @@
     </section>
   </div>
 </div>
+
+<!-- Add Task Modal -->
+<app-modal [isOpen]="isAddModalOpen()" (close)="isAddModalOpen.set(false)" title="Register New Operation">
+  <div class="space-y-6">
+    <app-form-field label="Task Title" [error]="newTaskForm.fields.title.error()">
+      <input [(ngModel)]="newTaskModel().title" 
+             class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none" 
+             placeholder="e.g. Annual Boiler Review">
+    </app-form-field>
+
+    <app-form-field label="Description">
+      <textarea [(ngModel)]="newTaskModel().description" 
+                class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none min-h-[100px]" 
+                placeholder="Details of the maintenance task..."></textarea>
+    </app-form-field>
+
+    <div class="grid grid-cols-2 gap-4">
+      <app-form-field label="Category">
+        <select [(ngModel)]="newTaskModel().category" 
+                class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none">
+          <option value="Plumbing">Plumbing</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Cleaning">Cleaning</option>
+          <option value="HVAC">HVAC</option>
+          <option value="Garden">Garden</option>
+          <option value="Other">Other</option>
+        </select>
+      </app-form-field>
+
+      <app-form-field label="Priority">
+        <select [(ngModel)]="newTaskModel().priority" 
+                class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+      </app-form-field>
+    </div>
+
+    <app-form-field label="Due Date" [error]="newTaskForm.fields.due_date.error()">
+      <input type="date" [(ngModel)]="newTaskModel().due_date" 
+             class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-primary focus:ring-2 focus:ring-primary/20 outline-none">
+    </app-form-field>
+
+    <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-50">
+      <button (click)="isAddModalOpen.set(false)" class="px-6 py-2 text-sm font-bold text-secondary uppercase tracking-widest hover:underline">Cancel</button>
+      <button (click)="createMaintenanceTask()" class="px-8 py-2 bg-primary text-white rounded-lg text-sm font-bold uppercase tracking-widest hover:brightness-110 transition-all">Save Task</button>
+    </div>
+  </div>
+</app-modal>
