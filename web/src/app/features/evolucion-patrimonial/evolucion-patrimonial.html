@@ -50,7 +50,7 @@
     </div>
 
     <!-- Self-Paying Ratio -->
-    <div class="relative bg-[#381800] text-white p-8 overflow-hidden rounded-xl">
+    <div class="relative bg-primary text-white p-8 overflow-hidden rounded-xl">
       <div class="absolute top-0 right-0 w-32 h-32 bg-on-primary-container/10 rounded-full -mr-16 -mt-16"></div>
       <p class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-primary-container mb-4">Self-Paying Ratio</p>
       <div class="flex items-baseline gap-2 mb-2">
@@ -91,7 +91,7 @@
       </div>
       
       <!-- Simulated Area Chart -->
-      <div class="relative h-[400px] w-full mt-8">
+      <div class="relative h-100 w-full mt-8">
         <svg class="w-full h-full" viewBox="0 0 1000 400" preserveAspectRatio="none">
           <!-- Equity Area Fill -->
           <path d="M0 320 L200 280 L400 220 L600 140 L800 80 L1000 40 L1000 350 L800 360 L600 375 L400 385 L200 392 L0 400 Z" fill="#b6d0ff" fill-opacity="0.1"></path>
@@ -106,7 +106,7 @@
         </svg>
         
         <!-- Tooltip Label -->
-        <div class="absolute top-[180px] left-[420px] bg-white shadow-xl p-4 rounded-lg border border-slate-100 z-10 hidden md:block">
+        <div class="absolute top-45 left-105 bg-white shadow-xl p-4 rounded-lg border border-slate-100 z-10 hidden md:block">
           <p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Current State ({{ currentYear() }})</p>
           <div class="space-y-1">
             <div class="flex justify-between gap-8">
@@ -157,7 +157,7 @@
       <div class="bg-surface-container-highest rounded-xl overflow-hidden group cursor-pointer border border-slate-100">
         <div class="h-48 relative">
           <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuxj5Gfzm_zEIxpC5mzjKqwX_SAIN8Zj257p_yrnaIZ7Gzc16h03gdaxLj7prlWlsJlLT9bdb378knU6WxT7dAluGKQO4MrNntCDtXf54tUHTvxB_eAhDzEpVvRE8ggjbpObV3g1ZM9zOibU2OdaEPaf_5XHIjzZsIFci-XTJMP4vVggnB-deh-PkLR05-_B8bKT6kHI-N116o5Y2e3kHB3O-nVfWCJt1vY0O0JMRyC1TrXxaz4OgVOOdf88v4orQ-Cv4fGZY6zoc" alt="Property">
-          <div class="absolute inset-0 bg-gradient-to-t from-[#1B365D]/80 to-transparent"></div>
+          <div class="absolute inset-0 bg-linear-to-t from-[#1B365D]/80 to-transparent"></div>
           <div class="absolute bottom-4 left-4 text-white">
             <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">Portfolio Asset #{{ activeId() }}</p>
             <p class="text-sm font-bold font-headline">{{ activeProperty()?.name }}</p>

@@ -17,6 +17,7 @@ import (
 	"github.com/tempoodev/reformaos/api/internal/mortgage"
 	"github.com/tempoodev/reformaos/api/internal/phase"
 	"github.com/tempoodev/reformaos/api/internal/property"
+	"github.com/tempoodev/reformaos/api/internal/rental"
 	"github.com/tempoodev/reformaos/api/internal/renovation"
 	"github.com/tempoodev/reformaos/api/internal/storage"
 	"github.com/tempoodev/reformaos/api/internal/user"
@@ -42,6 +43,7 @@ func main() {
 		&gallery.Photo{},
 		&document.DocumentOrInvoice{},
 		&expense.Expense{},
+		&rental.Booking{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
@@ -59,6 +61,7 @@ func main() {
 	renovationHandler := renovation.NewHandler(storageService)
 	documentHandler := document.NewHandler(storageService)
 	expenseHandler := expense.NewHandler(storageService)
+	rentalHandler := rental.NewHandler()
 
 	// Initialize Echo
 	e := echo.New()
@@ -109,6 +112,11 @@ func main() {
 	api.POST("/properties/:propertyId/expenses", expenseHandler.Create)
 	api.PUT("/expenses/:id", expenseHandler.Update)
 	api.DELETE("/expenses/:id", expenseHandler.Delete)
+
+	// Rentals
+	api.GET("/properties/:propertyId/bookings", rentalHandler.GetByProperty)
+	api.GET("/properties/:propertyId/rental-stats", rentalHandler.GetStats)
+	api.POST("/properties/:propertyId/bookings", rentalHandler.Create)
 
 	api.GET("/units", func(c echo.Context) error {
 		units := []map[string]interface{}{
@@ -219,6 +227,42 @@ func seedData() {
 			Details:        "Hipotetca de adquisición y reforma con condiciones preferentes.",
 		}
 		config.DB.Create(&m)
+
+		// Seed Bookings
+		bookings := []rental.Booking{
+			{
+				ID:         "BK-1",
+				PropertyID: p.ID,
+				Guest:      "Sarah Jenkins",
+				CheckIn:    time.Now().AddDate(0, 0, -2),
+				CheckOut:   time.Now().AddDate(0, 0, 3),
+				Status:     "Ocupado",
+				Platform:   "Airbnb",
+				Image:      "https://lh3.googleusercontent.com/aida-public/AB6AXuAAa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z",
+				TotalPrice: 725.0,
+			},
+			{
+				ID:         "BK-2",
+				PropertyID: p.ID,
+				Guest:      "Marco Polo",
+				CheckIn:    time.Now().AddDate(0, 0, 5),
+				CheckOut:   time.Now().AddDate(0, 0, 10),
+				Status:     "Confirmado",
+				Platform:   "Booking.com",
+				TotalPrice: 850.0,
+			},
+			{
+				ID:         "BK-3",
+				PropertyID: p.ID,
+				Guest:      "Elena Rossi",
+				CheckIn:    time.Now().AddDate(0, 0, 12),
+				CheckOut:   time.Now().AddDate(0, 0, 15),
+				Status:     "Pendiente",
+				Platform:   "Direct",
+				TotalPrice: 450.0,
+			},
+		}
+		config.DB.Create(&bookings)
 
 		// Ensure bucket exists in Minio
 		err := config.EnsureBucketExists(context.Background(), p.Bucket)

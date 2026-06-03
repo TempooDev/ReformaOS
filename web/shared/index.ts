@@ -162,13 +162,17 @@ export interface DailyRentalStats {
 }
 
 export interface Booking {
+  id: string;
   guest: string;
   checkIn?: string;
   checkOut?: string;
+  check_in?: string;
+  check_out?: string;
   dates?: string;
   status: string;
   platform: string;
   image?: string;
+  total_price?: number;
 }
 
 export interface Tenant {

@@ -1,34 +1,65 @@
-import { Component, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { Component, inject, computed } from '@angular/core';
+import { DecimalPipe, CommonModule } from '@angular/common';
+import { httpResource } from '@angular/common/http';
 import { DailyRentalStats, Booking } from '@shared';
 import { StatCardComponent } from '../../core/components/stat-card/stat-card';
+import { ReformaService } from '../../core/services/reforma';
 
 @Component({
   selector: 'app-daily-rental',
   standalone: true,
-  imports: [DecimalPipe, StatCardComponent],
+  imports: [DecimalPipe, CommonModule, StatCardComponent],
   templateUrl: './daily-rental.html',
   styleUrl: './daily-rental.css'
 })
 export class DailyRentalComponent {
-  stats = input<DailyRentalStats>({
-    occupancy: 85,
-    avgDailyRate: 145,
-    revenueMonth: 3820,
-    upcomingCheckouts: 2
+  private reformaService = inject(ReformaService);
+
+  // --- Resources ---
+  activeId = computed(() => this.reformaService.activePropertyId());
+
+  statsResource = httpResource<DailyRentalStats>(() => 
+    this.activeId() ? this.reformaService.getRentalStatsUrl(this.activeId()!) : undefined
+  );
+
+  bookingsResource = httpResource<Booking[]>(() => 
+    this.activeId() ? this.reformaService.getBookingsUrl(this.activeId()!) : undefined
+  );
+
+  // --- Derived Signals ---
+  stats = computed<DailyRentalStats>(() => this.statsResource.value() ?? {
+    occupancy: 0,
+    avgDailyRate: 0,
+    revenueMonth: 0,
+    upcomingCheckouts: 0
   });
 
-  currentBooking = input<Booking>({
-    guest: 'Sarah Jenkins',
-    checkIn: 'Oct 28',
-    checkOut: 'Nov 02',
-    status: 'Ocupado',
-    platform: 'Airbnb',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAAa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z'
+  allBookings = computed(() => this.bookingsResource.value() ?? []);
+
+  currentBooking = computed(() => {
+    const booking = this.allBookings().find(b => b.status === 'Ocupado') ?? null;
+    if (booking) {
+      return {
+        ...booking,
+        checkIn: booking.check_in,
+        checkOut: booking.check_out
+      };
+    }
+    return null;
   });
 
-  upcomingBookings = input<Booking[]>([
-    { guest: 'Marco Polo', dates: 'Nov 04 - Nov 08', status: 'Confirmado', platform: 'Booking.com' },
-    { guest: 'Elena Rossi', dates: 'Nov 10 - Nov 15', status: 'Pendiente', platform: 'Direct' }
-  ]);
+  upcomingBookings = computed(() => 
+    this.allBookings()
+      .filter(b => b.status !== 'Ocupado')
+      .map(b => {
+        const start = b.check_in ? new Date(b.check_in) : new Date();
+        const end = b.check_out ? new Date(b.check_out) : new Date();
+        return {
+          ...b,
+          checkIn: b.check_in,
+          checkOut: b.check_out,
+          dates: `${start.toLocaleDateString('es-ES', { month: 'short', day: '2-digit' })} - ${end.toLocaleDateString('es-ES', { month: 'short', day: '2-digit' })}`
+        };
+      })
+  );
 }
