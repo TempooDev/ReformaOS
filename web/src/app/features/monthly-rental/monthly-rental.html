@@ -100,11 +100,13 @@
             <div class="space-y-6">
               <div class="relative">
                 <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Previous Reading (kWh)</label>
-                <input class="w-full bg-surface-container-low border-none rounded-none border-b-2 border-transparent py-3 px-4 font-headline font-bold text-secondary text-lg" disabled type="number" value="12450">
+                <div class="w-full bg-surface-container-low py-3 px-4 font-headline font-bold text-secondary text-lg border-b-2 border-transparent">
+                  {{ prevElectricity() | number:'1.0-2' }}
+                </div>
               </div>
               <div class="relative">
                 <label class="block text-[11px] font-bold text-primary uppercase tracking-wider mb-2">Current Reading (kWh)</label>
-                <input class="w-full bg-surface-container-highest border-none rounded-none border-b-2 border-outline-variant focus:border-primary py-3 px-4 font-headline font-bold text-primary text-xl transition-all" placeholder="0.00" type="number">
+                <input [(ngModel)]="electricityInput" class="w-full bg-surface-container-highest border-none rounded-none border-b-2 border-outline-variant focus:border-primary py-3 px-4 font-headline font-bold text-primary text-xl transition-all" placeholder="0.00" type="number">
               </div>
             </div>
           </div>
@@ -120,11 +122,13 @@
             <div class="space-y-6">
               <div class="relative">
                 <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Previous Reading (m³)</label>
-                <input class="w-full bg-surface-container-low border-none rounded-none border-b-2 border-transparent py-3 px-4 font-headline font-bold text-secondary text-lg" disabled type="number" value="842">
+                <div class="w-full bg-surface-container-low py-3 px-4 font-headline font-bold text-secondary text-lg border-b-2 border-transparent">
+                  {{ prevWater() | number:'1.0-2' }}
+                </div>
               </div>
               <div class="relative">
                 <label class="block text-[11px] font-bold text-primary uppercase tracking-wider mb-2">Current Reading (m³)</label>
-                <input class="w-full bg-surface-container-highest border-none rounded-none border-b-2 border-outline-variant focus:border-primary py-3 px-4 font-headline font-bold text-primary text-xl transition-all" placeholder="0.00" type="number">
+                <input [(ngModel)]="waterInput" class="w-full bg-surface-container-highest border-none rounded-none border-b-2 border-outline-variant focus:border-primary py-3 px-4 font-headline font-bold text-primary text-xl transition-all" placeholder="0.00" type="number">
               </div>
             </div>
           </div>
@@ -134,9 +138,9 @@
             <span class="material-symbols-outlined">info</span>
             <p class="text-xs">Next billing cycle starts in <strong>14 days</strong>. Readings are due by the 25th.</p>
           </div>
-          <button class="w-full sm:w-auto bg-primary text-on-primary px-10 py-4 rounded-lg font-headline font-extrabold text-lg uppercase tracking-widest shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3">
-            Calculate Usage
-            <span class="material-symbols-outlined">calculate</span>
+          <button (click)="calculateUsage()" class="w-full sm:w-auto bg-primary text-on-primary px-10 py-4 rounded-lg font-headline font-extrabold text-lg uppercase tracking-widest shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3">
+            Record Reading
+            <span class="material-symbols-outlined">save</span>
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { inject, Injectable, signal, computed, effect } from '@angular/core';
 import { 
   Property, PropertyPhase, MortgageProposal, 
   RenovationProposal, PhotoFolder, DocumentOrInvoice, Photo, Unit, Expense,
-  Light, Camera, MaintenanceTask
+  Light, Camera, MaintenanceTask, UtilityReading
 } from '@shared';
 
 @Injectable({
@@ -78,6 +78,10 @@ export class ReformaService {
     return `${this.apiUrl}/properties/${propertyId}/transactions`;
   }
 
+  getUtilityReadingsUrl(propertyId: string) {
+    return `${this.apiUrl}/properties/${propertyId}/utility-readings`;
+  }
+
   getCamerasUrl(propertyId: string) {
     return `${this.apiUrl}/properties/${propertyId}/cameras`;
   }
@@ -105,6 +109,10 @@ export class ReformaService {
 
   createMaintenanceTask(propertyId: string, task: Partial<MaintenanceTask>) {
     return this.http.post<MaintenanceTask>(`${this.apiUrl}/properties/${propertyId}/maintenance`, task);
+  }
+
+  createUtilityReading(propertyId: string, reading: Partial<UtilityReading>) {
+    return this.http.post<UtilityReading>(`${this.apiUrl}/properties/${propertyId}/utility-readings`, reading);
   }
 
   updatePhasesBatch(propertyId: string, phases: PropertyPhase[]) {

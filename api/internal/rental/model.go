@@ -50,3 +50,14 @@ type RentalTransaction struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
+
+type UtilityReading struct {
+	ID         string    `gorm:"primaryKey" json:"id"`
+	PropertyID string    `gorm:"index" json:"property_id"`
+	Type       string    `json:"type"` // Electricity, Water
+	MeterID    string    `json:"meter_id"`
+	Value      float64   `json:"value"`
+	ReadingDate time.Time `json:"reading_date"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}

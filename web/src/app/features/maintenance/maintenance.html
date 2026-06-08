@@ -98,7 +98,7 @@
             <div class="space-y-6 relative pl-4 border-l-2 border-surface-container-high ml-2">
               @for (task of group.tasks; track task.id) {
                 <div class="relative">
-                  <div class="absolute -left-[25px] top-1 w-4 h-4 rounded-full border-2 border-white"
+                  <div class="absolute -left-6.25 top-1 w-4 h-4 rounded-full border-2 border-white"
                        [class.bg-primary]="task.status === 'Completed'"
                        [class.bg-secondary]="task.status === 'In Progress'"
                        [class.bg-slate-300]="task.status === 'Pending'"></div>
@@ -140,7 +140,7 @@
     <div>
       <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Description</label>
       <textarea [formField]="newTaskForm.description" 
-                class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary min-h-[100px]" 
+                class="w-full bg-surface-container-low border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary min-h-25" 
                 placeholder="Details of the maintenance task..."></textarea>
     </div>
 

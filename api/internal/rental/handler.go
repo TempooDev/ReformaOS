@@ -41,6 +41,31 @@ func (h *Handler) GetTransactionsByProperty(c echo.Context) error {
 	return c.JSON(http.StatusOK, transactions)
 }
 
+func (h *Handler) GetUtilityReadings(c echo.Context) error {
+	propertyID := c.Param("propertyId")
+	var readings []UtilityReading
+	if err := config.DB.Where("property_id = ?", propertyID).Order("reading_date desc").Find(&readings).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not fetch utility readings"})
+	}
+	return c.JSON(http.StatusOK, readings)
+}
+
+func (h *Handler) CreateUtilityReading(c echo.Context) error {
+	propertyID := c.Param("propertyId")
+	reading := new(UtilityReading)
+	if err := c.Bind(reading); err != nil {
+		return err
+	}
+	reading.PropertyID = propertyID
+	reading.ID = time.Now().Format("20060102150405")
+	reading.ReadingDate = time.Now()
+
+	if err := config.DB.Create(reading).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not create utility reading"})
+	}
+	return c.JSON(http.StatusCreated, reading)
+}
+
 func (h *Handler) GetStats(c echo.Context) error {
 	propertyID := c.Param("propertyId")
 	

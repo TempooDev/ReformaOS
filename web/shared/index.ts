@@ -212,6 +212,15 @@ export interface Transaction {
   status: string;
 }
 
+export interface UtilityReading {
+  id: string;
+  property_id: string;
+  type: 'Electricity' | 'Water';
+  meter_id: string;
+  value: number;
+  reading_date: string;
+}
+
 export interface AmortizationMilestone {
   year: number;
   totalPaid: number;

@@ -48,6 +48,7 @@ func main() {
 		&rental.Booking{},
 		&rental.Tenant{},
 		&rental.RentalTransaction{},
+		&rental.UtilityReading{},
 		&domotica.Camera{},
 		&domotica.Light{},
 		&maintenance.MaintenanceTask{},
@@ -127,6 +128,8 @@ func main() {
 	api.GET("/properties/:propertyId/rental-stats", rentalHandler.GetStats)
 	api.GET("/properties/:propertyId/tenant", rentalHandler.GetTenantByProperty)
 	api.GET("/properties/:propertyId/transactions", rentalHandler.GetTransactionsByProperty)
+	api.GET("/properties/:propertyId/utility-readings", rentalHandler.GetUtilityReadings)
+	api.POST("/properties/:propertyId/utility-readings", rentalHandler.CreateUtilityReading)
 	api.POST("/properties/:propertyId/bookings", rentalHandler.Create)
 
 	// Domotica
@@ -305,6 +308,13 @@ func seedData() {
 			{ID: "TRX-2", PropertyID: p.ID, TenantID: t.ID, Title: "August 2024 Rent", Date: time.Now().AddDate(0, -1, -5), Amount: 2450.0, Status: "Success"},
 		}
 		config.DB.Create(&transactions)
+
+		// Seed Utility Readings
+		readings := []rental.UtilityReading{
+			{ID: "UTR-1", PropertyID: p.ID, Type: "Electricity", MeterID: "E-98234-A", Value: 12450.0, ReadingDate: time.Now().AddDate(0, -1, 0)},
+			{ID: "UTR-2", PropertyID: p.ID, Type: "Water", MeterID: "W-11029-B", Value: 842.0, ReadingDate: time.Now().AddDate(0, -1, 0)},
+		}
+		config.DB.Create(&readings)
 
 		// Seed Domotica
 		cameras := []domotica.Camera{
