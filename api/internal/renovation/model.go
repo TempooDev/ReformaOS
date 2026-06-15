@@ -27,15 +27,15 @@ func (a *ConceptArray) Scan(value interface{}) error {
 }
 
 type RenovationProposal struct {
-	ID             string       `gorm:"primaryKey" json:"id"`
-	PropertyID     string       `json:"property_id"`
-	Provider       string       `json:"provider"`
-	Amount         float64      `json:"amount"`
-	DurationMonths int          `json:"duration_months"`
-	Concepts       ConceptArray `gorm:"type:jsonb" json:"concepts"`
-	Status         string       `json:"status"` // In Review, Approved, Rejected
-	Details        string       `json:"details"`
-	DocumentURL    string       `json:"document_url"` // Path in MinIO (e.g. /presupuestos/doc.pdf)
-	CreatedAt      time.Time    `json:"created_at"`
-	UpdatedAt      time.Time    `json:"updated_at"`
+	ID             string       `gorm:"primaryKey" json:"id" form:"id"`
+	PropertyID     string       `json:"property_id" form:"property_id"`
+	Provider       string       `json:"provider" form:"provider"`
+	Amount         float64      `json:"amount" form:"amount"`
+	DurationMonths int          `json:"duration_months" form:"duration_months"`
+	Concepts       ConceptArray `gorm:"type:jsonb" json:"concepts" form:"concepts"`
+	Status         string       `json:"status" form:"status"` // In Review, Approved, Rejected
+	Details        string       `json:"details" form:"details"`
+	DocumentURL    string       `json:"document_url" form:"document_url"` // Path in MinIO (e.g. /presupuestos/doc.pdf)
+	CreatedAt      time.Time    `json:"created_at" form:"created_at"`
+	UpdatedAt      time.Time    `json:"updated_at" form:"updated_at"`
 }

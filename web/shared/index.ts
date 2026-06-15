@@ -81,6 +81,7 @@ export interface DocumentOrInvoice {
   property_id: string;
   file_name: string;
   type: 'Invoice' | 'Document';
+  category?: string;
   status: 'Pending' | 'Approved' | 'Paid' | 'In Review';
   preview_url: string;
   updated_at?: string;

@@ -52,7 +52,6 @@
                    [class.bg-slate-300]="phase.status === 'Pending'"
                    [style.width.%]="phase.progress"></div>
             </div>
-            <!-- Background Decoration -->
             <span class="material-symbols-outlined absolute -bottom-2 -right-2 text-4xl text-slate-100 group-hover:text-slate-200 transition-colors">
               {{ phase.status === 'Completed' ? 'check_circle' : phase.status === 'In Progress' ? 'construction' : 'schedule' }}
             </span>
@@ -180,67 +179,99 @@
       </div>
     </section>
 
-    <!-- Documents & Invoices Table -->
-    <section class="col-span-12 bg-surface-container-lowest rounded-xl shadow-sm border border-slate-50 overflow-hidden flex flex-col mb-8">
+    <!-- Floor Plans Section -->
+    <section class="col-span-12 bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col mb-8">
       <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-surface-container-low/30">
         <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
-          <span class="material-symbols-outlined">folder_open</span>
-          Documentation and Invoices
+          <span class="material-symbols-outlined text-secondary">architecture</span>
+          Floor Plans & Topology
         </h3>
         @if (authService.getRole() !== authService.Role.MANAGER) {
-          <button (click)="openAddDocument()" class="flex items-center gap-2 text-xs font-bold text-white bg-primary px-4 py-2 rounded-lg hover:brightness-110 transition-colors cursor-pointer">
-            <span class="material-symbols-outlined text-sm">upload_file</span> Upload File
+          <button (click)="openAddDocument()" class="flex items-center gap-2 text-xs font-bold text-white bg-secondary px-4 py-2 rounded-lg hover:brightness-110 transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-sm">add</span> Upload Plan
           </button>
         }
       </div>
-      
+      <div class="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @for (doc of documentsAndInvoices(); track doc.id) {
+          @if (doc.category === 'Floor Plan') {
+            <div class="group relative bg-white border border-slate-100 rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer">
+              <div class="aspect-video bg-slate-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                <span class="material-symbols-outlined text-4xl text-slate-200">map</span>
+              </div>
+              <h4 class="font-bold text-primary text-sm truncate" [title]="doc.file_name">{{ doc.file_name }}</h4>
+              <p class="text-[10px] text-on-surface-variant uppercase mt-1">{{ doc.updated_at | date:'MMM dd, yyyy' }}</p>
+              <a [href]="sanitizeUrl(doc.preview_url)" target="_blank" class="absolute inset-0 z-10"></a>
+            </div>
+          }
+        } @empty {
+          <div class="col-span-full py-12 text-center text-on-surface-variant italic text-sm">
+            No floor plans uploaded yet.
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Legal & Bureaucracy Documents -->
+    <section class="col-span-12 lg:col-span-7 bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col mb-8">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-surface-container-low/30">
+        <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined">gavel</span>
+          Legal & Bureaucracy
+        </h3>
+      </div>
       <div class="overflow-x-auto flex-1">
         <table class="w-full text-left">
-          <thead>
-            <tr class="bg-surface-container-low/50">
-              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">File Name</th>
-              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Type</th>
-              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Modification Date</th>
-              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70">Status</th>
-              <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/70 text-right">Actions</th>
-            </tr>
-          </thead>
           <tbody class="divide-y divide-slate-50">
             @for (doc of documentsAndInvoices(); track doc.id) {
-            <tr class="hover:bg-surface-container-low transition-colors group">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">
-                    {{ doc.type === 'Invoice' ? 'receipt_long' : 'description' }}
-                  </span>
-                  <p class="font-bold text-primary text-sm max-w-[200px] truncate" [title]="doc.file_name">{{ doc.file_name }}</p>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <span class="text-xs font-medium text-on-surface-variant">{{ doc.type === 'Invoice' ? 'Invoice' : 'Document' }}</span>
-              </td>
-              <td class="px-6 py-4">
-                <span class="text-xs font-medium text-on-surface-variant tabular-nums">{{ doc.updated_at | date:'shortDate' }}</span>
-              </td>
-              <td class="px-6 py-4">
-                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest"
-                      [class.bg-green-50]="doc.status === 'Approved' || doc.status === 'Paid'"
-                      [class.text-green-700]="doc.status === 'Approved' || doc.status === 'Paid'"
-                      [class.bg-yellow-50]="doc.status === 'Pending' || doc.status === 'In Review'"
-                      [class.text-yellow-700]="doc.status === 'Pending' || doc.status === 'In Review'">
-                  {{ doc.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-right">
-                <a [href]="sanitizeUrl(doc.preview_url)" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-slate-200 hover:border-primary/30 hover:bg-primary/5 cursor-pointer">
-                  <span class="material-symbols-outlined text-sm">visibility</span>
-                  Preview
-                </a>
-              </td>
-            </tr>
+              @if (doc.category === 'Bureaucracy') {
+                <tr class="hover:bg-surface-container-low transition-colors group">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">description</span>
+                      <p class="font-bold text-primary text-sm max-w-[300px] truncate" [title]="doc.file_name">{{ doc.file_name }}</p>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <a [href]="sanitizeUrl(doc.preview_url)" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg border border-slate-200 hover:border-primary/30 hover:bg-primary/5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm">visibility</span> View
+                    </a>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- Invoices & Other Section -->
+    <section class="col-span-12 lg:col-span-5 bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col mb-8">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-surface-container-low/30">
+        <h3 class="font-headline text-xl font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined">receipt_long</span>
+          Invoices & General
+        </h3>
+      </div>
+      <div class="p-6 space-y-4">
+        @for (doc of documentsAndInvoices(); track doc.id) {
+          @if (doc.category !== 'Floor Plan' && doc.category !== 'Bureaucracy') {
+            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-slate-400">
+                  {{ doc.type === 'Invoice' ? 'receipt_long' : 'description' }}
+                </span>
+                <div>
+                   <p class="text-sm font-bold text-primary truncate max-w-[150px]">{{ doc.file_name }}</p>
+                   <p class="text-[10px] text-on-surface-variant uppercase">{{ doc.updated_at | date:'shortDate' }}</p>
+                </div>
+              </div>
+              <a [href]="sanitizeUrl(doc.preview_url)" target="_blank" class="p-2 hover:bg-primary/5 text-secondary hover:text-primary rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-sm">download</span>
+              </a>
+            </div>
+          }
+        }
       </div>
     </section>
 
@@ -427,10 +458,12 @@
     </div>
   </div>
   <div modal-footer class="flex justify-end gap-3 w-full">
-    <button class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 flex items-center gap-2">
-      <span class="material-symbols-outlined text-sm">download</span> Offer
-    </button>
-    <button (click)="closeMortgage()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white shadow-md">Accept</button>
+    @if (selectedMortgage()?.document_url) {
+      <a [href]="sanitizeUrl(selectedMortgage()!.document_url!)" target="_blank" class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">download</span> Offer PDF
+      </a>
+    }
+    <button (click)="closeMortgage()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white shadow-md">Close</button>
   </div>
 </app-modal>
 
@@ -472,70 +505,166 @@
         </table>
       </div>
     </div>
+    @if (selectedRenovation()?.details) {
+      <div>
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Observations</p>
+        <p class="text-sm text-on-surface-variant">{{ selectedRenovation()?.details }}</p>
+      </div>
+    }
   </div>
   <div modal-footer class="flex justify-end gap-3 w-full">
-    <button (click)="closeRenovation()" class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 flex items-center gap-1">
-      <span class="material-symbols-outlined text-sm">request_quote</span> Request Changes
-    </button>
-    <button (click)="closeRenovation()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white shadow-md">Approve</button>
+    @if (selectedRenovation()?.document_url) {
+      <a [href]="sanitizeUrl(selectedRenovation()!.document_url!)" target="_blank" class="px-6 py-2.5 rounded-lg font-bold text-sm border border-slate-300 text-primary hover:bg-slate-100 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">description</span> View PDF
+      </a>
+    }
+    <button (click)="closeRenovation()" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-primary text-white shadow-md">Close</button>
   </div>
 </app-modal>
 
 <!-- Add Mortgage Modal -->
 <app-modal [isOpen]="isAddMortgageModalOpen()" title="New Mortgage Proposal" maxWidth="max-w-lg" (close)="closeAddMortgage()">
-  <div class="space-y-4">
+  <div class="space-y-6">
     <div>
-      <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Bank Entity</label>
-      <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="E.g. Santander, BBVA...">
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Bank Entity</label>
+      <input [formField]="newMortgageForm.provider" type="text" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="E.g. Santander, BBVA...">
     </div>
+
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Amount (€)</label>
-        <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="150000">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Amount (€)</label>
+        <input [formField]="newMortgageForm.amount" type="number" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="150000">
       </div>
       <div>
-        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Interest (%)</label>
-        <input type="number" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="2.5">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Interest (%)</label>
+        <input [formField]="newMortgageForm.interest_rate" type="number" step="0.01" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="2.5">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Type</label>
+        <select [formField]="newMortgageForm.type" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 text-xs font-bold uppercase text-primary">
+          <option value="Fija">Fija</option>
+          <option value="Variable">Variable</option>
+          <option value="Mixta">Mixta</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Term (Months)</label>
+        <input [formField]="newMortgageForm.term_months" type="number" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="360">
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Monthly Payment (€)</label>
+      <input [formField]="newMortgageForm.monthly_payment" type="number" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="450.00">
+    </div>
+
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Details</label>
+      <textarea [formField]="newMortgageForm.details" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary min-h-[80px]" placeholder="Add bonuses, conditions..."></textarea>
+    </div>
+
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Supporting Document</label>
+      <input #mortgageFileInput type="file" (change)="onMortgageFileSelected($event)" class="hidden" accept=".pdf,.doc,.docx,.jpg,.png">
+      <div (click)="mortgageFileInput.click()" class="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer group">
+        <span class="material-symbols-outlined text-3xl mb-1 group-hover:scale-110 transition-transform">cloud_upload</span>
+        <p class="text-xs font-bold text-primary">{{ mortgageFile ? mortgageFile.name : 'Click to upload PDF/Offer' }}</p>
       </div>
     </div>
   </div>
   <div modal-footer class="flex gap-3 w-full">
-    <button (click)="closeAddMortgage()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancel</button>
-    <button (click)="closeAddMortgage()" class="flex-1 py-3 text-sm font-bold bg-primary text-white rounded-lg shadow-md">Save</button>
+    <button (click)="closeAddMortgage()" class="flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-all">Cancel</button>
+    <button (click)="saveMortgage()" [disabled]="newMortgageForm().invalid()" class="flex-1 py-4 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">Save Proposal</button>
   </div>
 </app-modal>
 
 <!-- Add Renovation Modal -->
-<app-modal [isOpen]="isAddRenovationModalOpen()" title="New Renovation Budget" maxWidth="max-w-lg" (close)="closeAddRenovation()">
-  <div class="space-y-4">
+<app-modal [isOpen]="isAddRenovationModalOpen()" title="New Renovation Budget" maxWidth="max-w-xl" (close)="closeAddRenovation()">
+  <div class="space-y-6">
     <div>
-      <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Provider / Company</label>
-      <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="E.g. Constructora X">
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Provider / Company</label>
+      <input [formField]="newRenovationForm.provider" type="text" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="E.g. Constructora X">
     </div>
+
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Total Amount (€)</label>
-        <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-hidden" placeholder="40000">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Total Amount (€)</label>
+        <input [formField]="newRenovationForm.amount" type="number" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="40000">
+      </div>
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Term (Months)</label>
+        <input [formField]="newRenovationForm.duration_months" type="number" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary" placeholder="12">
+      </div>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Budget Concepts</label>
+        <button (click)="addRenovationConcept()" class="text-[10px] font-bold text-secondary uppercase tracking-widest hover:underline flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">add_circle</span> Add Item
+        </button>
+      </div>
+      <div class="space-y-3">
+        @for (concept of newRenovationModel().concepts; track $index) {
+          <div class="flex gap-3 items-start animate-in fade-in slide-in-from-right-2 duration-300">
+            <input [(ngModel)]="concept.name" class="flex-1 bg-surface-container-low border-none rounded-xl px-4 py-3 text-xs font-bold text-primary" placeholder="Description">
+            <input type="number" [(ngModel)]="concept.cost" class="w-24 bg-surface-container-low border-none rounded-xl px-4 py-3 text-xs font-bold text-primary" placeholder="€">
+            <button (click)="removeRenovationConcept($index)" class="p-3 text-error hover:bg-error/5 rounded-xl transition-all">
+              <span class="material-symbols-outlined text-sm">delete</span>
+            </button>
+          </div>
+        }
+        @if (newRenovationModel().concepts.length === 0) {
+          <p class="text-center py-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-widest">No items added yet</p>
+        }
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Additional Details</label>
+      <textarea [formField]="newRenovationForm.details" class="w-full bg-surface-container-low border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-primary/20 transition-all text-primary min-h-[80px]" placeholder="Specific considerations..."></textarea>
+    </div>
+
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Supporting PDF</label>
+      <input #renovationFileInput type="file" (change)="onRenovationFileSelected($event)" class="hidden" accept=".pdf,.doc,.docx,.jpg,.png">
+      <div (click)="renovationFileInput.click()" class="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer group">
+        <span class="material-symbols-outlined text-3xl mb-1 group-hover:scale-110 transition-transform">cloud_upload</span>
+        <p class="text-xs font-bold text-primary">{{ renovationFile ? renovationFile.name : 'Click to upload budget PDF' }}</p>
       </div>
     </div>
   </div>
   <div modal-footer class="flex gap-3 w-full">
-    <button (click)="closeAddRenovation()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancel</button>
-    <button (click)="closeAddRenovation()" class="flex-1 py-3 text-sm font-bold bg-secondary text-white rounded-lg shadow-md">Add</button>
+    <button (click)="closeAddRenovation()" class="flex-1 py-4 rounded-xl text-xs font-black uppercase tracking-widest text-on-surface-variant hover:bg-slate-200">Cancel</button>
+    <button (click)="saveRenovation()" [disabled]="newRenovationForm().invalid()" class="flex-1 py-4 bg-secondary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-secondary/20">Add Budget</button>
   </div>
 </app-modal>
 
 <!-- Add Document Modal -->
 <app-modal [isOpen]="isAddDocumentModalOpen()" title="Upload Document / Invoice" maxWidth="max-w-md" (close)="closeAddDocument()">
   <div class="space-y-6">
-    <div class="border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors cursor-pointer">
-      <span class="material-symbols-outlined text-4xl mb-2">cloud_upload</span>
-      <p class="text-sm font-bold">Select PDF file</p>
+    <input #docInput type="file" (change)="onDocumentFileSelected($event)" class="hidden" accept=".pdf,.doc,.docx,.jpg,.png">
+    <div (click)="docInput.click()" class="border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors cursor-pointer group">
+      <span class="material-symbols-outlined text-4xl mb-2 group-hover:scale-110 transition-transform">cloud_upload</span>
+      <p class="text-sm font-bold">{{ selectedDocumentFile ? selectedDocumentFile.name : 'Select file (PDF, Images)' }}</p>
+    </div>
+
+    <div>
+      <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Category</label>
+      <select [ngModel]="documentCategory()" (ngModelChange)="documentCategory.set($event)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-primary outline-hidden">
+        <option value="General">General</option>
+        <option value="Floor Plan">Floor Plan</option>
+        <option value="Bureaucracy">Bureaucracy</option>
+        <option value="Invoice">Invoice</option>
+      </select>
     </div>
   </div>
   <div modal-footer class="flex gap-3 w-full">
     <button (click)="closeAddDocument()" class="flex-1 py-3 text-sm font-bold text-on-surface-variant hover:bg-slate-200 rounded-lg">Cancel</button>
-    <button (click)="closeAddDocument()" class="flex-1 py-3 text-sm font-bold bg-primary text-white rounded-lg shadow-md">Upload</button>
+    <button (click)="uploadDocument()" [disabled]="!selectedDocumentFile" class="flex-1 py-3 text-sm font-bold bg-primary text-white rounded-lg shadow-md disabled:opacity-50">Upload</button>
   </div>
 </app-modal>
 

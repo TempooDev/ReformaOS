@@ -9,6 +9,7 @@ type DocumentOrInvoice struct {
 	PropertyID string    `json:"property_id"`
 	FileName   string    `json:"file_name"`
 	Type       string    `json:"type"`        // Invoice, Document
+	Category   string    `json:"category"`    // Floor Plan, Bureaucracy, Other
 	Status     string    `json:"status"`      // Pending, Approved, Paid, In Review
 	PreviewURL string    `json:"preview_url"` // Path in MinIO
 	CreatedAt  time.Time `json:"created_at"`

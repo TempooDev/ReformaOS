@@ -25,7 +25,6 @@ func (h *Handler) GetByProperty(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, proposals)
 }
-
 func (h *Handler) Create(c echo.Context) error {
 	propertyID := c.Param("propertyId")
 	r := new(RenovationProposal)
@@ -34,8 +33,19 @@ func (h *Handler) Create(c echo.Context) error {
 	}
 	r.PropertyID = propertyID
 
+	// Handle concepts if they come as a JSON string in a form field
+	conceptsJSON := c.FormValue("concepts")
+	if conceptsJSON != "" {
+		var concepts ConceptArray
+		if err := json.Unmarshal([]byte(conceptsJSON), &concepts); err == nil {
+			r.Concepts = concepts
+		}
+	}
+
 	// Handle optional document upload
 	file, err := c.FormFile("document")
+...
+
 	if err == nil {
 		var p property.Property
 		if err := config.DB.First(&p, "id = ?", propertyID).Error; err != nil {

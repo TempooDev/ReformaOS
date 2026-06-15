@@ -73,8 +73,41 @@ export class RenovationManagerComponent {
   isAddFolderModalOpen = signal<boolean>(false);
 
   selectedFiles: File[] = [];
+  selectedDocumentFile: File | null = null;
+  documentCategory = signal<string>('General');
   photoDescription = signal<string>('');
   newFolderName = signal<string>('');
+
+  // --- Form: New Mortgage ---
+  newMortgageModel = signal({
+    provider: '',
+    amount: 0,
+    interest_rate: 0,
+    type: 'Fija' as 'Fija' | 'Variable' | 'Mixta',
+    term_months: 360,
+    monthly_payment: 0,
+    details: ''
+  });
+  newMortgageForm = form(this.newMortgageModel, (s) => {
+    required(s.provider);
+    min(s.amount, 1);
+    min(s.interest_rate, 0);
+  });
+  mortgageFile: File | null = null;
+
+  // --- Form: New Renovation ---
+  newRenovationModel = signal({
+    provider: '',
+    amount: 0,
+    duration_months: 12,
+    details: '',
+    concepts: [] as { name: string, cost: number }[]
+  });
+  newRenovationForm = form(this.newRenovationModel, (s) => {
+    required(s.provider);
+    min(s.amount, 1);
+  });
+  renovationFile: File | null = null;
 
   // --- Upload State ---
 
@@ -141,14 +174,136 @@ export class RenovationManagerComponent {
   closeRenovation() { this.selectedRenovation.set(null); }
 
   // --- Creation Methods ---
-  openAddMortgage() { this.isAddMortgageModalOpen.set(true); }
+  openAddMortgage() { 
+    this.mortgageFile = null;
+    this.newMortgageModel.set({
+      provider: '', amount: 0, interest_rate: 0, 
+      type: 'Fija', term_months: 360, monthly_payment: 0, details: ''
+    });
+    this.isAddMortgageModalOpen.set(true); 
+  }
   closeAddMortgage() { this.isAddMortgageModalOpen.set(false); }
 
-  openAddRenovation() { this.isAddRenovationModalOpen.set(true); }
+  onMortgageFileSelected(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) this.mortgageFile = files[0];
+  }
+
+  async saveMortgage() {
+    const pId = this.activeId();
+    if (!pId) return;
+
+    await submit(this.newMortgageForm, async () => {
+      const formData = new FormData();
+      const model = this.newMortgageModel();
+      formData.append('provider', model.provider);
+      formData.append('amount', model.amount.toString());
+      formData.append('interest_rate', model.interest_rate.toString());
+      formData.append('type', model.type);
+      formData.append('term_months', model.term_months.toString());
+      formData.append('monthly_payment', model.monthly_payment.toString());
+      formData.append('details', model.details);
+      if (this.mortgageFile) formData.append('document', this.mortgageFile);
+
+      this.reformaService.createMortgage(pId, formData).subscribe({
+        next: () => {
+          this.mortgagesResource.reload();
+          this.closeAddMortgage();
+          this.notificationService.success('Success', 'Mortgage proposal saved.');
+        },
+        error: () => this.notificationService.error('Error', 'Could not save mortgage proposal.')
+      });
+    });
+  }
+
+  openAddRenovation() { 
+    this.renovationFile = null;
+    this.newRenovationModel.set({
+      provider: '', amount: 0, duration_months: 12, details: '', concepts: []
+    });
+    this.isAddRenovationModalOpen.set(true); 
+  }
   closeAddRenovation() { this.isAddRenovationModalOpen.set(false); }
 
-  openAddDocument() { this.isAddDocumentModalOpen.set(true); }
+  onRenovationFileSelected(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) this.renovationFile = files[0];
+  }
+
+  addRenovationConcept() {
+    this.newRenovationModel.update(m => ({
+      ...m,
+      concepts: [...m.concepts, { name: '', cost: 0 }]
+    }));
+  }
+
+  removeRenovationConcept(index: number) {
+    this.newRenovationModel.update(m => ({
+      ...m,
+      concepts: m.concepts.filter((_, i) => i !== index)
+    }));
+  }
+
+  async saveRenovation() {
+    const pId = this.activeId();
+    if (!pId) return;
+
+    await submit(this.newRenovationForm, async () => {
+      const formData = new FormData();
+      const model = this.newRenovationModel();
+      formData.append('provider', model.provider);
+      formData.append('amount', model.amount.toString());
+      formData.append('duration_months', model.duration_months.toString());
+      formData.append('details', model.details);
+      formData.append('concepts', JSON.stringify(model.concepts));
+      if (this.renovationFile) formData.append('document', this.renovationFile);
+
+      this.reformaService.createRenovation(pId, formData).subscribe({
+        next: () => {
+          this.renovationsResource.reload();
+          this.closeAddRenovation();
+          this.notificationService.success('Success', 'Renovation budget saved.');
+        },
+        error: () => this.notificationService.error('Error', 'Could not save renovation budget.')
+      });
+    });
+  }
+
+  openAddDocument() { 
+    this.selectedDocumentFile = null;
+    this.documentCategory.set('General');
+    this.isAddDocumentModalOpen.set(true); 
+  }
   closeAddDocument() { this.isAddDocumentModalOpen.set(false); }
+
+  onDocumentFileSelected(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      this.selectedDocumentFile = files[0];
+    }
+  }
+
+  uploadDocument() {
+    const pId = this.reformaService.activePropertyId();
+    if (!pId || !this.selectedDocumentFile) return;
+
+    const formData = new FormData();
+    formData.append('file', this.selectedDocumentFile);
+    formData.append('type', 'Document');
+    formData.append('category', this.documentCategory());
+
+    this.reformaService.uploadDocument(pId, formData).subscribe({
+      next: () => {
+        this.documentsResource.reload();
+        this.closeAddDocument();
+        this.notificationService.success('Success', 'Document uploaded successfully.');
+      },
+      error: (err) => {
+        const errorMsg = err.error?.error || 'Could not upload document.';
+        this.notificationService.error('Error Uploading Document', errorMsg);
+      }
+    });
+  }
 
   openAddPhoto() { 
     this.resetUploadState();

@@ -57,11 +57,20 @@ func LoadConfig() *Config {
 
 // Global Constants to avoid magic strings
 const (
-	SectionGallery   = "galeria"
-	SectionMortgages = "hipotecas"
-	SectionBudgets   = "presupuestos"
-	SectionProjects  = "proyecto"
-	SectionInvoices  = "facturas"
+	SectionGallery     = "galeria"
+	SectionMortgages   = "hipotecas"
+	SectionBudgets     = "presupuestos"
+	SectionProjects    = "proyecto"
+	SectionInvoices    = "facturas"
+	SectionPlans       = "planos"
+	SectionBureaucracy = "documentos"
+)
+
+const (
+	CategoryFloorPlan   = "Floor Plan"
+	CategoryBureaucracy = "Bureaucracy"
+	CategoryInvoice     = "Invoice"
+	CategoryGeneral     = "General"
 )
 
 const (

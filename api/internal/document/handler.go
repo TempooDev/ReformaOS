@@ -29,6 +29,7 @@ func (h *Handler) GetByProperty(c echo.Context) error {
 func (h *Handler) Upload(c echo.Context) error {
 	propertyID := c.Param("propertyId")
 	docType := c.FormValue("type") // Invoice or Document
+	category := c.FormValue("category")
 
 	var p property.Property
 	if err := config.DB.First(&p, "id = ?", propertyID).Error; err != nil {
@@ -40,9 +41,13 @@ func (h *Handler) Upload(c echo.Context) error {
 		return err
 	}
 
-	// Use constants for sections
+	// Dynamic section mapping based on category/type
 	section := config.SectionProjects
-	if docType == "Invoice" {
+	if category == config.CategoryFloorPlan {
+		section = config.SectionPlans
+	} else if category == config.CategoryBureaucracy {
+		section = config.SectionBureaucracy
+	} else if docType == "Invoice" {
 		section = config.SectionInvoices
 	}
 
@@ -56,6 +61,7 @@ func (h *Handler) Upload(c echo.Context) error {
 		PropertyID: propertyID,
 		FileName:   file.Filename,
 		Type:       docType,
+		Category:   category,
 		Status:     config.StatusPending,
 		PreviewURL: url,
 	}
